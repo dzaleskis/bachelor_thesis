@@ -19,7 +19,7 @@
 % Titulinio aprašas
 \university{Vilniaus universitetas}
 \faculty{Matematikos ir informatikos fakultetas}
-\institute{Informatikos institutas}  % Užkomentavus šią eilutę - institutas neįtraukiamas į titulinį
+\institute{Informatikos institutas}
 \department{Informatikos katedra}
 \papertype{Baigiamasis bakalauro darbas}
 \title{Rikiavimo tobulinimas genetiniais algoritmais}
@@ -30,8 +30,6 @@
 \reviewer{doc. dr. Vardauskas Pavardauskas}
 \date{Vilnius \\ \the\year}
 
-% Nustatymai
-% \setmainfont{Palemonas}   % Pakeisti teksto šriftą į Palemonas (turi būti įdiegtas sistemoje)
 \bibliography{bibliografija} 
 
 \begin{document}
@@ -39,13 +37,44 @@
 
 \tableofcontents
 
+% ar verta tureti santrauka?
+
 \sectionnonum{Sąvokų apibrėžimai}
 Sutartinių ženklų, simbolių, vienetų ir terminų sutrumpinimų sąrašas (jeigu
 ženklų, simbolių, vienetų ir terminų bendras skaičius didesnis nei 10 ir
 kiekvienas iš jų tekste kartojasi daugiau nei 3 kartus).
 
 \sectionnonum{Įvadas}
-Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai.
+% Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai.
+
+Duomenų rikiavimas yra vienas aktyviausiai tiriamų uždavinių informatikos moksle.
+Iš dalies tai lemia rikiavimo uždavinio prieinamumas ir sąlygos paprastumas.
+Formaliai rikiavimo uždavinys formuluojamas taip:
+duotai baigtinei palyginamų elementų sekai $S = (s_1, s_2, ..., s_n)$ pateikti tokį
+kėlinį, kad duotosios sekos elementai būtų išdėstyti monotonine (didėjančia arba mažėjančia) tvarka.
+Kadangi rikiavimo uždavinio sąlyga yra paprasta, tai suteikia didelę galimų implementacijų įvairovę.
+Todėl nauji rikiavimo algoritmai ir įvairūs patobulinimai egzistuojantiems algoritmams yra kuriami ir dabar.
+
+Rikiavimo uždavinys yra fundamentalus, kadangi efektyvus rikiavimas padeda pagrindą
+efektyviam kitų uždavinių sprendimui.
+Kaip to pavyzdį galima pateikti dvejetainės paieškos algoritmą, kurio prielaida,
+jog duomenys yra išrikiuoti, leidžia sumažinti paieškos laiko sudėtingumą iki $O(log\,n)$.
+Efektyvus rikiavimas taip pat svarbus duomenų normalizavimui bei pateikimui žmonėms lengvai suprantamu formatu.
+Kadangi duomenų rikiavimas yra fundamentalus uždavinys, net ir nežymūs patobulinimai žvelgiant bendrai
+gali atnešti didelę naudą.
+
+Rikiavimo uždaviniui spręsti egzistuoja labai įvairių algoritmų.
+Plačiausiai žinomi yra klasikiniai rikiavimo algoritmai: rikiavimas sąlaja (angl. merge sort), rikiavimas įterpimu (angl. insertion sort) ir greitojo rikiavimo algoritmas (angl. quicksort).
+Tiesa, šie algoritmai turi įvairių trukūmų:
+rikiavimas sąlaja veikia lėčiau nei nestabilūs algoritmai, rikiavimas įterpimu yra efektyvus tik kai rikiuojamų duomenų dydis yra mažas, o
+greitojo rikiavimo algoritmas netinkamai parinkus slenkstį gali degraduoti į $O(n^2)$ laiko sudėtingumą.
+Todėl šiuo metu praktikoje plačiausiai naudojami yra hibridiniai rikiavimo algoritmai, kurie apjungia kelis klasikinius algoritmus į vieną panaudodami jų geriausias savybes.
+Pavyzdžiui, C++ programavimo kalbos standartinėje bibliotekoje pateikiamas introsort algoritmas įprastai naudoja greitojo rikiavimo algoritmą,
+pasiekus tam tikrą rekursijos gylį yra naudojamas rikiavimas krūva (angl. heapsort) siekiant išvengti degradacijos į $O(n^2)$ laiko sudėtingumą,
+o kai rikiuojamų duomenų dydis yra pakankamai mažas, pasitelkiamas rikiavimas įterpimu, kadangi su mažais duomenų dydžiais jis yra efektyvesnis.
+Apibendrinant, pasitelkiant įvairius rikiavimo algoritmus ir jų unikalias savybes yra įmanoma rikiavimo uždavinį spręsti efektyviau.
+
+
 
 \section{Pagrindinė tiriamoji dalis}
 Pagrindinėje tiriamojoje dalyje aptariama ir pagrindžiama tyrimo metodika; pagal
