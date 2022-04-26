@@ -48,32 +48,88 @@ kiekvienas iš jų tekste kartojasi daugiau nei 3 kartus).
 % Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai.
 
 Duomenų rikiavimas yra vienas aktyviausiai tiriamų uždavinių informatikos moksle.
-Iš dalies tai lemia rikiavimo uždavinio prieinamumas ir sąlygos paprastumas.
+Iš dalies tai lemia rikiavimo uždavinio prieinamumas ir analizės paprastumas.
 Formaliai rikiavimo uždavinys formuluojamas taip:
 duotai baigtinei palyginamų elementų sekai $S = (s_1, s_2, ..., s_n)$ pateikti tokį
 kėlinį, kad duotosios sekos elementai būtų išdėstyti monotonine (didėjančia arba mažėjančia) tvarka.
-Kadangi rikiavimo uždavinio sąlyga yra paprasta, tai suteikia didelę galimų implementacijų įvairovę.
+Kadangi rikiavimo uždavinio sąlyga yra gana paprasta, tai suteikia didelę galimų implementacijų įvairovę.
 Todėl nauji rikiavimo algoritmai ir įvairūs patobulinimai egzistuojantiems algoritmams yra kuriami ir dabar.
 
-Rikiavimo uždavinys yra fundamentalus, kadangi efektyvus rikiavimas padeda pagrindą
-efektyviam kitų uždavinių sprendimui.
+Rikiavimo uždavinys yra fundamentalus, kadangi rikiavimas padeda pagrindą efektyviam kitų uždavinių sprendimui.
 Kaip to pavyzdį galima pateikti dvejetainės paieškos algoritmą, kurio prielaida,
 jog duomenys yra išrikiuoti, leidžia sumažinti paieškos laiko sudėtingumą iki $O(log\,n)$.
-Efektyvus rikiavimas taip pat svarbus duomenų normalizavimui bei pateikimui žmonėms lengvai suprantamu formatu.
+Rikiavimas taip pat svarbus duomenų normalizavimui bei pateikimui žmonėms lengvai suprantamu formatu.
 Kadangi duomenų rikiavimas yra fundamentalus uždavinys, net ir nežymūs patobulinimai žvelgiant bendrai
 gali atnešti didelę naudą.
 
 Rikiavimo uždaviniui spręsti egzistuoja labai įvairių algoritmų.
 Plačiausiai žinomi yra klasikiniai rikiavimo algoritmai: rikiavimas sąlaja (angl. merge sort), rikiavimas įterpimu (angl. insertion sort) ir greitojo rikiavimo algoritmas (angl. quicksort).
 Tiesa, šie algoritmai turi įvairių trukūmų:
-rikiavimas sąlaja veikia lėčiau nei nestabilūs algoritmai, rikiavimas įterpimu yra efektyvus tik kai rikiuojamų duomenų dydis yra mažas, o
-greitojo rikiavimo algoritmas netinkamai parinkus slenkstį gali degraduoti į $O(n^2)$ laiko sudėtingumą.
-Todėl šiuo metu praktikoje plačiausiai naudojami yra hibridiniai rikiavimo algoritmai, kurie apjungia kelis klasikinius algoritmus į vieną panaudodami jų geriausias savybes.
-Pavyzdžiui, C++ programavimo kalbos standartinėje bibliotekoje pateikiamas introsort algoritmas įprastai naudoja greitojo rikiavimo algoritmą,
-pasiekus tam tikrą rekursijos gylį yra naudojamas rikiavimas krūva (angl. heapsort) siekiant išvengti degradacijos į $O(n^2)$ laiko sudėtingumą,
+rikiavimas sąlaja dažnai veikia lėčiau nei nestabilūs algoritmai ir naudoja $O(n)$ papildomos atminties, rikiavimas įterpimu yra efektyvus tik kai rikiuojamų duomenų dydis yra mažas, o
+greitojo rikiavimo algoritmas blogiausiu atveju turi $O(n^2)$ laiko sudėtingumą.
+Todėl šiuo metu praktikoje plačiausiai naudojami hibridiniai rikiavimo algoritmai, kurie apjungia kelis klasikinius algoritmus į vieną panaudodami jų geriausias savybes.
+Pavyzdžiui, C++ programavimo kalbos standartinėje bibliotekoje naudojamas introspektyvaus rikiavimo (angl. introsort) algoritmas įprastai naudoja greitojo rikiavimo algoritmą,
+pasiekus tam tikrą rekursijos gylį yra naudojamas rikiavimas krūva (angl. heapsort) siekiant išvengti $O(n^2)$ laiko sudėtingumo,
 o kai rikiuojamų duomenų dydis yra pakankamai mažas, pasitelkiamas rikiavimas įterpimu, kadangi su mažais duomenų dydžiais jis yra efektyvesnis.
 Apibendrinant, pasitelkiant įvairius rikiavimo algoritmus ir jų unikalias savybes yra įmanoma rikiavimo uždavinį spręsti efektyviau.
 
+Vienas iš teorine prasme įdomiausių klasikinių algoritmų yra Šelo rikiavimo algoritmas.
+Šelo algoritmą galima laikyti rikiavimo įterpimu optimizacija, kadangi atliekant rikiavimą yra lyginami ne tik gretimi elementai,
+kas leidžia kai kuriuos elementus perkelti į galutinę poziciją atliekant mažiau operacijų.
+Pagrindinė algoritmo idėja - išskaidyti rikiuojamą seką $S$ į posekius $S_1, S_2, ..., S_n$, kur
+$S_i = (s_i, s_{i+h}, s_{i+2h}, ...)$ ir atskirai išrikiuoti kiekvieną posekį $S_i$.
+Įprastai tarpų rinkinys, kuriuo remiantis formuojami rikiuojami posekiai, vadinamas tarpų seka.
+Šelo algoritmo efektyvumas įprastai priklauso nuo pasirinktos tarpų sekos, todėl bendra teorinė šio algoritmo analizė yra labai sudėtinga.
+Taip pat reikia pastebėti, jog praktikoje efektyviausi yra eksperimentiškai gauti Šelo algoritmo variantai \cite{ciura2001best,tokuda1992}.
+
+Literatūroje galima rasti darbų \cite{roos2002genetic,simpson1999faster}, kuriuose genetiniai algoritmai yra taikomi naujų Šelo algoritmo tarpų sekų radimui.
+Tiesa, šių darbų praktinio panaudojimo potencialas yra gana ribotas.
+Simpson-Yachavaram darbe daugiausia dėmesio skiriama atliekamiems palyginimams, teigiama, jog gautos tarpų sekos atlieka mažiausiai palyginimo operacijų,
+tačiau jos yra lyginamos tik su Sedgewick ir Incerpi-Sedgewick tarpų sekomis.
+Tačiau šiuo metu yra laikoma, jog vidutiniškai atliekamų palyginimų atžvilgiu optimaliausia yra Ciura \cite{ciura2001best} tarpų seka.
+Kursinio darbo metu buvo atliktas Ciura ir Simpson-Yachavaram tarpų sekų tarpusavio palyginimas vidutiniškai atliekamų priskyrimų atžvilgiu, gauti rezultatai tam neprieštaravo.
+Roos et al. darbe daugiausia dėmesio skiriama veikimo laikui, teigiama, jog gauta tarpų seka veikia greičiau nei kitos tirtos tarpų sekos, tačiau
+pateikiamuose rezultatuose ji lyginama tik su Simpson-Yachavaram tarpų seka, tiriami tik keli duomenų dydžiai.
+Kursinio darbo metu buvo atliktas platesnio masto Roos et al. ir kitų tarpų sekų tarpusavio palyginimas vidutinio veikimo laiko atžvilgiu,
+pagal gautus rezultatus Roos et al. sekos veikimo laikas buvo mažiausias, tačiau ji taip pat atliko daugiausia palyginimo ir priskyrimo operacijų.
+
+
+
+
+% Projektiniame bandem gauti kazka, taciau major focus buvo palyginimai.
+% Dabar nebandom kazko isradinet, nes ciura palyginimu nelabai aplenksim, tai tiesiog bandysim veikt greiciau nei kiti.
+% Praeiti GA darbai remesi tik vienu kriterijumi (palyginimai arba veikimo laikas), mes naudosim daugiakriterini kad subalansuot.
+
+
+
+Keliama tokia \textbf{hipotezė}:
+
+\textit{Pasitelkiant genetinius algoritmus įmanoma sukonstruoti efektyvius Šelo algoritmo variantus,
+kurių vidutinis veikimo laikas būtų mažesnis nei šiuo metu žinomų variantų.}
+
+% pagrindas (kas leidzia igyvendinti ir nustatyti ar hipoteze teisinga)
+
+Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos \textbf{uždavinius}:
+\begin{itemize}
+    \item Išanalizuoti Šelo algoritmą ir jo variantus remiantis literatūra ir eksperimentiškai gautais duomenimis;
+    \item Nustatyti kriterijus Šelo algoritmo variantų efektyvumui įvertinti;
+    \item Realizuoti genetinį algoritmą Šelo algoritmo variantų generavimui;
+    \item Pasitelkiant realizuotą genetinį algoritmą sugeneruoti Šelo algoritmo variantus;
+    \item Eksperimentiškai palyginti sugeneruotų ir pateiktų literatūroje Šelo algoritmo variantų efektyvumą.
+  \end{itemize}
+
+Šiame darbe atlikta:
+\begin{itemize}
+    \item kol kas nieko
+\end{itemize}
+
+Darbas remiasi tokiomis prielaidomis:
+\begin{itemize}
+    \item Atliekant Šelo algoritmo variantų generavimą ir tarpusavio palyginimą rikiuojamų duomenų palyginimo ir priskyrimo sudėtingumas laiko atžvilgiu yra $O(1)$;
+    \item Atliekant Šelo algoritmo variantų tarpusavio palyginimą yra pakankama aprėpti geriausiai žinomus variantus
+        (visų literatūroje pateiktų variantų tarpusavio palyginimas reikalautų atskiro tyrimo);
+    \item Šelo algoritmo variantų tarpusavio palyginimui pasirinkti duomenų rinkiniai pakankamai tiksliai atspindi dažniausiai praktikoje sutinkamus duomenų rinkinius.
+\end{itemize}
 
 
 \section{Pagrindinė tiriamoji dalis}
