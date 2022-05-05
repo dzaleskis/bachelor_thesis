@@ -355,7 +355,8 @@ Dažniausiai tai pasiekiama chromosomas išreiškiant bitų ar kitų primityvių
 Tada mutacija gali būti įgyvendinama tiesiog modifikuojant atsitiktinai pasirinktą masyvo elementą,
 o rekombinacijai pakanka remiantis tam tikra strategija perkopijuoti tėvinių chromosomų elementus į vaikinę chromosomą.
 
-Sprendinio kokybę įvardijame kaip jo tinkamumą, kuris apibrėžiamas tinkamumo funkcijos reikšme, pateikus sprendinį arba tarpinį sprendinio kainos įvertį kaip parametrą.
+Sprendinio kokybę įvardijame kaip jo tinkamumą, kuris apibrėžiamas tinkamumo funkcijos reikšme, pateikus sprendinį arba tarpinį sprendinio įvertį kaip parametrą.
+Sprendžiant minimizavimo uždavinį, tinkamumo funkcija taip pat vadinama kainos funkcija.
 Tinkamumo funkcija yra viena svarbiausių genetinio algoritmo dalių,
 kadangi kai ji netinkamai parinkta, algoritmas nekonverguos į tinkamą sprendinį arba užtruks labai ilgai.
 
@@ -392,18 +393,89 @@ kas reiškia, jog populiacijos genetinė įvairovė palaipsniui mažės.
 
 \section{Genetinis algoritmas Šelo algoritmo variantų generavimui}
 
+% FIXME: tai chromosoma ar individas???
+
 Pirmiausia reikėtų aptarti kaip turėtų būti modeliuojamas sprendinys, atspindintis tam tikrą Šelo algoritmo variantą.
 Laikysime jog Šelo algoritmo variantą sudaro sąrašas porų $(p, h)$, kur $p$ yra skaičius, atitinkantis vieną iš anksčiau darbe aptartų perėjimų tipų,
 o $h$ - tarpas, su kuriuo rikiuojama tame perėjime.
-Toliau darbe tokiu būdu modeliuojamą Šelo algoritmo variantą vadinsime chromosoma, o porą $(p, h)$ - genu.
+Toliau darbe tokiu būdu modeliuojamą Šelo algoritmo variantą vadinsime chromosoma arba individu, o porą $(p, h)$ - genu.
 Tiesa, toks modelis neturi jokio funkcionalumo (juo duomenų rikiuoti negalime), tačiau tai nėra sunku išspręsti: pakanka kiekvienam perėjimo tipui
 paruošti atitinkamą funkciją, kuri kaip parametrus priima rikiuojamus duomenis ir tarpą su kuriuo rikiuojama.
-Taip modeliuojamą algoritmą galima nesunkiai vykdyti iteruojant jo genų sąrašą ir kiekvienai porai $(p, h)$ iškviečiant funkciją atitinkančią jos tipą ir nurodant tarpą su kuriuo rikiuoti.
+Tada modeliuojamą Šelo algoritmo variantą galima nesunkiai vykdyti iteruojant jo genų sąrašą ir kiekvienai porai $(p, h)$ iškviečiant funkciją atitinkančią jos tipą ir nurodant tarpą su kuriuo rikiuoti.
 
-% chromosomu generavimas
+Taip pat labai svarbu apibrėžti kaip bus inicializuojami pradiniai sprendiniai, kurie bus naudojami genetinio algoritmo vykdymui.
+Parinkti atsitiktinį perėjimo tipą yra nesudėtinga, kadangi pakanka sugeneruoti atsitiktinį skaičių, atitinkantį vieną iš apibrėžtų tipų.
+Sudėtingiau yra greitai sugeneruoti pakankamai efektyvias tarpų sekas.
+Tuo tikslu buvo pasirinkta individų inializacijai naudoti geometrines tarpų sekas.
+Kaip galima pastebėti \ref{alg:geometric_gaps} algoritme, jas gana nesudėtinga generuoti.
+Taip pat geometrinės tarpų sekos yra pakankamai efektyvios bendru atveju.
+Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
+tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
 
-% openga
+\begin{algorithm}[H]
+  \caption{Geometrinių tarpų sekų generavimas}\label{alg:geometric_gaps}
+  \begin{algorithmic}[1]
+    \Procedure{geometric\_gaps}{$n, q$}
+      \State let $gaps$ be an empty set
+      \State $current \gets 1$
+      
+      \While{$current < n$}
+        \State insert $\lceil current \rceil$ into $gaps$
+        \State $current \gets current * q$ 
+      \EndWhile
 
+      \State \textbf{return} $gaps$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+Genetinio algoritmo įgyvendinimui buvo pasirinkta naudoti C++ programavimo kalbą ir openGA biblioteką \cite{mohammadi2017openga}.
+C++ buvo pasirinkta dėl veikimo spartos ir patirties sukauptos ruošiant kursinį darbą ir kursinį projektą.
+OpenGA biblioteka buvo pasirinkta dėl modernumo, lygiagretaus vykdymo palaikymo ir patirties sukauptos ruošiant kursinį darbą ir kursinį projektą.
+
+Nors kriterijai Šelo algoritmo varianto efektyvumui įvertinti buvo apibrėžti praeitame skyriuje,
+reikalinga plačiau aptarti kaip bus nustatoma duoto individo kaina.
+Pirmiausia, siekiama, jog gautas algoritmas būtų deterministinis ir visada išrikiuotų duomenis, kadangi tikimybinių rikiavimo algoritmų panaudojamumas yra ribotas.
+Todėl būtina po rikiavimo suskaičiuoti rikiuojamų duomenų inversijas ir šį kriterijų minimizuoti.
+Taip pat reikia, jog pats inversijų skaičiavimas neužtruktų per ilgai, kadangi tai apsunkintų genetinio algoritmo vykdymą.
+Šiuo tikslu buvo nuspręsta inversijų skaičiavimui pasitelkti modifikuotą rikiavimo sąlaja algoritmą, kurio sudėtingumas blogiausiu atveju yra $O(n\,log\,n)$.
+Remiantis darbe iškelta hipoteze taip pat siekiama, jog sugeneruoti algoritmai veiktų greitai, todėl
+vienas iš esminių kriterijų yra veikimo laikas.
+Veikimo laiko matavimams buvo nuspręsta naudoti rikiavimo metu procesoriaus atliekamų ciklų skaičių pasitelkiant \verb|RDTSC| instrukciją.
+Taip pat labai svarbu, jog algoritmo veikimo laikas stipriai nepriklausytų nuo rikiuojamų duomenų specifikos, tad 
+būtina užtikrinti, jog atliekamų palyginimo ir priskyrimo operacijų skaičius būtų pakankamai mažas.
+Operacijų skaičiavimui buvo pasitelkta projektiniame darbe naudota Element klasė, kuri naudojant palyginimo ir priskyrimo operatorių
+perkrovimą seka šių operacijų skaičių rikiavimo metu.
+
+Kaip buvo minėta įvade, Šelo algoritmo variantų generavimui buvo pasirinkta naudoti daugiakriterinį genetinį algoritmą.
+Kadangi daugiakriteriniame GA svoriai netaikomi, buvo pasirinkta kai kuriems kriterijams taikyti prioritetus.
+Tai reiškia, jog vienam iš kriterijų neatitinkant nustatyto apribojimo, kai kurie kiti kriterijai gali būti ignoruojami
+tam, kad prioritetinis kriterijus atitiktų apribojimus.
+Remiantis aukščiau aptartais tikslais, buvo nuspręsta taikyti prioritetus duomenų inversijoms bei veikimo laikui.
+Laikant jog $i$ yra inversijų skaičius, $t$ - veikimo laikas (ciklais),
+$c$ - palyginimų skaičius, $a$ - priskyrimų skaičius, o $T$ - tam tikra konstanta,
+individo kainos funkcija yra apibrėžiama tokia forma:
+
+\[
+  cost(i, t, c, a)=
+  \begin{cases}
+    (i, \infty, \infty, \infty),& \text{if } i > 0\\
+    (i, t, \infty, \infty),& \text{if } t > T\\
+    (i, t, c, a), & \text{otherwise}
+  \end{cases}
+\]
+
+
+Individų mutacija buvo įgyvendinta pasirenkant atsitiktinį individo geną ir atsitiktinai pakeičiant jo perėjimo tipą kuriuo nors kitu.
+Sprendinių rekombinacija buvo vykdoma tolygia strategija, kur dviejų tėvų genai turi vienodą tikimybę
+būti perduoti vaikiniam individui.
+Siekiant išvengti netinkamų sprendinių, rekombinacijos operatoriumi gauto naujo individo genai buvo išrikiuojami pagal tarpą naudojamą rikiavimui.
+
+Atlikus pradinius eksperimentus ir preliminariai įvertinus gautų sprendinių tinkamumą buvo pasirinkta GA taikyti tokius parametrus:
+populiacija - $500$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos dalis - $0.4$.
+GA buvo nurodyta sustoti įvykdžius 100 iteracijų.
+
+\section{Šelo algoritmo variantų generavimas}
 
 
 
