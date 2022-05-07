@@ -14,9 +14,24 @@
 \usepackage{subfig}
 \usepackage{url}
 \usepackage{wrapfig}
+\usepackage{booktabs}
+\usepackage[table,xcdraw]{xcolor}
 
 \algnewcommand\algorithmicforeach{\textbf{foreach}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+\definecolor{eclipseStrings}{RGB}{42,0.0,255}
+\definecolor{eclipseKeywords}{RGB}{127,0,85}
+
+\lstset{
+  basicstyle=\normalfont\ttfamily,
+  commentstyle=\color{eclipseStrings}, % style of comment
+  stringstyle=\color{eclipseKeywords}, % style of strings
+  backgroundcolor=\color{white},
+  showstringspaces=false,
+  breaklines=true,
+  frame=lines,
+}
 
 % Titulinio aprašas
 \university{Vilniaus universitetas}
@@ -29,6 +44,7 @@
 \status{4 kurso 2 grupės studentas}
 \author{Deividas Zaleskis}
 \supervisor{Irmantas Radavičius}
+% FIXME - nesamone
 \reviewer{doc. dr. Vardauskas Pavardauskas}
 \date{Vilnius \\ \the\year}
 
@@ -46,7 +62,8 @@
 
 Šelo algoritmas
 GA
-
+OS
+WSL
 
 \sectionnonum{Įvadas}
 
@@ -302,14 +319,137 @@ Jo pseudokodas yra pateikiamas \ref{alg:brick_pass} algoritme.
 
 
 \subsection{Eksperimentinė Šelo algoritmo analizė}
-% TODO: reik kazkaip gaut perf tools, pasitikrint, jei imanoma parodyt apie swap distance
+
+Norint paruošti greitai veikiantį Šelo algoritmo variantą arba taisykles tokiam algoritmui gauti, vertinga žinoti, kodėl vieni variantai veikia greičiau nei kiti.
+Pradėkime nuo to, jog kursiniame darbe ir kursiniame projekte buvo pastebėta, jog Šelo algoritmo variantų atliekamų operacijų skaičius ne visada koreliuoja su veikimo laiku.
+Dėl šiuolaikinių kompiuterių veikimo subtilybių algoritmai, kurie atlieka daugiau palyginimo ir priskyrimo operacijų,
+kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai \cite{peters2021pattern}.
+Atliekant kursinį darbą ir kursinį projektą buvo pastebėtas panašus efektas - 
+tyrimuose geriausius veikimo laiko rezultatus parodę Šelo algoritmo variantai atliko ženkliai daugiau operacijų, nei atliekamų operacijų operacijų atžvilgiu optimalūs variantai.
+Taigi keliama pradinė hipotezė, jog vien operacijų skaičius neleidžia tinkamai įvertinti kaip Šelo algoritmo variantas veiks praktikoje.
+
+Pirmiausia pastebėsime, jog šiuolaikinių kompiuterių architektūros yra labai sudėtingos, kas dažnu atveju neleidžia iš anksto nustatyti praktinio algoritmo efektyvumo.
+Išankstinę teorinę analizę apsunkina įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
+instrukcijų vykdymas ne iš eilės (siekiant pilnai išnaudoti procesoriaus ciklus),
+duomenų saugojimas kelių lygių talpykloje (siekiant panaikinti atminties delsą) ir
+šakų nuspėjimas (siekiant išlygiagretinti instrukcijų vykdymą).
+Jei duotas algoritmas netinkamai išnaudoja šias mašinos galimybes, praktinis efektyvumas gali stipriai nukentėti.
+Todėl bene geriausias būdas nustatyti tikėtiną praktinį algoritmo efektyvumą yra atlikti eksperimentus ir stebėti mašinos veikimą.
+Žinoma, tokiu būdu gauti rezultatai priklauso nuo duotos mašinos techinių parametrų ir įvairių kitų veiksnių, tačiau didžioji dalis
+šiuolaikinių kompiuterių pasitelkia tas pačias strategijas, tad pvz. lyginant kelių algoritmų veikimą
+santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis net ir atliekant matavimus skirtinguose kompiuteriuose.  
+
+Reikia pastebėti, jog šiuolaikiniai kompiuteriai, nors ir sudėtingi, dažnai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
+Tam dažniausiai yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
+Tiesa, šiuos rodiklius yra lengviau analizuoti pasitelkiant tam skirtus įrankius.
+Šiame darbe buvo pasirinkta praktinei analizei naudoti \verb|perf| profiliuotoją, kadangi jis yra plačiai naudojamas, nemokamas ir jį naudoti nesudėtinga.
+Kadangi \verb|perf| yra prieinamas tik Linux OS vartotojamas, buvo pasinaudota WSL funkcionalumu, kas leido jį naudoti kompiuteryje su Windows 11 OS.
+Pastebėsime, jog naudojant WSL prieinama Linux OS veikia virtualioje mašinoje, tad tai gali paveikti gautus rezultatus. 
+
+Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi ir 32 GB operatyviosios atminties.
+Kadangi praktinis efektyvumas stipriai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
+Tiek naudojant \verb|perf|, tiek matuojant veikimo laiką ir atliekamas operacijas eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinai išmaišytus sveikus 32 bitų skaičius priklausančius intervalui $[0, size)$.
+Siekiant išvengti neatitikimų, abi eksperimentų rūšys buvo vykdomos WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
+Kadangi \verb|perf| stebi visą programos veikimo laikotarpį, atliekant matavimus pirmiausia buvo išmatuojama kiek operacijų, ciklų ir pan. reikia vien duomenų generavimui,
+vėliau juos atimant iš rodiklių, gautų atliekant rikiavimą.
+
+Vykdant eksperimentus buvo nuspręsta tirti Šelo algoritmo veikimą rikiuojant 64 elementus.
+Tai pakankamai svarbus scenarijus, kadangi jis tokiu principu dažnai pasitelkiamas hibridiniuose rikiavimo algoritmuose \cite{golangsort,bzip2sort}.
+Tai taip pat palengvina analizę, kadangi ją atlikti su nedideliais duomenų dydžiais yra paprasčiau.
+
+Pirmiausia buvo nutarta pamatuoti kelių skirtingų Šelo algoritmo variantų veikimo laiką ir atliekamas operacijas, siekiant nustatyti kaip tarpų sekos įtakoja šiuos kriterijus.
+Tuo tikslu buvo pasirinkti du Šelo algoritmo variantai, kur pirmasis naudoja tarpų seką $\{1\}$ kas prilygsta rikiavimui įterpimu, o antrasis naudoja sutrumpintą Ciura tarpų seką $\{57,23,10,4,1\}$.
+Pagal \ref{experiment_results_64} lentelėje matomus rezultatus matome, jog Šelo algoritmas atliko žymiai mažiau operacijų su Ciura tarpų seka, tačiau taip pat veikė reikšmingai lėčiau.
+
+\begin{table}[H]
+  \caption{Eksperimentų rezultatai matuojant veikimo laiką ir operacijas, kai $N = 64$}
+  \label{experiment_results_64}
+  \centering
+  \begin{tabular}{@{}llll@{}}
+  Tarpų seka            & palyginimai       & priskyrimai      & laikas (ciklais) \\ \midrule
+  $\{1\}$               & 1067              & 1126             & 2544                  \\
+  Ciura                 & 403               & 439              & 3873                  \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+Norint geriau suprasti gautus rezultatus, galima pasinaudoti \verb|perf| teikiamu funkcionalumu.
+Naudojant \verb|perf| gauti rezultatai pateikiami \ref{perf_results_64} lentelėje.
+Pastebėsime, jog kai kurie šiuo atveju neesminiai kriterijai nėra pateikiami, kadangi juos geriau atspindi kombinuoti kriterijai
+(pvz. neverta pateikti viso atliktų šakų ir neatspėtų šakų, kai galime pateikti neatspėtų šakų santykį).
+Pastebėsime, jog instrukcijos įvykdomos per ciklą iš dalies priklauso nuo procesoriaus gebėjimo atspėti šaką, kadangi jos neatspėjus tenka atstatyti prieš spėjimą buvusią būseną,
+kas įprastai užtrunka 10-20 ciklų.
+Analizuojant gautus rezultatus galima pastebėti, kad variantas su tarpų seka $\{1\}$ turi apytiksliai 6 kartus mažesnį neatspėtų šakų santykį bei įvykdo apytiksliai 3 kartus daugiau instrukcijų per ciklą.
+Todėl, nors jis ir nėra efektyvus teorine prasme (atlieka daug palyginimų ir priskyrimų), praktikoje jis veikia reikšmingai greičiau, kadangi geriau išnaudoja procesoriaus galimybes.
+Tiesa, rikiuojant sudėtingus duomenų tipus variantas su Ciura tarpų seka turėtų gauti palankesnius rezultatus, kadangi atlieka mažiau operacijų.
+
+\begin{table}[H]
+  \caption{Rezultatai gauti naudojant perf, kai $N = 64$}
+  \label{perf_results_64}
+  \centering
+  \begin{tabular}{@{}lll@{}}
+  Tarpų seka            & instrukcijos/ciklai     & neatspėtos šakos \\ \midrule
+  $\{1\}$               & 2.35                    & 3.44\%           \\
+  $\{57,23,10,4,1\}$    & 0.71                    & 21.30\%          \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+
+Pirmiausia reikėtų išnagrinėti, nuo ko priklauso šakų neatspėjimo santykis naudojant skirtingas tarpų sekas.
+Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, panagrinėsime tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{16, 1\}$, $\{32, 1\}$, $\{48, 1\}$.
+Atliekant eksperimentus gauti rezultatai pateikiami \ref{perf_results2_64} lentelėje.
+Remiantis gautais rezultatais, geriausią šakos atspėjimo santykį turi tarpų seka $\{48, 1\}$.
+Taip pat galime pastebėti, kaip mažėjant neatspėtų šakų skaičiui auga instrukcijų per ciklą skaičius bei didėja atliekamų operacijų skaičius.
+Ir nors su tarpų seka $\{48, 1\}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{32, 1\}$ veikimo laikas yra geresnis.
+Tad vien šakų nuspėjimo tikslumas ir instrukcijų įvykdomų per ciklą kiekis pilnai nenusako veikimo spartos. 
+
+\begin{table}[H]
+  \caption{Eksperimentų rezultatai, kai $N = 64$}
+  \label{perf_results2_64}
+  \centering
+  \begin{tabular}{@{}lllllll@{}}
+  Tarpų seka             & instrukcijos/ciklai     & neatspėtos šakos  & palyginimai       & priskyrimai      & laikas (ciklais) \\ \midrule
+  $\{16, 1\}$            & 1.29                    & 9.94\%            & 578               & 656              & 2822                  \\
+  $\{32, 1\}$            & 1.74                    & 6.19\%            & 753               & 823              & 2579                  \\
+  $\{48, 1\}$            & 1.93                    & 5.20\%            & 825               & 888              & 2618                  \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+Dabar panagrinėsime, kodėl buvo gauti būtent tokie rezultatai.
+Pirmiausia pastebėsime, jog rikiavimas įterpimu yra vienas palankiausių $O(n^2)$ algoritmų šakų nuspėjimui
+ir rikiuojant neatspėjama $O(n)$ šakų \cite{biggar2005sorting}.
+Tai lemia kelios priežastys: išorinio ciklo sąlyga yra lengvai nuspėjama, kadangi ji bus patenkinta tik perėjus visus elementus;
+vidiniame cikle pirmiausia tikrinama, ar nepasiekta rikiuojamų duomenų pradžia (tai teisinga tik blogiausiu atveju),
+o kita šaka priklauso nuo elementų palyginimo rezultato (sunkiai nuspėjama).
+Tarpų seka $\{48, 1\}$ pirmame perėjime atlieka mažiau instrukcijų nei kitos tarpų sekos, kadangi jis vykdomas pradedant nuo indekso $48$,
+tad atliekama viso 16 iteracijų, o kiekvienoje iteracijoje rikiuojamo posekio ilgis visada bus 2 (jei esame ties paskutiniu elementu, rikiuojamo posekio indeksai bus $\{63, 15\}$).
+Tarpų seka $\{32, 1\}$ pirmame perėjime atliks 32 iteracijas ir kiekvieno rikiuojamo posekio ilgis taip pat bus 2.
+Tarpų seka $\{16, 1\}$ pirmame perėjime atliks 48 iteracijas, tačiau rikiuojamo posekio ilgis didės kas 16 iteracijų (pradėjus rikiavimą
+rikiuojamo posekio indeksai bus $\{16, 0\}$, o paskutinėje iteracijoje rikiuojamo posekio indeksai bus $\{63, 47, 31, 15\}$).
+Pastebėsime, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ pirmo perėjimo šakos nuspėjamumas yra geresnis, kadangi
+vidinis ciklas visada atliks daugiausia vieną iteraciją ir iš esmės priklausys nuo elementų palyginimo, tuo tarpu sekos $\{16, 1\}$
+pirmo perėjimo nuspėjamumas yra prastesnis, kadangi priklausomai nuo išorinio ciklo iteracijos vidinis ciklas daugiausia atliks nuo 1 iki 3 iteracijų.
+Taip pat galime pastebėti, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
+atlieka mažiau instrukcijų, kas lemia, jog daugiau rikiavimo (tuo pačiu ir šakų) bus atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
+
+Reikia pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima praleisti
+indekso išėjimo už ribų tikrinimą $j \ge h$, kadangi maksimalus iteracijų skaičius vidiniame cikle bus 1.
+Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje. 
+Paminėsime, jog burbuliuko perėjimas atlieka būtent tai, kadangi jis neturi vidinio ciklo.
+Tad jo taikymas vietoje įterpimo perėjimo tokiais atvejais gali būti prasmingas, kadangi tai leistų atsisakyti vienos šakos ir kelių instrukcijų per iteraciją.  
+
+Vertinant gautus rezultatus, taip pat pastebima, jog variantai su tarpų sekomis $\{48, 1\}$, $\{32, 1\}$, $\{16, 1\}$ pastebimai lenkia variantą
+su Ciura tarpų seka vertinant veikimo laiką ir beveik prilygsta variantui su tarpų seka $\{1\}$.
+Žinoma, tam pasiekti jie atlieka daugiau operacijų, nei variantas su Ciura tarpų seka, tačiau taip pat atlieka reikšmingai mažiau operacijų nei variantas su tarpų seka $\{1\}$.
+Tad šiuo atveju pasiekiamas tam tikras balansas tarp atliekamų operacijų ir veikimo laiko, ko ir yra siekiama šiame darbe.
+
+% galima parasyt apie unguarded selo algoritma, kuri galima naudot hibriduose 
 
 \section{Šelo algoritmo variantų efektyvumo kriterijai}
 
 Įprastai praktinis rikiavimo algoritmų efektyvumas yra vertinamas matuojant jų atliekamų palyginimų ar priskyrimų skaičių.
 Tai yra pakankamai geri kriterijai norint praktiškai įvertinti duoto algoritmo efektyvumą su tam tikrais duomenų dydžiais,
 kadangi teorinis laiko sudėtingumas nurodo tik algoritmo sudėtingumo funkcijos augimo greitį ir
-neatsižvelgia į konstantas, kurios praktikoje taip pat įtakoja veikimo greitį.
+neatsižvelgia į konstantas, kurios praktikoje taip pat įtakoja veikimo greitį \cite{biggar2005sorting}.
 
 Pastebėsime, jog tiksliam efektyvumo įvertinimui tinkama matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus.
 To priežastis yra gana paprasta - rikiuojant duomenis, kurių palyginimas yra sudėtingas (pvz. simbolių eilutes),
@@ -324,14 +464,6 @@ Savaime suprantama, jog į šį kriterijų verta žvelgti pakankamai kritiškai,
 eksperimentams naudojamos mašinos techninių parametrų ir kompiliatoriaus taikomų optimizacijų lygio.
 Tačiau tai bene vienintelis kriterijus, leidžiantis įvertinti realų algoritmo praktinį efektyvumą, kas yra ypač svarbu,
 kadangi naudojant šiuolaikinį kompiuterį labai sunku iš anksto nustatyti, kaip greitai algoritmas veiks praktikoje.
-Tai lemia įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
-instrukcijų vykdymas ne iš eilės (siekiant pilnai išnaudoti procesoriaus ciklus),
-duomenų saugojimas kelių lygių talpykloje (siekiant panaikinti atminties delsą) ir
-šakų nuspėjimas (siekiant išlygiagretinti instrukcijų vykdymą).
-Dėl šiuolaikinių kompiuterių veikimo subtilybių algoritmai, kurie atlieka daugiau palyginimo ir priskyrimo operacijų,
-kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai \cite{peters2021pattern}. 
-Rezultatai, gauti kursiniame darbe ir kursiniame projekte taip pat tam neprieštarauja -
-tyrimuose geriausius veikimo laiko rezultatus parodę Šelo algoritmo variantai atliko ženkliai daugiau operacijų, nei atliekamų operacijų operacijų atžvilgiu optimalūs variantai.
 Atsižvelgiant į aukščiau pateiktus argumentus, galima teigti, jog
 algoritmo veikimo laiko įvertis yra svarbus kriterijus įvertinant praktinį Šelo algoritmo varianto efektyvumą.
 
@@ -491,5 +623,30 @@ suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
 \appendix  % Priedai
 
+\section{Eksperimentams naudota Šelo algoritmo implementacija}
+
+\begin{lstlisting}[label={alg:test_shellsort},language=C++]
+template <typename T>
+inline void test_shellsort(T & data) {
+    const int gaps[] = { 1 };
+    const std::size_t size = data.size();
+
+    for (int gap: gaps) {
+        for (int i = gap; i < size; i++) {
+            if (data[i - gap] > data[i]) {
+                auto temp = data[i];
+                int j = i;
+
+                do {
+                    data[j] = data[j - gap];
+                    j -= gap;
+                } while (j >= gap && data[j - gap] > temp);
+
+                data[j] = temp;
+            }
+        }
+    }
+}
+\end{lstlisting}
 
 \end{document}
