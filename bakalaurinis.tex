@@ -341,7 +341,7 @@ santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis net ir atliekan
 
 Reikia pastebėti, jog šiuolaikiniai kompiuteriai, nors ir sudėtingi, dažnai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
 Tam dažniausiai yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
-Tiesa, šiuos rodiklius yra lengviau analizuoti pasitelkiant tam skirtus įrankius.
+Šiuos rodiklius įprastai yra lengviau analizuoti pasitelkiant tam skirtus įrankius.
 Šiame darbe buvo pasirinkta praktinei analizei naudoti \verb|perf| profiliuotoją, kadangi jis yra plačiai naudojamas, nemokamas ir jį naudoti nesudėtinga.
 Kadangi \verb|perf| yra prieinamas tik Linux OS vartotojamas, buvo pasinaudota WSL funkcionalumu, kas leido jį naudoti kompiuteryje su Windows 11 OS.
 Pastebėsime, jog naudojant WSL prieinama Linux OS veikia virtualioje mašinoje, tad tai gali paveikti gautus rezultatus. 
@@ -404,12 +404,12 @@ Reikia paminėti, jog rikiavimo įterpimu vidinis ciklas įprastai yra vykdomas 
 ir todėl elementų palyginimo šaka yra santykinai lengvai nuspėjama.
 Nors Šelo algoritmo šakų nuspėjamumas priklauso nuo naudojamos tarpų sekos, jis įprastai būna reikšmingai prastesnis nei rikiavimo įterpimu \cite{biggar2005sorting}.
 Biggar et al. pastebėjo, jog su Gonnet tarpų seka Šelo algoritme per vieną iteraciją kiekvienas elementas yra pastumiamas apytiksliai per $0.9744 * h$ \cite{biggar2008experimental}.
-Tad vidinis ciklas, kuriame vykdomas rikiavimas įterpimu su tam tikru tarpu, retai kada atlieka daugiau nei vieną iteraciją, kas lemia, jog
+Tai reiškia, kad vidinis ciklas, kuriame vykdomas rikiavimas įterpimu su tam tikru tarpu, retai kada atlieka daugiau nei vieną iteraciją, kas lemia, jog
 vidiniame cikle vykdomo elementų palyginimo šaką yra sudėtinga nuspėti.
 
-Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, panagrinėsime tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{16, 1\}$, $\{32, 1\}$, $\{48, 1\}$.
+Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, buvo pasirinkta ištirti tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{16, 1\}$, $\{32, 1\}$, $\{48, 1\}$.
 Atliekant eksperimentus gauti rezultatai pateikiami \ref{perf_results2_64} lentelėje.
-Remiantis gautais rezultatais, geriausią šakos atspėjimo santykį turi tarpų seka $\{48, 1\}$.
+Remiantis gautais rezultatais, geriausią šakų nuspėjamumą turi tarpų seka $\{48, 1\}$.
 Taip pat galime pastebėti, kaip mažėjant neatspėtų šakų skaičiui auga instrukcijų per ciklą skaičius bei didėja atliekamų operacijų skaičius.
 Ir nors su tarpų seka $\{48, 1\}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{32, 1\}$ veikimo laikas yra geresnis.
 Tad vien šakų nuspėjimo tikslumas ir instrukcijų įvykdomų per ciklą kiekis pilnai nenusako veikimo spartos. 
@@ -432,28 +432,25 @@ tad atliekama viso 16 iteracijų, o kiekvienoje iteracijoje rikiuojamo posekio i
 Tarpų seka $\{32, 1\}$ pirmame perėjime atliks 32 iteracijas ir kiekvieno rikiuojamo posekio ilgis taip pat bus 2.
 Tarpų seka $\{16, 1\}$ pirmame perėjime atliks 48 iteracijas, tačiau rikiuojamo posekio ilgis didės kas 16 iteracijų (pradėjus rikiavimą
 rikiuojamo posekio indeksai bus $\{16, 0\}$, o paskutinėje iteracijoje rikiuojamo posekio indeksai bus $\{63, 47, 31, 15\}$).
+Remiantis tuo, įmanoma apskaičiuoti maksimaliai pirmame perėjime atliekamų palyginimų skaičių kiekvienai tarpų sekai:
+$\{48, 1\}$ - $16 * 1 = 16$, $\{32, 1\}$ - $32 * 1 = 32$, $\{16, 1\}$ - $16 * 1 + 16 * 2 + 16 * 3 = 96$.
+Tad tarpų seka $\{16, 1\}$ pirmame perėjime gali atlikti 6 kartus daugiau palyginimų, nei tarpų seka $\{48, 1\}$.
 
-Pastebėsime, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ pirmo perėjimo šakos nuspėjamumas yra prastesnis, kadangi
-vidinis ciklas visada atliks daugiausia vieną iteraciją.
-Tad bus sudėtinga atspėti ne tik elementų palyginimo šaką, tačiau ir šaką, kurioje tikrinama ar esamas vidinio ciklo indeksas nėra mažesnis už tarpą su kuriuo rikiuojama.
-Tarpų sekos $\{16, 1\}$ pirmo perėjimo nuspėjamumas yra geresnis, kadangi priklausomai nuo išorinio ciklo iteracijos vidinis ciklas daugiausia atliks iki 3 iteracijų, tad dažniau galima spėti, jog šaka bus imama.
-Tuo pačiu galime pastebėti, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ bendri šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
-atlieka mažiau instrukcijų, kas lemia, jog daugiau rikiavimo (tuo pačiu ir šakų) bus atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
+Tiesa, sunku pasakyti, kaip priklauso elementų palyginimo šakos nuspėjamumas priklausomai nuo tarpo dydžio.
+Atlikus preliminarius matavimus rikiuojant vien su tarpais 16, 32 ir 48 nebuvo pastebėta reikšmingų skirtumų (visais atvejais neatspėtų šakų buvo apie 17\%).
+Tad labiausiai tikėtina, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
+atlieka mažiau instrukcijų, kas lemia, jog daugiau rikiavimo (tuo pačiu ir šakų) atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
 
-Reikia pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima netikrinti,
+Vertinga pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima netikrinti,
 ar vidinio ciklo indeksas nėra mažesnis už tarpą, kadangi maksimalus iteracijų skaičius vidiniame cikle visada bus 1.
-Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje. 
-Paminėsime, jog burbuliuko perėjimas atlieka būtent tai, kadangi jis neturi vidinio ciklo (per vieną išorinio ciklo iteraciją sukeičiama maksimaliai viena elementų pora).
-Tad jo taikymas vietoje įterpimo perėjimo tokiais atvejais gali būti prasmingas, kadangi tai leistų atsisakyti vienos šakos ir kelių instrukcijų per iteraciją.  
+Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje.
+Įterpimo perėjimo pakeitimas burbuliuko perėjimu tokiais atvejais gali būti prasmingas,
+kadangi jis neturi vidinio ciklo, tad jo taikymas leistų atsisakyti vienos šakos ir kelių instrukcijų per iteraciją.  
 
-Vertinant gautus rezultatus, taip pat pastebima, jog variantai su tarpų sekomis $\{48, 1\}$, $\{32, 1\}$, $\{16, 1\}$ pastebimai lenkia variantą
+Vertinant gautus rezultatus, taip pat pastebima, jog variantai su tarpų sekomis $\{48, 1\}$, $\{32, 1\}$, $\{16, 1\}$ lenkia variantą
 su Ciura tarpų seka vertinant veikimo laiką ir beveik prilygsta variantui su tarpų seka $\{1\}$.
 Žinoma, tam pasiekti jie atlieka daugiau operacijų, nei variantas su Ciura tarpų seka, tačiau taip pat atlieka reikšmingai mažiau operacijų nei variantas su tarpų seka $\{1\}$.
 Tad šiuo atveju pasiekiamas tam tikras balansas tarp atliekamų operacijų ir veikimo laiko, ko ir yra siekiama šiame darbe.
-
-% galima parasyt apie unguarded selo algoritma, kuri galima naudot hibriduose 
-
-% galima parasyt apie savo algoritma, kuris irgi neblogai rikiuoja iki 64 dydzio
 
 \section{Šelo algoritmo variantų efektyvumo kriterijai}
 
@@ -547,10 +544,10 @@ Tada modeliuojamą Šelo algoritmo variantą galima nesunkiai vykdyti iteruojant
 
 Taip pat labai svarbu apibrėžti kaip bus inicializuojami pradiniai sprendiniai, kurie bus naudojami genetinio algoritmo vykdymui.
 Parinkti atsitiktinį perėjimo tipą yra nesudėtinga, kadangi pakanka sugeneruoti atsitiktinį skaičių, atitinkantį vieną iš apibrėžtų tipų.
-Sudėtingiau yra greitai sugeneruoti pakankamai efektyvias tarpų sekas.
-Tuo tikslu buvo pasirinkta individų inializacijai naudoti geometrines tarpų sekas.
-Kaip galima pastebėti \ref{alg:geometric_gaps} algoritme, jas gana nesudėtinga generuoti.
-Taip pat geometrinės tarpų sekos yra pakankamai efektyvios bendru atveju.
+Tuo tarpu greitai sugeneruoti pakankamai efektyvias tarpų sekas yra gana sudėtinga.
+Tuo tikslu buvo pasirinkta individų inializacijai naudoti geometrines tarpų sekas, kadangi jas gana nesudėtinga generuoti
+ir jos bendru atveju yra pakankamai efektyvios (didelė dalis efektyvių eksperimentiškai gautų tarpų sekų yra geometrinės).
+Geometrinių tarpų sekų generavimo eiga yra pateikiama \ref{alg:geometric_gaps} algoritme.
 Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
 tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
 
@@ -573,7 +570,7 @@ tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų
 
 Genetinio algoritmo įgyvendinimui buvo pasirinkta naudoti C++ programavimo kalbą ir openGA biblioteką \cite{mohammadi2017openga}.
 C++ buvo pasirinkta dėl veikimo spartos ir patirties sukauptos ruošiant kursinį darbą ir kursinį projektą.
-OpenGA biblioteka buvo pasirinkta dėl modernumo, lygiagretaus vykdymo palaikymo ir patirties sukauptos ruošiant kursinį darbą ir kursinį projektą.
+OpenGA biblioteka buvo pasirinkta dėl modernumo ir lygiagretaus vykdymo palaikymo.
 
 Nors kriterijai Šelo algoritmo varianto efektyvumui įvertinti buvo apibrėžti praeitame skyriuje,
 reikalinga plačiau aptarti kaip bus nustatoma duoto individo kaina.
@@ -590,7 +587,7 @@ Operacijų skaičiavimui buvo pasitelkta projektiniame darbe naudota Element kla
 perkrovimą seka šių operacijų skaičių rikiavimo metu.
 
 Kaip buvo minėta įvade, Šelo algoritmo variantų generavimui buvo pasirinkta naudoti daugiakriterinį genetinį algoritmą.
-Kadangi daugiakriteriniame GA svoriai netaikomi, buvo pasirinkta kai kuriems kriterijams taikyti prioritetus.
+Kadangi daugiakriteriniame GA svoriai netaikomi, buvo nuspręsta kai kuriems kriterijams taikyti prioritetus.
 Tai reiškia, jog vienam iš kriterijų neatitinkant nustatyto apribojimo, kai kurie kiti kriterijai gali būti ignoruojami
 tam, kad prioritetinis kriterijus atitiktų apribojimus.
 Remiantis aukščiau aptartais tikslais, buvo nuspręsta taikyti prioritetus duomenų inversijoms bei veikimo laikui.
@@ -618,6 +615,10 @@ populiacija - $500$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos da
 GA buvo nurodyta sustoti įvykdžius 100 iteracijų.
 
 \section{Šelo algoritmo variantų generavimas}
+
+% sizes: 128, 1024, 16384
+
+
 
 \section{Šelo algoritmo variantų efektyvumo įvertinimas}
 
