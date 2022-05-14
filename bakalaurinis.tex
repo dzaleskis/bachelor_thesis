@@ -365,7 +365,8 @@ Pastebėsime, jog naudojant WSL prieinama Linux OS veikia virtualioje mašinoje,
 
 Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi ir 32 GB operatyviosios atminties.
 Kadangi praktinis efektyvumas stipriai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
-Tiek naudojant \verb|perf|, tiek matuojant veikimo laiką ir atliekamas operacijas eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinai išmaišytus sveikus 32 bitų skaičius priklausančius intervalui $[0, size)$.
+Tiek naudojant \verb|perf|, tiek matuojant veikimo laiką ir atliekamas operacijas eksperimentai buvo vykdomi 5000000 kartų rikiuojant
+atsitiktinai išmaišytus sveikus 32 bitų skaičius priklausančius intervalui $[0, size)$.
 Siekiant išvengti neatitikimų, abi eksperimentų rūšys buvo vykdomos WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
 Kadangi \verb|perf| stebi visą programos veikimo laikotarpį, atliekant matavimus pirmiausia buvo išmatuojama kiek operacijų, ciklų ir pan. reikia vien duomenų generavimui,
 vėliau juos atimant iš rodiklių, gautų atliekant rikiavimą.
@@ -482,6 +483,8 @@ algoritmo veikimo laiką stipriau įtakoja jo atliekamų palyginimų skaičiaus.
 Analogiškas efektas pastebimas ir rikiuojant duomenis, kurių priskyrimas yra sudėtingas.
 Vertinant Šelo algoritmo variantų efektyvumą būtina matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus, kadangi
 atliekamų palyginimų ir priskyrimų skaičiaus santykis priklauso nuo implementacijos ir augant $N$ nebūtinai artėja prie 1 \cite{Radavičius_Baranauskas_2013}.
+
+% parasyt apie comparison itaka branch predictionui ir performance
 
 Vertinant Šelo algoritmo variantų efektyvumą taip pat būtina atsižvelgti ir į veikimo laiką.
 Savaime suprantama, jog į šį kriterijų verta žvelgti pakankamai kritiškai, kadangi jis priklauso nuo konkrečios algoritmo implementacijos,
@@ -764,14 +767,111 @@ kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi varianta
     {"gap":1,"passType":"insertion"}
   ]
 \end{lstlisting}
+
+
 \section{Šelo algoritmo variantų efektyvumo įvertinimas}
 
+\subsection{Duomenų rinkiniai}
+
+Norint tinkamai įvertinti įvairių Šelo algoritmo variantų efektyvumą, yra būtina atlikti eksperimentus naudojant
+įvairius duomenų rinkinius.
+Idealiu atveju, tyrime taip pat naudojami skirtingi duomenų tipai (skaičiai, simbolių eilutės, etc.), kas leidžia įvertinti 
+atliekamų palyginimų ir priskyrimų įtaką rikiavimo laikui.
+Šiame darbe buvo pasirinkta naudoti sveikaskaitinius duomenis, generuojamus juos išdėstant 6 skirtingais būdais.
+Šie duomenų išsidėstymo būdai yra apibrėžiami žemiau.
+
+Dažniausiai literatūroje tiriant rikiavimo algoritmų efektyvumą yra sutinkami atsitiktiniai išsidėstę duomenys.
+Šiame darbe buvo pasirinkta naudoti kelis šio duomenų išsidėstymo variantus.
+Variantas \verb|shuffled_int| pirmiausia sugeneruoja sąrašą pavidalo $\{0, \dots, size-1\}$,
+tada naudojant \verb|std::shuffle| funkciją šis sąrašas yra išmaišomas.
+Reikia paminėti, jog \verb|std::shuffle| garantuoja, kad ją įvykdžius elementų tvarka yra atsitiktinė ir kiekvienas
+skirtingas įmanomas elementų derinys turi vienodą tikimybę pasirodyti galutiniame sąraše.
+
+Variantas \verb|shuffled_16_values| pirmiausia sugeneruoja sąrašą, kur kiekviena reikšmė yra formos $a \pmod{16}$ ir $a \in {0, \dots, size-1}$,
+o tada naudojant \verb|std::shuffle| šis sąrašas yra išmaišomas.
+Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai yra pakankamai daug dublikatų.
+
+Variantas \verb|descending| sugeneruoja sąrašą pavidalo $\{size-1, \dots, 0 \}$,
+t.y. elementai yra išdėstomi mažėjimo tvarka.
+Šiuo atveju laikome, jog algoritmai rikiuoja didėjimo tvarka, tad toks duomenų rinkinys leidžia
+įvertinti, kaip veikia tiriami rikiavimo algoritmai, kai duomenys yra išdėstyti nepalankia (atvirkščia) tvarka.
+Tuo pačiu reikia pridurti, jog rinkinys, kur elementai išdėstyti didėjimo tvarka, šio tyrimo kontekste neturėtų prasmės ir todėl nėra įtraukiamas,
+kadangi visiems Šelo algoritmo variantams tai yra geriausias atvejis (nereikia vykdyti jokių sukeitimų).
+Lygiai tuo pačiu principu buvo pasirinkta neįtraukti ir duomenų rinkinio, kur visi elementai yra lygūs.
+
+Variantas \verb|partially_sorted| sugeneruoja sąrašą pavidalo $\{0, \dots, size-1\}$,
+tada naudojant \verb|std::shuffle| jį išmaišo, o po to dalinai jį išrikiuoja pasitelkiant \verb|std::partial_sort| funkciją.
+Šiuo atveju dalinis rikiavimas atliekamas tokiu būdu, kad pirma pusė elementų yra išrikiuoti, o antra pusė elementų yra išdėstyti atsitiktine tvarka.
+Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai į vieną yra sujungiami du sąrašai, kur pirmas sąrašas yra išrikiuotas, o antras ne.
+Galima nesunkiai įsivaizduoti tokio duomenų išsidėstymo pasitaikymo atvejį praktikoje - tarkime, programa turi duomenis kurie yra išrikiuoti,
+gauna daugiau duomenų, šiuos sąrašus sujungia ir vėl išrikiuoja, siekiant išlaikyti jų tvarką.
+
+Variantas \verb|push_min| sugeneruoja sąrašą pavidalo $\{1, \dots, size-1, 0\}$, t.y. visi elementai, išskyrus paskutinį, yra išrikiuoti.
+Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai į išrikiuoto sąrašo galą yra pridedamas dar vienas elementas ir siekiama vėl užtikrinti duomenų tvarką.
+Šis atvejis yra gana nepalankus, kadangi paskutinį elementą būtina perstumti į kitą sąrašo galą.
+Galima nesunkiai įsivaizduoti tokio duomenų išsidėstymo pasitaikymo atvejį praktikoje, ypač jei siekiant išlaikyti duomenų tvarką dėl ribotos standartinės bibliotekos ar
+žinių trūkumo pasirenkama naudoti ne prioritetinę eilę, o duomenis kaskart išrikiuoti.
+
+Variantas \verb|unshift_max| sugeneruoja sąrašą pavidalo $\{size-1, 0, \dots, size-2\}$, t.y. visi elementai, išskyrus pirmą, yra išrikiuoti.
+Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai į išrikiuoto sąrašo pradžią yra pridedamas dar vienas elementas ir siekiama vėl užtikrinti duomenų tvarką.
+Šis atvejis taip pat yra nepalankus, kadangi pirmą elementą būtina perstumti į kitą sąrašo galą.
+Jo praktinio pasitaikymo galimybės yra pakankamai panašios į \verb|push_min| varianto, kadangi kai kurios populiarios programavimo kalbos (pvz. JavaScript, Go)
+neturi eilės duomenų struktūros standartinėje bibliotekoje, tad naudotojai dažnai renkasi naudoti masyvais paremtus sąrašus tiek kaip stekus, tiek kaip eiles.
+
+\subsection{Tyrimo metodika}
+
+Atliekant tyrimą buvo pasirinkta įvertinti sugeneruotų ir geriausiai žinomų Šelo algoritmo variantų efektyvumą.
+Tuo tikslu buvo pasirinkta gautus variantus lyginti su optimizuotu Šelo algoritmu naudojant šias tarpų sekas:
+
+\begin{itemize}
+  \item Ciura: $1, 4, 10, 23, 57, 132, 301, 701$ \cite{ciura2001best}
+  \item Tokuda: $1, 4, 9, 20, 46, 103, 233, 525, \ldots $ \cite{tokuda1992}
+  \item Sedgewick: $1, 5, 19, 41, 109, 209, 505, 929, \ldots$ \cite{SEDGEWICK1986159}
+\end{itemize}
+
+Kadangi Ciura seka yra baigtinė, didesnių duomenų dydžių rikiavimui ji buvo pratęsta pasitelkiant rekursyvią formulę $h_{k}=\lfloor 2.25h_{k-1}\rfloor$.
+Sedgewick ir Tokuda sekos yra begalinės, tad jos buvo sutrumpintos taip, jog gauta seka būtų ilgiausia įmanoma seka, kurios visi elementai mažesni už 8192 (maksimalų tirtą duomenų dydį).
+
+Kadangi darbe buvo generuojami algoritmai, leidžiantys efektyviai rikiuoti tris skirtingus duomenų dydžius, tyrimą sudaro trys algoritmų rinkiniai.
+Kiekvieną rinkinį sudaro literatūroje pateikti algoritmai bei darbo eigoje sugeneruoti algoritmai
+(pvz. pirmą rinkinį sudaro A1, A2, A3 algoritmai bei Šelo algoritmas su Ciura, Tokuda ir Sedgewick tarpų sekomis).
+Su kiekvienu iš šių rinkinių eksperimentai atliekami naudojant keturis skirtingus duomenų dydžius: $\frac{N}{2^3}$, $\frac{N}{2^2}$, $\frac{N}{2}$, $N$.
+Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų (pvz. pirmam rinkiniui naudojami duomenų dydžiai 16, 32, 64, 128).
+
+Atliekant efektyvumo tyrimą buvo pasirinkta kiekvienai algoritmo ir duomenų rinkinio porai
+atlikti matavimus tol, kol praeis 10 sekundžių.
+Tokiu būdu atliekamų matavimų skaičius automatiškai prisitaiko prie duomenų dydžio
+ir rezultatai gauti su mažesniais duomenų dydžiais yra tikslesni.
+Siekiant padidinti rezultatų tikslumą, kiekviena algoritmo ir duomenų rinkinio pora
+prieš atliekant matavimus buvo 2 sekundes apšildoma atliekant rikiavimą ir nefiksuojant rezultatų.
+Tai leidžia apšildyti procesoriaus talpyklas ir sumažinti tikimybę,
+jog procesoriaus veikimo dažnis ženkliai pasikeis atliekant matavimus.
+
+Kiekvienai algoritmo ir atsitiktinio duomenų rinkinio porai taip pat buvo naudojama ta pati pradinė reikšmė,
+kuri inicializuoja \verb|std::shuffle| naudojamą atsitiktinių skaičių generatorių.
+Tad iš esmės kiekvienas algoritmas tam tikrame duomenų rinkinyje turėtų rikiuoti tokius pat pradinius duomenis.
+
+Siekiant jog gauti rezultatai būtų statistiškai reikšmingi, buvo pasirinkta naudoti tarpkvartilinio diapazono (angl. interquartile range) metodą.
+Šis metodas leidžia aptikti nuokrypius, kas leidžia nustatyti nenumatytų veiksnių įtaką gautiems rezultatams.
+Tai ypač svarbu matuojant veikimo laiką, kadangi jį labiausiai paveikia išorinių veiksnių įtaka.
+Taip pat tarpkvartilinis diapazonas nurodo rezultatų sklaidą aplink medianą,
+kas leidžia nustatyti atliktų matavimų paklaidą.
+
+
+\subsection{Tyrimo aplinka}
+
+Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi,
+32 GB operatyviosios atminties ir Windows 11 operacine sistema.
+Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
+
+\subsection{Tyrimo rezultatai}
+
 \sectionnonum{Išvados}
-Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
-suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
+% Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
+% suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
 \sectionnonum{Conclusions}
-Šiame skyriuje pateikiamos išvados (reziume) anglų kalba.
+% Šiame skyriuje pateikiamos išvados (reziume) anglų kalba.
 
 
 \printbibliography[heading=bibintoc]
