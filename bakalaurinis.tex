@@ -20,17 +20,34 @@
 \algnewcommand\algorithmicforeach{\textbf{foreach}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
-\definecolor{eclipseStrings}{RGB}{42,0.0,255}
-\definecolor{eclipseKeywords}{RGB}{127,0,85}
+\definecolor{eclipseStrings}{RGB}{127,0,85}
+\definecolor{eclipseKeywords}{RGB}{42,0,255}
+\colorlet{numb}{magenta!60!black}
+
 
 \lstset{
   basicstyle=\normalfont\ttfamily,
-  commentstyle=\color{eclipseStrings}, % style of comment
-  stringstyle=\color{eclipseKeywords}, % style of strings
+  commentstyle=\color{eclipseKeywords}, % style of comment
+  stringstyle=\color{eclipseStrings}, % style of strings
   backgroundcolor=\color{white},
   showstringspaces=false,
   breaklines=true,
   frame=lines,
+}
+
+\lstdefinelanguage{json}{
+    string=[s]{"}{"},
+    literate=
+        *{0}{{{\color{numb}0}}}{1}
+         {1}{{{\color{numb}1}}}{1}
+         {2}{{{\color{numb}2}}}{1}
+         {3}{{{\color{numb}3}}}{1}
+         {4}{{{\color{numb}4}}}{1}
+         {5}{{{\color{numb}5}}}{1}
+         {6}{{{\color{numb}6}}}{1}
+         {7}{{{\color{numb}7}}}{1}
+         {8}{{{\color{numb}8}}}{1}
+         {9}{{{\color{numb}9}}}{1}
 }
 
 % Titulinio aprašas
@@ -550,6 +567,7 @@ ir jos bendru atveju yra pakankamai efektyvios (didelė dalis efektyvių eksperi
 Geometrinių tarpų sekų generavimo eiga yra pateikiama \ref{alg:geometric_gaps} algoritme.
 Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
 tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
+Generuojant tarpų sekas buvo nuspręsta koeficientą $q$ parinkti atsitiktinai, užtikrinant, jog jis priklauso intervalui 
 
 \begin{algorithm}[H]
   \caption{Geometrinių tarpų sekų generavimas}\label{alg:geometric_gaps}
@@ -604,6 +622,7 @@ individo kainos funkcija yra apibrėžiama tokia forma:
   \end{cases}
 \]
 
+% parasyt koki q naudojau
 
 Individų mutacija buvo įgyvendinta pasirenkant atsitiktinį individo geną ir atsitiktinai pakeičiant jo perėjimo tipą kuriuo nors kitu.
 Sprendinių rekombinacija buvo vykdoma tolygia strategija, kur dviejų tėvų genai turi vienodą tikimybę
@@ -614,12 +633,137 @@ Atlikus pradinius eksperimentus ir preliminariai įvertinus gautų sprendinių t
 populiacija - $500$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos dalis - $0.4$.
 GA buvo nurodyta sustoti įvykdžius 100 iteracijų.
 
+% parasyt apie postgres?
+
+% populiacija neteisinga su didesniu N, reiktu parasyt kiekvienam atskirai
+
+% parasyt apie priemimo kriterijus
+
 \section{Šelo algoritmo variantų generavimas}
 
-% sizes: 128, 1024, 16384
+Šį skyrių sudaro trys poskyriai.
+Pirmame poskyryje generuojami Šelo algoritmo variantai, kai $N = 128$.
+Antrame poskyryje generuojami Šelo algoritmo variantai, kai $N = 1024$.
+Trečiame poskyryje generuojami Šelo algoritmo variantai, kai $N = 8192$.
 
+\subsection{Šelo algoritmo variantų generavimas, kai $N = 128$}
 
+Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
+kurie leistų rikiuoti nedidelius duomenų dydžius greičiau nei žinomi variantai.
+Genetinio algoritmo esminiai veikimo principai buvo apibrėžti praeitame skyriuje, tačiau
+konstantos $T$, apibrėžiančios apribojimus veikimo laikui, reikšmė nebuvo apibrėžta.
+Iš esmės $T$ reikšmė priklauso nuo duomenų dydžio - jei rikiuojama daugiau elementų, reikėtų pasirinkti didesnę $T$ reikšmę.
+Natūralu būtų siekti apibrėžti funkciją $f$, kuri atitinkamam duomenų dydžiui grąžintų reikiamą $T$.
+Tačiau tam reikėtų funkcijos, nusakančios apytikslį įvairių Šelo algoritmo variantų vidutinį veikimo laiką.
+Kaip jau buvo minėta anksčiau, Šelo algoritmo vidutinio veikimo laiko analizė yra labai sudėtinga ir iš esmės priklauso nuo naudojamos tarpų sekos.
+Todėl buvo pasirinkta generuojant Šelo algoritmo variantus tam tikram duomenų dydžiui pamatuoti vidutinį įvairių žinomų variantų veikimo laiką,
+rasti apytikslį veikimo laikų vidurkį ir laikyti, jog šis skaičius yra $T$. % po bench gali tekt pataisyt
+Šiuo atveju pasirinkta naudoti $T = 9000$.
 
+% parasyt kokius duomenus naudojau, kiek kartu rikiuota ir pan.
+
+Suprojektuotas genetinis algoritmas buvo įvykdytas 50 kartų.
+Viso buvo sugeneruota 890 skirtingų variantų.
+Tada atsižvelgiant į veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai. % pridet daugiau apie procesa 
+
+\begin{lstlisting}[caption={Algoritmas A1},label={alg:A1},language=json]
+  [
+    {"gap":52,"passType":"bubble"}, 
+    {"gap":6,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas A2},label={alg:A2},language=json]
+  [
+    {"gap":92,"passType":"shake"}, 
+    {"gap":7,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas A3},label={alg:A3},language=json]
+  [
+    {"gap":76,"passType":"bubble"}, 
+    {"gap":10,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\subsection{Šelo algoritmo variantų generavimas, kai $N = 1024$}
+
+Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
+kurie leistų rikiuoti vidutinius duomenų dydžius greičiau nei žinomi variantai.
+
+\begin{lstlisting}[caption={Algoritmas B1},label={alg:B1},language=json]
+  [
+    {"gap":162,"passType":"insertion"}, 
+    {"gap":40,"passType":"insertion"}, 
+    {"gap":17,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas B2},label={alg:B2},language=json]
+  [
+    {"gap":155,"passType":"insertion"}, 
+    {"gap":19,"passType":"insertion"}, 
+    {"gap":5,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas B3},label={alg:B3},language=json]
+  [
+    {"gap":97,"passType":"insertion"}, 
+    {"gap":26,"passType":"insertion"}, 
+    {"gap":8,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
+
+Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
+kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi variantai.
+
+\begin{lstlisting}[caption={Algoritmas C1},label={alg:C1},language=json]
+  [
+    {"gap":1794,"passType":"insertion"}, 
+    {"gap":615,"passType":"shake"}, 
+    {"gap":264,"passType":"insertion"}, 
+    {"gap":104,"passType":"insertion"}, 
+    {"gap":25,"passType":"insertion"}, 
+    {"gap":11,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas C2},label={alg:C2},language=json]
+  [
+    {"gap":1794,"passType":"insertion"}, 
+    {"gap":1152,"passType":"brick"}, 
+    {"gap":356,"passType":"insertion"}, 
+    {"gap":104,"passType":"insertion"}, 
+    {"gap":25,"passType":"insertion"}, 
+    {"gap":11,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas C3},label={alg:C3},language=json]
+  [
+    {"gap":760,"passType":"insertion"}, 
+    {"gap":187,"passType":"insertion"}, 
+    {"gap":53,"passType":"insertion"}, 
+    {"gap":19,"passType":"insertion"}, 
+    {"gap":6,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
 \section{Šelo algoritmo variantų efektyvumo įvertinimas}
 
 \sectionnonum{Išvados}
