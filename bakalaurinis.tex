@@ -775,12 +775,32 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
 
 \subsubsection{Pirmas algoritmų rinkinys}
 
+\ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
+Pirmiausia galima pastebėti, jog su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų algoritmų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
+Didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
+Tai galima paaiškinti faktu, jog GA veikimo metu optimizacija buvo vykdoma būtent rikiuojant atsitiktinius, nedidelį dublikatų skaičių turinčius duomenis, tad gauti algoritmai
+geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
+Bendrai vertinant veikimo laiką su įvairiais duomenų rinkiniais geriausi rezultatai gauti su A3 algoritmu.
+
 \begin{figure}[H]
   \centering
   \includegraphics[scale=1]{img/cycles_bench_results_128_128.jpg}
   \caption{Veikimo laikas su $N = 128$}
   \label{img:bench_cycles_128}
 \end{figure}
+
+
+\ref{img:bench_comparisons_128} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
+Gauti algoritmai atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai, su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
+Iš esmės to buvo galima tikėtis - gautų algoritmų veikimo laikas buvo patobulintas paaukojant atliekamų operacijų kiekį.
+Tačiau su likusiais duomenų rinkiniais gauti algoritmai atlieka mažiau palyginimo operacijų.
+Tai galima paaiškinti tuo, jog gauti algoritmai turi mažiau perėjimų, nei literatūroje pateikti variantai.
+Todėl kai duomenys yra gana tvarkingi, šie algoritmai atlieka mažiau nereikalingų palyginimų, nei literatūroje pateikti variantai. 
+Bendrai vertinant atliekamus palyginimus su \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| duomenų rinkiniais geriausi rezultatai gauti su Ciura tarpų seka paremtu Šelo algoritmu.
+Su kitais duomenų rinkiniais sunku išskirti geriausią algoritmą,
+kadangi rezultatai tarp algoritmų A1, A2 ir A3 svyruoja priklausomai nuo naudojamo duomenų dydžio (priklausomai nuo algoritmo taikomų tarpų, kai kurie duomenų dydžiai gali būti palankesni).
 
 \begin{figure}[H]
   \centering
@@ -789,6 +809,13 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
   \label{img:bench_comparisons_128}
 \end{figure}
 
+\ref{img:bench_assignments_128} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
+Gauti algoritmai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|, atlieka ženkliai daugiau priskyrimo operacijų (kaip ir analizuojant atliekamus palyginimus).
+Su duomenų rinkiniais \verb|partially_sorted|, \verb|merge| atliekamų priskyrimų rezultatai yra palankesni, tačiau vis tiek atsilieka nuo literatūroje pateiktų algoritmų.
+Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą kurį reikia perstumti į kitą sąrašo galą,
+tad šiuo atveju gauti algoritmai pasirodo geriau, kadangi jų santykinis atstumas tarp dviejų tarpų yra didesnis.
+Vertinant bendrai, mažiausiai priskyrimų atliko Šelo algoritmas su Tokuda tarpų seka.
 
 \begin{figure}[H]
   \centering
@@ -800,6 +827,10 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
 
 \subsubsection{Antras algoritmų rinkinys}
 
+\ref{img:bench_cycles_1024} pav. yra pateikiamas veikimo laikas, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+Iš esmės gauti rezultatai yra pakankamai panašūs į praeitame etape gautus rezultatus,
+gauti algoritmai lenkia literatūroje pateiktus algoritmus su visais duomenų rinkiniais ir dydžiais.
+Bendrai geriausi veikimo laiko rezultatai pastebimi su algoritmu B2.
 
 \begin{figure}[H]
   \centering
@@ -808,6 +839,11 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
   \label{img:bench_cycles_1024}
 \end{figure}
 
+\ref{img:bench_comparisons_1024} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+Galima pastebėti, jog algoritmas B1 labai nežymiai atsilieka nuo literatūroje pateiktų variantų vertinant atliekamus palyginimus
+su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
+Algoritmas B2 su atsitiktiniais duomenų rinkiniais atlieka daugiausia palyginimų, algoritmo B3 silpnoji vieta - mažėjančia tvarka išrikiuoti duomenys.
+
 \begin{figure}[H]
   \centering
   \includegraphics[scale=1]{img/cmp_bench_results_1024_1024.jpg}
@@ -815,6 +851,10 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
   \label{img:bench_comparisons_1024}
 \end{figure}
 
+\ref{img:bench_assignments_1024} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+Kaip ir vertinant atliekamus palyginimus, algoritmas B1 nedaug atsilieka nuo literatūroje pateiktų algoritmų vertinant atliekamus priskyrimus.
+Bendrai daugiausia priskyrimų atlieka algoritmas B2.
+Mažėjančia tvarka išrikiuoti duomenys sukelia sunkumų algoritmui B3 ir Šelo algoritmui su Tokuda tarpų seka.
 
 \begin{figure}[H]
   \centering
@@ -826,12 +866,24 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
 
 \subsubsection{Trečias algoritmų rinkinys}
 
+\ref{img:bench_cycles_8192} pav. yra pateikiamas veikimo laikas, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+Algoritmas C1 beveik visais atvejais rodo labai prastą veikimo laiką ir dažnu atveju atsilieka net ir nuo literatūroje pateiktų variantų.
+Dėl to turbūt galima kaltinti ribotą GA veikimo metu atliekamą algoritmų vertinimą, kadangi šio algoritmo veikimo laiko rezultatai
+GA veikimo metu buvo pakankamai geri, tačiau dėl riboto atliekamų matavimų skaičiaus tai galėjo būti tiesiog atsitiktinumas.  
+Ypač palankūs veikimo laiko rezultatai gauti su algoritmu C3, jis pirmauja pagal veikimo laiką beveik visais atvejais.
+
 \begin{figure}[H]
   \centering
   \includegraphics[scale=1]{img/cycles_bench_results_8192_8192.jpg}
   \caption{Veikimo laikas su $N = 8192$}
   \label{img:bench_cycles_8192}
 \end{figure}
+
+\ref{img:bench_comparisons_8192} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+Algoritmas C1 rodo labai prastus rezultatus, kaip ir vertinant veikimo laiką.
+Algoritmai C2 ir C3 su mažesniais duomenų dydžiais ir atsitiktiniais duomenų rinkiniais nuo literatūrinių algoritmų atsilieka sąlyginai nedaug,
+tad galima daryti prielaidą, jog jų perėjimai su didžiausiais tarpais nėra ypač efektyvūs ir šie algoritmai galėtų būti dar patobulinti.
+Algoritmas C3 taip pat rodo labai palankius rezultatus su sąlyginai tvarkingais duomenų rinkiniais.
 
 \begin{figure}[H]
   \centering
@@ -840,6 +892,10 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
   \label{img:bench_comparisons_8192}
 \end{figure}
 
+\ref{img:bench_assignments_8192} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+Iš GA sugeneruotų algoritmų geriausius rezultatus pagal šį kriterijų rodo Algoritmas C1, tačiau vis tiek ženkliai atsilieka nuo literatūrinių algoritmų su
+atsitiktiniais duomenų rinkiniais.
+Likusių algoritmų rezultatai nėra ypač palankūs net ir su sąlyginai tvarkingais duomenų rinkiniais.
 
 \begin{figure}[H]
   \centering
