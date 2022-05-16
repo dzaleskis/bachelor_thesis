@@ -334,16 +334,15 @@ Jo pseudokodas yra pateikiamas \ref{alg:brick_pass} algoritme.
   \end{algorithmic}
 \end{algorithm}
 
-
 \subsection{Eksperimentinė Šelo algoritmo analizė}
 
 Norint paruošti greitai veikiantį Šelo algoritmo variantą arba taisykles tokiam algoritmui gauti, vertinga žinoti, kodėl vieni variantai veikia greičiau nei kiti.
 Pradėkime nuo to, jog kursiniame darbe ir kursiniame projekte buvo pastebėta, jog Šelo algoritmo variantų atliekamų operacijų skaičius ne visada koreliuoja su veikimo laiku.
 Dėl šiuolaikinių kompiuterių veikimo subtilybių algoritmai, kurie atlieka daugiau palyginimo ir priskyrimo operacijų,
-kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai \cite{peters2021pattern}.
-Atliekant kursinį darbą ir kursinį projektą buvo pastebėtas panašus efektas - 
+kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai.
+Atliekant kursinį darbą ir kursinį projektą buvo pastebėta būtent tai - 
 tyrimuose geriausius veikimo laiko rezultatus parodę Šelo algoritmo variantai atliko ženkliai daugiau operacijų, nei atliekamų operacijų operacijų atžvilgiu optimalūs variantai.
-Taigi keliama pradinė hipotezė, jog vien operacijų skaičius neleidžia tinkamai įvertinti kaip Šelo algoritmo variantas veiks praktikoje.
+Taigi, keliama pradinė hipotezė, jog vien operacijų skaičius neleidžia tinkamai įvertinti kaip Šelo algoritmo variantas veiks praktikoje.
 
 Pirmiausia pastebėsime, jog šiuolaikinių kompiuterių architektūros yra labai sudėtingos, kas dažnu atveju neleidžia iš anksto nustatyti praktinio algoritmo efektyvumo.
 Išankstinę teorinę analizę apsunkina įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
@@ -570,7 +569,8 @@ ir jos bendru atveju yra pakankamai efektyvios (didelė dalis efektyvių eksperi
 Geometrinių tarpų sekų generavimo eiga yra pateikiama \ref{alg:geometric_gaps} algoritme.
 Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
 tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
-Generuojant tarpų sekas buvo nuspręsta koeficientą $q$ parinkti atsitiktinai, užtikrinant, jog jis priklauso intervalui 
+Generuojant geometrines tarpų sekas buvo nuspręsta koeficientą $q$ parinkti atsitiktinai, užtikrinant, jog $1.5 \leq q \leq 7$.
+Generuojant atsitiktines tarpų sekas taip pat buvo taikomas panašus principas, tačiau šiuo atveju naudotas toks $q$, kad $1.5 \leq q \leq 12.5$.
 
 \begin{algorithm}[H]
   \caption{Geometrinių tarpų sekų generavimas}\label{alg:geometric_gaps}
@@ -625,7 +625,9 @@ individo kainos funkcija yra apibrėžiama tokia forma:
   \end{cases}
 \]
 
-% parasyt koki q naudojau
+% TODO: parasyt kiek kartu rikiavo, kokie duomenys rikiuoti
+% TODO: parasyt apie individu atranka 
+
 
 Individų mutacija buvo įgyvendinta pasirenkant atsitiktinį individo geną ir atsitiktinai pakeičiant jo perėjimo tipą kuriuo nors kitu.
 Sprendinių rekombinacija buvo vykdoma tolygia strategija, kur dviejų tėvų genai turi vienodą tikimybę
@@ -636,11 +638,7 @@ Atlikus pradinius eksperimentus ir preliminariai įvertinus gautų sprendinių t
 populiacija - $500$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos dalis - $0.4$.
 GA buvo nurodyta sustoti įvykdžius 100 iteracijų.
 
-% parasyt apie postgres?
-
-% populiacija neteisinga su didesniu N, reiktu parasyt kiekvienam atskirai
-
-% parasyt apie priemimo kriterijus
+% FIXME: populiacija neteisinga su didesniu N, reiktu parasyt kiekvienam atskirai
 
 \section{Šelo algoritmo variantų generavimas}
 
@@ -660,114 +658,22 @@ Natūralu būtų siekti apibrėžti funkciją $f$, kuri atitinkamam duomenų dyd
 Tačiau tam reikėtų funkcijos, nusakančios apytikslį įvairių Šelo algoritmo variantų vidutinį veikimo laiką.
 Kaip jau buvo minėta anksčiau, Šelo algoritmo vidutinio veikimo laiko analizė yra labai sudėtinga ir iš esmės priklauso nuo naudojamos tarpų sekos.
 Todėl buvo pasirinkta generuojant Šelo algoritmo variantus tam tikram duomenų dydžiui pamatuoti vidutinį įvairių žinomų variantų veikimo laiką,
-rasti apytikslį veikimo laikų vidurkį ir laikyti, jog šis skaičius yra $T$. % po bench gali tekt pataisyt
+rasti apytikslį veikimo laikų vidurkį ir laikyti, jog šis skaičius yra $T$. % FIXME: pievos cia
 Šiuo atveju pasirinkta naudoti $T = 9000$.
-
-% parasyt kokius duomenus naudojau, kiek kartu rikiuota ir pan.
 
 Suprojektuotas genetinis algoritmas buvo įvykdytas 50 kartų.
 Viso buvo sugeneruota 890 skirtingų variantų.
 Tada atsižvelgiant į veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai. % pridet daugiau apie procesa 
-
-\begin{lstlisting}[caption={Algoritmas A1},label={alg:A1},language=json]
-  [
-    {"gap":52,"passType":"bubble"}, 
-    {"gap":6,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas A2},label={alg:A2},language=json]
-  [
-    {"gap":92,"passType":"shake"}, 
-    {"gap":7,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas A3},label={alg:A3},language=json]
-  [
-    {"gap":76,"passType":"bubble"}, 
-    {"gap":10,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
 
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 1024$}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti vidutinius duomenų dydžius greičiau nei žinomi variantai.
 
-\begin{lstlisting}[caption={Algoritmas B1},label={alg:B1},language=json]
-  [
-    {"gap":162,"passType":"insertion"}, 
-    {"gap":40,"passType":"insertion"}, 
-    {"gap":17,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas B2},label={alg:B2},language=json]
-  [
-    {"gap":155,"passType":"insertion"}, 
-    {"gap":19,"passType":"insertion"}, 
-    {"gap":5,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas B3},label={alg:B3},language=json]
-  [
-    {"gap":97,"passType":"insertion"}, 
-    {"gap":26,"passType":"insertion"}, 
-    {"gap":8,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi variantai.
-
-\begin{lstlisting}[caption={Algoritmas C1},label={alg:C1},language=json]
-  [
-    {"gap":1794,"passType":"insertion"}, 
-    {"gap":615,"passType":"shake"}, 
-    {"gap":264,"passType":"insertion"}, 
-    {"gap":104,"passType":"insertion"}, 
-    {"gap":25,"passType":"insertion"}, 
-    {"gap":11,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas C2},label={alg:C2},language=json]
-  [
-    {"gap":1794,"passType":"insertion"}, 
-    {"gap":1152,"passType":"brick"}, 
-    {"gap":356,"passType":"insertion"}, 
-    {"gap":104,"passType":"insertion"}, 
-    {"gap":25,"passType":"insertion"}, 
-    {"gap":11,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas C3},label={alg:C3},language=json]
-  [
-    {"gap":760,"passType":"insertion"}, 
-    {"gap":187,"passType":"insertion"}, 
-    {"gap":53,"passType":"insertion"}, 
-    {"gap":19,"passType":"insertion"}, 
-    {"gap":6,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
 
 \section{Šelo algoritmo variantų efektyvumo įvertinimas}
 
@@ -787,7 +693,7 @@ tada naudojant \verb|std::shuffle| funkciją šis sąrašas yra išmaišomas.
 Reikia paminėti, jog \verb|std::shuffle| garantuoja, kad ją įvykdžius elementų tvarka yra atsitiktinė ir kiekvienas
 skirtingas įmanomas elementų derinys turi vienodą tikimybę pasirodyti galutiniame sąraše.
 
-Variantas \verb|shuffled_16_values| pirmiausia sugeneruoja sąrašą, kur kiekviena reikšmė yra formos $a \pmod{16}$ ir $a \in {0, \dots, size-1}$,
+Variantas \verb|shuffled_mod_sqrt| pirmiausia sugeneruoja sąrašą, kur kiekviena reikšmė yra formos $a \pmod{\lfloor \sqrt{size} \rfloor}$ ir $a \in \{0, \dots, size-1\}$,
 o tada naudojant \verb|std::shuffle| šis sąrašas yra išmaišomas.
 Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai yra pakankamai daug dublikatų.
 
@@ -806,17 +712,17 @@ tada naudojant \verb|std::shuffle| jį išmaišo, o po to dalinai jį išrikiuoj
 Galima nesunkiai įsivaizduoti tokio duomenų išsidėstymo pasitaikymo atvejį praktikoje - tarkime, programa turi duomenis kurie yra išrikiuoti,
 gauna daugiau duomenų, šiuos sąrašus sujungia ir vėl išrikiuoja, siekiant išlaikyti jų tvarką.
 
+Variantas \verb|merge| sugeneruoja du sąrašus pavidalo $\{0, \dots, \lfloor size/2 \rfloor\}$ ir juos sujungia į vieną.
+Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai vieną sąrašą sudaro du išrikiuoti nuoseklūs posekiai.
+Praktinis šio duomenų rinkinio naudojimo atvejis yra gana panašus į \verb|partially_sorted| duomenų rinkinio.
+Reikia pastebėti, jog šis atvejis su praktikoje sutinkamais duomenimis yra gana dažnas, dėl to pvz.
+Timsort algoritmas, kuris sugeba išnaudoti duomenyse pasitaikančius išrikiuotus posekius efektyvesniam rikiavimui, yra taip plačiai naudojamas \cite{auger2015merge}.
+
 Variantas \verb|push_min| sugeneruoja sąrašą pavidalo $\{1, \dots, size-1, 0\}$, t.y. visi elementai, išskyrus paskutinį, yra išrikiuoti.
 Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai į išrikiuoto sąrašo galą yra pridedamas dar vienas elementas ir siekiama vėl užtikrinti duomenų tvarką.
-Šis atvejis yra gana nepalankus, kadangi paskutinį elementą būtina perstumti į kitą sąrašo galą.
+Šis atvejis yra gana nepalankus, kadangi neišrikiuotas yra tik vienas elementas, tačiau jį yra būtina perstumti į kitą sąrašo galą.
 Galima nesunkiai įsivaizduoti tokio duomenų išsidėstymo pasitaikymo atvejį praktikoje, ypač jei siekiant išlaikyti duomenų tvarką dėl ribotos standartinės bibliotekos ar
 žinių trūkumo pasirenkama naudoti ne prioritetinę eilę, o duomenis kaskart išrikiuoti.
-
-Variantas \verb|unshift_max| sugeneruoja sąrašą pavidalo $\{size-1, 0, \dots, size-2\}$, t.y. visi elementai, išskyrus pirmą, yra išrikiuoti.
-Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai į išrikiuoto sąrašo pradžią yra pridedamas dar vienas elementas ir siekiama vėl užtikrinti duomenų tvarką.
-Šis atvejis taip pat yra nepalankus, kadangi pirmą elementą būtina perstumti į kitą sąrašo galą.
-Jo praktinio pasitaikymo galimybės yra pakankamai panašios į \verb|push_min| varianto, kadangi kai kurios populiarios programavimo kalbos (pvz. JavaScript, Go)
-neturi eilės duomenų struktūros standartinėje bibliotekoje, tad naudotojai dažnai renkasi naudoti masyvais paremtus sąrašus tiek kaip stekus, tiek kaip eiles.
 
 \subsection{Tyrimo metodika}
 
@@ -835,8 +741,10 @@ Sedgewick ir Tokuda sekos yra begalinės, tad jos buvo sutrumpintos taip, jog ga
 Kadangi darbe buvo generuojami algoritmai, leidžiantys efektyviai rikiuoti tris skirtingus duomenų dydžius, tyrimą sudaro trys algoritmų rinkiniai.
 Kiekvieną rinkinį sudaro literatūroje pateikti algoritmai bei darbo eigoje sugeneruoti algoritmai
 (pvz. pirmą rinkinį sudaro A1, A2, A3 algoritmai bei Šelo algoritmas su Ciura, Tokuda ir Sedgewick tarpų sekomis).
-Su kiekvienu iš šių rinkinių eksperimentai atliekami naudojant keturis skirtingus duomenų dydžius: $\frac{N}{2^3}$, $\frac{N}{2^2}$, $\frac{N}{2}$, $N$.
-Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų (pvz. pirmam rinkiniui naudojami duomenų dydžiai 16, 32, 64, 128).
+Su kiekvienu iš šių rinkinių eksperimentai atliekami naudojant tris skirtingus duomenų dydžius: $\frac{N}{2^2}$, $\frac{N}{2}$, $N$.
+Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų (pvz. pirmam rinkiniui naudojami duomenų dydžiai 32, 64, 128).
+
+% FIXME: aprasyt detaliai viska iskart, o ne abstrakciai
 
 Atliekant efektyvumo tyrimą buvo pasirinkta kiekvienai algoritmo ir duomenų rinkinio porai
 atlikti matavimus tol, kol praeis 10 sekundžių.
@@ -844,7 +752,7 @@ Tokiu būdu atliekamų matavimų skaičius automatiškai prisitaiko prie duomen�
 ir rezultatai gauti su mažesniais duomenų dydžiais yra tikslesni.
 Siekiant padidinti rezultatų tikslumą, kiekviena algoritmo ir duomenų rinkinio pora
 prieš atliekant matavimus buvo 2 sekundes apšildoma atliekant rikiavimą ir nefiksuojant rezultatų.
-Tai leidžia apšildyti procesoriaus talpyklas ir sumažinti tikimybę,
+Tai leido apšildyti procesoriaus talpyklas ir sumažinti tikimybę,
 jog procesoriaus veikimo dažnis ženkliai pasikeis atliekant matavimus.
 
 Kiekvienai algoritmo ir atsitiktinio duomenų rinkinio porai taip pat buvo naudojama ta pati pradinė reikšmė,
@@ -857,7 +765,6 @@ Tai ypač svarbu matuojant veikimo laiką, kadangi jį labiausiai paveikia išor
 Taip pat tarpkvartilinis diapazonas nurodo rezultatų sklaidą aplink medianą,
 kas leidžia nustatyti atliktų matavimų paklaidą.
 
-
 \subsection{Tyrimo aplinka}
 
 Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi,
@@ -865,6 +772,81 @@ Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM)
 Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
 
 \subsection{Tyrimo rezultatai}
+
+\subsubsection{Pirmas algoritmų rinkinys}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cycles_bench_results_128_128.jpg}
+  \caption{Veikimo laikas su $N = 128$}
+  \label{img:bench_cycles_128}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cmp_bench_results_128_128.jpg}
+  \caption{Atliekami palyginimai su $N = 128$}
+  \label{img:bench_comparisons_128}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/asg_bench_results_128_128.jpg}
+  \caption{Atliekami priskyrimai su $N = 128$}
+  \label{img:bench_assignments_128}
+\end{figure}
+
+
+\subsubsection{Antras algoritmų rinkinys}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cycles_bench_results_1024_1024.jpg}
+  \caption{Veikimo laikas su $N = 1024$}
+  \label{img:bench_cycles_1024}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cmp_bench_results_1024_1024.jpg}
+  \caption{Atliekami palyginimai su $N = 1024$}
+  \label{img:bench_comparisons_1024}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/asg_bench_results_1024_1024.jpg}
+  \caption{Atliekami priskyrimai su $N = 1024$}
+  \label{img:bench_assignments_1024}
+\end{figure}
+
+
+\subsubsection{Trečias algoritmų rinkinys}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cycles_bench_results_8192_8192.jpg}
+  \caption{Veikimo laikas su $N = 8192$}
+  \label{img:bench_cycles_8192}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/cmp_bench_results_8192_8192.jpg}
+  \caption{Atliekami palyginimai su $N = 8192$}
+  \label{img:bench_comparisons_8192}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1]{img/asg_bench_results_8192_8192.jpg}
+  \caption{Atliekami priskyrimai su $N = 8192$}
+  \label{img:bench_assignments_8192}
+\end{figure}
 
 \sectionnonum{Išvados}
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
@@ -902,6 +884,102 @@ inline void test_shellsort(T & data) {
         }
     }
 }
+\end{lstlisting}
+
+\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 128$}
+
+\begin{lstlisting}[caption={Algoritmas A1},label={alg:A1},language=json]
+  [
+    {"gap":52,"passType":"bubble"}, 
+    {"gap":6,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas A2},label={alg:A2},language=json]
+  [
+    {"gap":92,"passType":"shake"}, 
+    {"gap":7,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas A3},label={alg:A3},language=json]
+  [
+    {"gap":76,"passType":"bubble"}, 
+    {"gap":10,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 1024$}
+
+\begin{lstlisting}[caption={Algoritmas B1},label={alg:B1},language=json]
+  [
+    {"gap":162,"passType":"insertion"}, 
+    {"gap":40,"passType":"insertion"}, 
+    {"gap":17,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas B2},label={alg:B2},language=json]
+  [
+    {"gap":155,"passType":"insertion"}, 
+    {"gap":19,"passType":"insertion"}, 
+    {"gap":5,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas B3},label={alg:B3},language=json]
+  [
+    {"gap":97,"passType":"insertion"}, 
+    {"gap":26,"passType":"insertion"}, 
+    {"gap":8,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+
+\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 8192$}
+
+\begin{lstlisting}[caption={Algoritmas C1},label={alg:C1},language=json]
+  [
+    {"gap":1794,"passType":"insertion"}, 
+    {"gap":615,"passType":"shake"}, 
+    {"gap":264,"passType":"insertion"}, 
+    {"gap":104,"passType":"insertion"}, 
+    {"gap":25,"passType":"insertion"}, 
+    {"gap":11,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas C2},label={alg:C2},language=json]
+  [
+    {"gap":1794,"passType":"insertion"}, 
+    {"gap":1152,"passType":"brick"}, 
+    {"gap":356,"passType":"insertion"}, 
+    {"gap":104,"passType":"insertion"}, 
+    {"gap":25,"passType":"insertion"}, 
+    {"gap":11,"passType":"insertion"}, 
+    {"gap":4,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algoritmas C3},label={alg:C3},language=json]
+  [
+    {"gap":760,"passType":"insertion"}, 
+    {"gap":187,"passType":"insertion"}, 
+    {"gap":53,"passType":"insertion"}, 
+    {"gap":19,"passType":"insertion"}, 
+    {"gap":6,"passType":"insertion"}, 
+    {"gap":1,"passType":"insertion"}
+  ]
 \end{lstlisting}
 
 \end{document}
