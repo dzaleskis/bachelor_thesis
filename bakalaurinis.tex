@@ -458,6 +458,12 @@ Atlikus preliminarius matavimus rikiuojant vien su tarpais 16, 32 ir 48 nebuvo p
 Tad labiausiai tikėtina, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
 atlieka mažiau instrukcijų, kas lemia, jog daugiau rikiavimo (tuo pačiu ir šakų) atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
 
+Taip pat verta pastebėti, jog kiekvienas papildomas tarpas padidina neatspėtų šakų santykį.
+Kaip pastebima \cite{biggar2008experimental}, Šelo algoritmo neatspėtų šakų skaičius priklauso nuo atliekamų perėjimų skaičiaus.
+To paaiškinimas yra gana paprastas - rikiavimas įterpimu sukelia $O(n)$ neatspėtų šakų,
+tad vienas perėjimas, kuriame atliekamas posekio rikiavimas įterpimu taip pat sukels $O(n)$ neatspėtų šakų \cite{biggar2008experimental}.
+Tad $p$ perėjimų atliekantis Šelo algoritmas viso sukels $O(np)$ neatspėtų šakų.
+
 Vertinga pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima netikrinti,
 ar vidinio ciklo indeksas nėra mažesnis už tarpą, kadangi maksimalus iteracijų skaičius vidiniame cikle visada bus 1.
 Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje.
@@ -483,7 +489,7 @@ Analogiškas efektas pastebimas ir rikiuojant duomenis, kurių priskyrimas yra s
 Vertinant Šelo algoritmo variantų efektyvumą būtina matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus, kadangi
 atliekamų palyginimų ir priskyrimų skaičiaus santykis priklauso nuo implementacijos ir augant $N$ nebūtinai artėja prie 1 \cite{Radavičius_Baranauskas_2013}.
 
-% parasyt apie comparison itaka branch predictionui ir performance
+% TODO: parasyt apie comparison itaka branch predictionui ir performance
 
 Vertinant Šelo algoritmo variantų efektyvumą taip pat būtina atsižvelgti ir į veikimo laiką.
 Savaime suprantama, jog į šį kriterijų verta žvelgti pakankamai kritiškai, kadangi jis priklauso nuo konkrečios algoritmo implementacijos,
@@ -625,9 +631,14 @@ individo kainos funkcija yra apibrėžiama tokia forma:
   \end{cases}
 \]
 
-% TODO: parasyt kiek kartu rikiavo, kokie duomenys rikiuoti
-% TODO: parasyt apie individu atranka 
+Algoritmai buvo vertinami rikiuojant atsitiktinius sveikaskaitinius duomenis.
+Atliekamų matavimų skaičius buvo nustatomas pagal duomenų dydį, kuriam generuojami algoritmai (jei duomenų dydis didelis, atliekama mažiau matavimų).
+Pirmiausia dėl to, jog su didesniais duomenų dydžiais GA neužtruktų per ilgai, o tuo pačiu ir tam,
+jog rezultatai gauti su mažesniais duomenų dydžiais būtų tikslesni.
 
+Siekiant pagerinti gautų rezultatų kokybę buvo įgyvendinta individų atranka.
+Šiuo tikslu buvo atmetami individai, kurių vidutinis duomenų inversijų skaičius po rikiavimo didesnis nei $frac{N}{10}$.
+Taip pat buvo atmetami individai, kurių vidutinis veikimo laikas buvo didesnis nei $2\,T$.
 
 Individų mutacija buvo įgyvendinta pasirenkant atsitiktinį individo geną ir atsitiktinai pakeičiant jo perėjimo tipą kuriuo nors kitu.
 Sprendinių rekombinacija buvo vykdoma tolygia strategija, kur dviejų tėvų genai turi vienodą tikimybę
@@ -635,45 +646,77 @@ būti perduoti vaikiniam individui.
 Siekiant išvengti netinkamų sprendinių, rekombinacijos operatoriumi gauto naujo individo genai buvo išrikiuojami pagal tarpą naudojamą rikiavimui.
 
 Atlikus pradinius eksperimentus ir preliminariai įvertinus gautų sprendinių tinkamumą buvo pasirinkta GA taikyti tokius parametrus:
-populiacija - $500$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos dalis - $0.4$.
+populiacija - $250$, mutacijos tikimybė - $0.1$, rekombinuojama populiacijos dalis - $0.4$.
 GA buvo nurodyta sustoti įvykdžius 100 iteracijų.
-
-% FIXME: populiacija neteisinga su didesniu N, reiktu parasyt kiekvienam atskirai
 
 \section{Šelo algoritmo variantų generavimas}
 
-Šį skyrių sudaro trys poskyriai.
-Pirmame poskyryje generuojami Šelo algoritmo variantai, kai $N = 128$.
-Antrame poskyryje generuojami Šelo algoritmo variantai, kai $N = 1024$.
-Trečiame poskyryje generuojami Šelo algoritmo variantai, kai $N = 8192$.
-
-\subsection{Šelo algoritmo variantų generavimas, kai $N = 128$}
-
-Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
-kurie leistų rikiuoti nedidelius duomenų dydžius greičiau nei žinomi variantai.
+Šiame skyriuje siekiama sugeneruoti Šelo algoritmo variantus,
+kurie leistų rikiuoti duomenis greičiau nei žinomi variantai.
 Genetinio algoritmo esminiai veikimo principai buvo apibrėžti praeitame skyriuje, tačiau
 konstantos $T$, apibrėžiančios apribojimus veikimo laikui, reikšmė nebuvo apibrėžta.
 Iš esmės $T$ reikšmė priklauso nuo duomenų dydžio - jei rikiuojama daugiau elementų, reikėtų pasirinkti didesnę $T$ reikšmę.
 Natūralu būtų siekti apibrėžti funkciją $f$, kuri atitinkamam duomenų dydžiui grąžintų reikiamą $T$.
 Tačiau tam reikėtų funkcijos, nusakančios apytikslį įvairių Šelo algoritmo variantų vidutinį veikimo laiką.
-Kaip jau buvo minėta anksčiau, Šelo algoritmo vidutinio veikimo laiko analizė yra labai sudėtinga ir iš esmės priklauso nuo naudojamos tarpų sekos.
-Todėl buvo pasirinkta generuojant Šelo algoritmo variantus tam tikram duomenų dydžiui pamatuoti vidutinį įvairių žinomų variantų veikimo laiką,
-rasti apytikslį veikimo laikų vidurkį ir laikyti, jog šis skaičius yra $T$. % FIXME: pievos cia
-Šiuo atveju pasirinkta naudoti $T = 9000$.
+Kadangi tai įgyvendinti yra gana sudėtinga, buvo pasirinktas paprastesnis metodas - kiekvienam naudojamam duomenų dydžiui ištirti
+Šelo algoritmo su Ciura tarpų seka veikimo laiką ir laikyti, jog tai yra $T$.
 
-Suprojektuotas genetinis algoritmas buvo įvykdytas 50 kartų.
-Viso buvo sugeneruota 890 skirtingų variantų.
-Tada atsižvelgiant į veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai. % pridet daugiau apie procesa 
+\subsection{Šelo algoritmo variantų generavimas, kai $N = 128$}
+
+Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
+kurie leistų rikiuoti nedidelius duomenų dydžius greičiau nei žinomi variantai.
+Algoritmų generavimui pasirinkta naudoti $T = 9000$.
+Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 890 skirtingų variantų.
+
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: A1, A2 ir A3.
+Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+
+\begin{itemize}
+  \item A1: $1, 6, 52$, su didžiausiu tarpu naudojamas burbuliuko perėjimas
+  \item A2: $1, 7, 92$, su didžiausiu tarpu naudojamas supurtymo perėjimas
+  \item A3: $1, 10, 76 $, su didžiausiu tarpu naudojamas burbuliuko perėjimas
+\end{itemize}
+
+Galima pastebėti tendenciją, jog visi gauti algoritmai naudoja ne įterpimo perėjimą su didžiausiu tarpu.
+Kaip buvo minėta viename iš praeitų skyrių, su dideliais (santykinai duomenų dydžiui) tarpais atlikti įterpimo perėjimą nėra prasminga,
+tad panašu, jog kainos funkcija taip pat privedė individus prie šios optimizacijos taikymo.
 
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 1024$}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti vidutinius duomenų dydžius greičiau nei žinomi variantai.
+Algoritmų generavimui pasirinkta naudoti $T = 125000$.
+Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 690 skirtingų variantų.
+
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: B1, B2 ir B3. 
+Kadangi gauti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėlei bus nusakomos tik jų tarpų sekos.
+
+\begin{itemize}
+  \item B1: $1, 4, 17, 40, 162$
+  \item B2: $1, 5, 19, 155$
+  \item B3: $1, 8, 26, 97 $
+\end{itemize}
+
+Galima pastebėti, jog gautų algoritmų tarpų sekos yra žymiai trumpesnės, nei įprastai sutinkamų Šelo algoritmo variantų.
+Kaip pastebima \cite{Radavičius_Baranauskas_2013}, vertinant veikimo laiką dažnai tinkamesnės būna geometrinės tarpų sekos, kur $q$ yra didesnis.
+Reikia pastebėti, kad kuo didesnis $q$, tuo mažiau perėjimų bus atliekama tam tikro duomenų dydžio išrikiavimui.
+Taip pat kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja papildomo darbo.  
 
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi variantai.
+Algoritmų generavimui pasirinkta naudoti $T = 1500000$.
+Genetinis algoritmas buvo įvykdytas 20 kartų, viso buvo sugeneruoti 322 skirtingi variantai.
+
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: C1, C2 ir C3.
+Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+
+\begin{itemize}
+  \item C1: $1, 4, 11, 25, 104, 264, 615, 1794$, su antru pagal dydį tarpu naudojamas supurtymo perėjimas
+  \item C2: $1, 4, 11, 25, 104, 356, 1152, 1794$, su antru pagal dydį tarpu naudojamas burbuliuko perėjimas
+  \item C3: $1, 6, 19, 53, 187, 760 $
+\end{itemize}
 
 \section{Šelo algoritmo variantų efektyvumo įvertinimas}
 
@@ -739,12 +782,10 @@ Kadangi Ciura seka yra baigtinė, didesnių duomenų dydžių rikiavimui ji buvo
 Sedgewick ir Tokuda sekos yra begalinės, tad jos buvo sutrumpintos taip, jog gauta seka būtų ilgiausia įmanoma seka, kurios visi elementai mažesni už 8192 (maksimalų tirtą duomenų dydį).
 
 Kadangi darbe buvo generuojami algoritmai, leidžiantys efektyviai rikiuoti tris skirtingus duomenų dydžius, tyrimą sudaro trys algoritmų rinkiniai.
-Kiekvieną rinkinį sudaro literatūroje pateikti algoritmai bei darbo eigoje sugeneruoti algoritmai
-(pvz. pirmą rinkinį sudaro A1, A2, A3 algoritmai bei Šelo algoritmas su Ciura, Tokuda ir Sedgewick tarpų sekomis).
+Pirmą rinkinį sudaro A1, A2, A3 algoritmai ir literatūroje pateikti variantai, antrą rinkinį sudaro B1, B2, B3 algoritmai ir literatūroje pateikti variantai,
+trečią rinkinį C1, C2, C3 algoritmai ir literatūroje pateikti variantai.
 Su kiekvienu iš šių rinkinių eksperimentai atliekami naudojant tris skirtingus duomenų dydžius: $\frac{N}{2^2}$, $\frac{N}{2}$, $N$.
-Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų (pvz. pirmam rinkiniui naudojami duomenų dydžiai 32, 64, 128).
-
-% FIXME: aprasyt detaliai viska iskart, o ne abstrakciai
+Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų.
 
 Atliekant efektyvumo tyrimą buvo pasirinkta kiekvienai algoritmo ir duomenų rinkinio porai
 atlikti matavimus tol, kol praeis 10 sekundžių.
@@ -773,136 +814,136 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
 
 \subsection{Tyrimo rezultatai}
 
-\subsubsection{Pirmas algoritmų rinkinys}
+% \subsubsection{Pirmas algoritmų rinkinys}
 
-\ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
-Pirmiausia galima pastebėti, jog su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų algoritmų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
-Didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
-Tai galima paaiškinti faktu, jog GA veikimo metu optimizacija buvo vykdoma būtent rikiuojant atsitiktinius, nedidelį dublikatų skaičių turinčius duomenis, tad gauti algoritmai
-geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
-Bendrai vertinant veikimo laiką su įvairiais duomenų rinkiniais geriausi rezultatai gauti su A3 algoritmu.
+% \ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+% Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
+% Pirmiausia galima pastebėti, jog su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų algoritmų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
+% Didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
+% Tai galima paaiškinti faktu, jog GA veikimo metu optimizacija buvo vykdoma būtent rikiuojant atsitiktinius, nedidelį dublikatų skaičių turinčius duomenis, tad gauti algoritmai
+% geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
+% Bendrai vertinant veikimo laiką su įvairiais duomenų rinkiniais geriausi rezultatai gauti su A3 algoritmu.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cycles_bench_results_128_128.jpg}
-  \caption{Veikimo laikas su $N = 128$}
-  \label{img:bench_cycles_128}
-\end{figure}
-
-
-\ref{img:bench_comparisons_128} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
-Gauti algoritmai atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai, su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
-Iš esmės to buvo galima tikėtis - gautų algoritmų veikimo laikas buvo patobulintas paaukojant atliekamų operacijų kiekį.
-Tačiau su likusiais duomenų rinkiniais gauti algoritmai atlieka mažiau palyginimo operacijų.
-Tai galima paaiškinti tuo, jog gauti algoritmai turi mažiau perėjimų, nei literatūroje pateikti variantai.
-Todėl kai duomenys yra gana tvarkingi, šie algoritmai atlieka mažiau nereikalingų palyginimų, nei literatūroje pateikti variantai. 
-Bendrai vertinant atliekamus palyginimus su \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| duomenų rinkiniais geriausi rezultatai gauti su Ciura tarpų seka paremtu Šelo algoritmu.
-Su kitais duomenų rinkiniais sunku išskirti geriausią algoritmą,
-kadangi rezultatai tarp algoritmų A1, A2 ir A3 svyruoja priklausomai nuo naudojamo duomenų dydžio (priklausomai nuo algoritmo taikomų tarpų, kai kurie duomenų dydžiai gali būti palankesni).
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cmp_bench_results_128_128.jpg}
-  \caption{Atliekami palyginimai su $N = 128$}
-  \label{img:bench_comparisons_128}
-\end{figure}
-
-\ref{img:bench_assignments_128} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
-Gauti algoritmai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|, atlieka ženkliai daugiau priskyrimo operacijų (kaip ir analizuojant atliekamus palyginimus).
-Su duomenų rinkiniais \verb|partially_sorted|, \verb|merge| atliekamų priskyrimų rezultatai yra palankesni, tačiau vis tiek atsilieka nuo literatūroje pateiktų algoritmų.
-Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą kurį reikia perstumti į kitą sąrašo galą,
-tad šiuo atveju gauti algoritmai pasirodo geriau, kadangi jų santykinis atstumas tarp dviejų tarpų yra didesnis.
-Vertinant bendrai, mažiausiai priskyrimų atliko Šelo algoritmas su Tokuda tarpų seka.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/asg_bench_results_128_128.jpg}
-  \caption{Atliekami priskyrimai su $N = 128$}
-  \label{img:bench_assignments_128}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cycles_bench_results_128_128.jpg}
+%   \caption{Veikimo laikas su $N = 128$}
+%   \label{img:bench_cycles_128}
+% \end{figure}
 
 
-\subsubsection{Antras algoritmų rinkinys}
+% \ref{img:bench_comparisons_128} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+% Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
+% Gauti algoritmai atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai, su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
+% Iš esmės to buvo galima tikėtis - gautų algoritmų veikimo laikas buvo patobulintas paaukojant atliekamų operacijų kiekį.
+% Tačiau su likusiais duomenų rinkiniais gauti algoritmai atlieka mažiau palyginimo operacijų.
+% Tai galima paaiškinti tuo, jog gauti algoritmai turi mažiau perėjimų, nei literatūroje pateikti variantai.
+% Todėl kai duomenys yra gana tvarkingi, šie algoritmai atlieka mažiau nereikalingų palyginimų, nei literatūroje pateikti variantai. 
+% Bendrai vertinant atliekamus palyginimus su \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| duomenų rinkiniais geriausi rezultatai gauti su Ciura tarpų seka paremtu Šelo algoritmu.
+% Su kitais duomenų rinkiniais sunku išskirti geriausią algoritmą,
+% kadangi rezultatai tarp algoritmų A1, A2 ir A3 svyruoja priklausomai nuo naudojamo duomenų dydžio (priklausomai nuo algoritmo taikomų tarpų, kai kurie duomenų dydžiai gali būti palankesni).
 
-\ref{img:bench_cycles_1024} pav. yra pateikiamas veikimo laikas, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-Iš esmės gauti rezultatai yra pakankamai panašūs į praeitame etape gautus rezultatus,
-gauti algoritmai lenkia literatūroje pateiktus algoritmus su visais duomenų rinkiniais ir dydžiais.
-Bendrai geriausi veikimo laiko rezultatai pastebimi su algoritmu B2.
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cmp_bench_results_128_128.jpg}
+%   \caption{Atliekami palyginimai su $N = 128$}
+%   \label{img:bench_comparisons_128}
+% \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cycles_bench_results_1024_1024.jpg}
-  \caption{Veikimo laikas su $N = 1024$}
-  \label{img:bench_cycles_1024}
-\end{figure}
+% \ref{img:bench_assignments_128} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
+% Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
+% Gauti algoritmai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|, atlieka ženkliai daugiau priskyrimo operacijų (kaip ir analizuojant atliekamus palyginimus).
+% Su duomenų rinkiniais \verb|partially_sorted|, \verb|merge| atliekamų priskyrimų rezultatai yra palankesni, tačiau vis tiek atsilieka nuo literatūroje pateiktų algoritmų.
+% Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą kurį reikia perstumti į kitą sąrašo galą,
+% tad šiuo atveju gauti algoritmai pasirodo geriau, kadangi jų santykinis atstumas tarp dviejų tarpų yra didesnis.
+% Vertinant bendrai, mažiausiai priskyrimų atliko Šelo algoritmas su Tokuda tarpų seka.
 
-\ref{img:bench_comparisons_1024} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-Galima pastebėti, jog algoritmas B1 labai nežymiai atsilieka nuo literatūroje pateiktų variantų vertinant atliekamus palyginimus
-su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
-Algoritmas B2 su atsitiktiniais duomenų rinkiniais atlieka daugiausia palyginimų, algoritmo B3 silpnoji vieta - mažėjančia tvarka išrikiuoti duomenys.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cmp_bench_results_1024_1024.jpg}
-  \caption{Atliekami palyginimai su $N = 1024$}
-  \label{img:bench_comparisons_1024}
-\end{figure}
-
-\ref{img:bench_assignments_1024} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-Kaip ir vertinant atliekamus palyginimus, algoritmas B1 nedaug atsilieka nuo literatūroje pateiktų algoritmų vertinant atliekamus priskyrimus.
-Bendrai daugiausia priskyrimų atlieka algoritmas B2.
-Mažėjančia tvarka išrikiuoti duomenys sukelia sunkumų algoritmui B3 ir Šelo algoritmui su Tokuda tarpų seka.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/asg_bench_results_1024_1024.jpg}
-  \caption{Atliekami priskyrimai su $N = 1024$}
-  \label{img:bench_assignments_1024}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/asg_bench_results_128_128.jpg}
+%   \caption{Atliekami priskyrimai su $N = 128$}
+%   \label{img:bench_assignments_128}
+% \end{figure}
 
 
-\subsubsection{Trečias algoritmų rinkinys}
+% \subsubsection{Antras algoritmų rinkinys}
 
-\ref{img:bench_cycles_8192} pav. yra pateikiamas veikimo laikas, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-Algoritmas C1 beveik visais atvejais rodo labai prastą veikimo laiką ir dažnu atveju atsilieka net ir nuo literatūroje pateiktų variantų.
-Dėl to turbūt galima kaltinti ribotą GA veikimo metu atliekamą algoritmų vertinimą, kadangi šio algoritmo veikimo laiko rezultatai
-GA veikimo metu buvo pakankamai geri, tačiau dėl riboto atliekamų matavimų skaičiaus tai galėjo būti tiesiog atsitiktinumas.  
-Ypač palankūs veikimo laiko rezultatai gauti su algoritmu C3, jis pirmauja pagal veikimo laiką beveik visais atvejais.
+% \ref{img:bench_cycles_1024} pav. yra pateikiamas veikimo laikas, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+% Iš esmės gauti rezultatai yra pakankamai panašūs į praeitame etape gautus rezultatus,
+% gauti algoritmai lenkia literatūroje pateiktus algoritmus su visais duomenų rinkiniais ir dydžiais.
+% Bendrai geriausi veikimo laiko rezultatai pastebimi su algoritmu B2.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cycles_bench_results_8192_8192.jpg}
-  \caption{Veikimo laikas su $N = 8192$}
-  \label{img:bench_cycles_8192}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cycles_bench_results_1024_1024.jpg}
+%   \caption{Veikimo laikas su $N = 1024$}
+%   \label{img:bench_cycles_1024}
+% \end{figure}
 
-\ref{img:bench_comparisons_8192} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-Algoritmas C1 rodo labai prastus rezultatus, kaip ir vertinant veikimo laiką.
-Algoritmai C2 ir C3 su mažesniais duomenų dydžiais ir atsitiktiniais duomenų rinkiniais nuo literatūrinių algoritmų atsilieka sąlyginai nedaug,
-tad galima daryti prielaidą, jog jų perėjimai su didžiausiais tarpais nėra ypač efektyvūs ir šie algoritmai galėtų būti dar patobulinti.
-Algoritmas C3 taip pat rodo labai palankius rezultatus su sąlyginai tvarkingais duomenų rinkiniais.
+% \ref{img:bench_comparisons_1024} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+% Galima pastebėti, jog algoritmas B1 labai nežymiai atsilieka nuo literatūroje pateiktų variantų vertinant atliekamus palyginimus
+% su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
+% Algoritmas B2 su atsitiktiniais duomenų rinkiniais atlieka daugiausia palyginimų, algoritmo B3 silpnoji vieta - mažėjančia tvarka išrikiuoti duomenys.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/cmp_bench_results_8192_8192.jpg}
-  \caption{Atliekami palyginimai su $N = 8192$}
-  \label{img:bench_comparisons_8192}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cmp_bench_results_1024_1024.jpg}
+%   \caption{Atliekami palyginimai su $N = 1024$}
+%   \label{img:bench_comparisons_1024}
+% \end{figure}
 
-\ref{img:bench_assignments_8192} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-Iš GA sugeneruotų algoritmų geriausius rezultatus pagal šį kriterijų rodo Algoritmas C1, tačiau vis tiek ženkliai atsilieka nuo literatūrinių algoritmų su
-atsitiktiniais duomenų rinkiniais.
-Likusių algoritmų rezultatai nėra ypač palankūs net ir su sąlyginai tvarkingais duomenų rinkiniais.
+% \ref{img:bench_assignments_1024} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
+% Kaip ir vertinant atliekamus palyginimus, algoritmas B1 nedaug atsilieka nuo literatūroje pateiktų algoritmų vertinant atliekamus priskyrimus.
+% Bendrai daugiausia priskyrimų atlieka algoritmas B2.
+% Mažėjančia tvarka išrikiuoti duomenys sukelia sunkumų algoritmui B3 ir Šelo algoritmui su Tokuda tarpų seka.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=1]{img/asg_bench_results_8192_8192.jpg}
-  \caption{Atliekami priskyrimai su $N = 8192$}
-  \label{img:bench_assignments_8192}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/asg_bench_results_1024_1024.jpg}
+%   \caption{Atliekami priskyrimai su $N = 1024$}
+%   \label{img:bench_assignments_1024}
+% \end{figure}
+
+
+% \subsubsection{Trečias algoritmų rinkinys}
+
+% \ref{img:bench_cycles_8192} pav. yra pateikiamas veikimo laikas, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+% Algoritmas C1 beveik visais atvejais rodo labai prastą veikimo laiką ir dažnu atveju atsilieka net ir nuo literatūroje pateiktų variantų.
+% Dėl to turbūt galima kaltinti ribotą GA veikimo metu atliekamą algoritmų vertinimą, kadangi šio algoritmo veikimo laiko rezultatai
+% GA veikimo metu buvo pakankamai geri, tačiau dėl riboto atliekamų matavimų skaičiaus tai galėjo būti tiesiog atsitiktinumas.  
+% Ypač palankūs veikimo laiko rezultatai gauti su algoritmu C3, jis pirmauja pagal veikimo laiką beveik visais atvejais.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cycles_bench_results_8192_8192.jpg}
+%   \caption{Veikimo laikas su $N = 8192$}
+%   \label{img:bench_cycles_8192}
+% \end{figure}
+
+% \ref{img:bench_comparisons_8192} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+% Algoritmas C1 rodo labai prastus rezultatus, kaip ir vertinant veikimo laiką.
+% Algoritmai C2 ir C3 su mažesniais duomenų dydžiais ir atsitiktiniais duomenų rinkiniais nuo literatūrinių algoritmų atsilieka sąlyginai nedaug,
+% tad galima daryti prielaidą, jog jų perėjimai su didžiausiais tarpais nėra ypač efektyvūs ir šie algoritmai galėtų būti dar patobulinti.
+% Algoritmas C3 taip pat rodo labai palankius rezultatus su sąlyginai tvarkingais duomenų rinkiniais.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/cmp_bench_results_8192_8192.jpg}
+%   \caption{Atliekami palyginimai su $N = 8192$}
+%   \label{img:bench_comparisons_8192}
+% \end{figure}
+
+% \ref{img:bench_assignments_8192} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
+% Iš GA sugeneruotų algoritmų geriausius rezultatus pagal šį kriterijų rodo Algoritmas C1, tačiau vis tiek ženkliai atsilieka nuo literatūrinių algoritmų su
+% atsitiktiniais duomenų rinkiniais.
+% Likusių algoritmų rezultatai nėra ypač palankūs net ir su sąlyginai tvarkingais duomenų rinkiniais.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=1]{img/asg_bench_results_8192_8192.jpg}
+%   \caption{Atliekami priskyrimai su $N = 8192$}
+%   \label{img:bench_assignments_8192}
+% \end{figure}
 
 \sectionnonum{Išvados}
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
