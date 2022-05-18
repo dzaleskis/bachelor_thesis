@@ -699,8 +699,8 @@ Kadangi gauti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėl
 
 Galima pastebėti, jog gautų algoritmų tarpų sekos yra žymiai trumpesnės, nei įprastai sutinkamų Šelo algoritmo variantų.
 Kaip pastebima \cite{Radavičius_Baranauskas_2013}, vertinant veikimo laiką dažnai tinkamesnės būna geometrinės tarpų sekos, kur $q$ yra didesnis.
-Reikia pastebėti, kad kuo didesnis $q$, tuo mažiau perėjimų bus atliekama tam tikro duomenų dydžio išrikiavimui.
-Taip pat kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja papildomo darbo.  
+Reikia pastebėti, kad kuo didesnis $q$, tuo mažiau perėjimų bus atliekama tam tikro duomenų dydžio išrikiavimui,
+o kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja papildomo darbo.  
 
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
 
@@ -718,7 +718,7 @@ Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaus
   \item C3: $1, 6, 19, 53, 187, 760 $
 \end{itemize}
 
-\section{Šelo algoritmo variantų efektyvumo įvertinimas}
+\section{Šelo algoritmo variantų efektyvumo tyrimo aplinkos paruošimas}
 
 \subsection{Duomenų rinkiniai}
 
@@ -812,9 +812,84 @@ Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM)
 32 GB operatyviosios atminties ir Windows 11 operacine sistema.
 Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
 
-\subsection{Tyrimo rezultatai}
 
-% \subsubsection{Pirmas algoritmų rinkinys}
+\section{Šelo algoritmo variantų efektyvumo tyrimas}
+
+\subsection{Efektyvumas priklausomai nuo duomenų rinkinio}
+
+Remiantis \ref{img:cycles_1024_1024} pav. rezultatais, mažiausiai palankus veikimo laiko prasme yra duomenų rinkinys \verb|shuffled|.
+Duomenų rinkinys \verb|shuffled| iš tiriamų rinkinių turi didžiausią entropiją, kadangi jį sudaro atsitiktine tvarka išdėstyti ir neturintys dublikatų duomenys.
+Tokį duomenų rinkinį sudėtinga rikiuoti, kadangi jau išrikiuotų posekių egzistavimo tikimybė yra gana maža ir
+kiekvienas elementas turi vienodą tikimybę būti bet kurioje iš galimų pozicijų.
+Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinai išdėstomas ir todėl gana nepalankus, tačiau galima teigti, jog jo entropija yra mažesnė, kadangi
+šis rinkinys turi didesnį dublikatų skaičių, kas leistų paaiškinti šiek tiek geresnius veikimo laiko rezultatus.
+
+Veikimo laiko atžvilgiu labiausiai palankūs yra rinkiniai \verb|merge| ir \verb|push_min|.
+Šie rinkiniai pasižymi tuo, jog yra dalinai išrikiuoti (\verb|merge| sudaro du išrikiuoti sąrašai, \verb|push_min| turi tik vieną neišrikiuotą elementą).
+Šelo algoritmas (o tuo pačiu ir tiriami variantai) yra adaptyvus (dalinai išrikiuotus duomenis rikiuoja greičiau),
+tad šiuo atveju galima pastebėti šios savybės teikiamą naudą.
+
+Su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų variantų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
+Bene didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
+Tai galima paaiškinti faktu, jog GA optimizavo variantus rikiuojant atsitiktinius, dublikatų neturinčius duomenis, tad sugeneruoti variantai
+geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/cycles_1024_1024.jpg}
+  \caption{Veikimo laikas priklausomai nuo duomenų rinkinio su $N = 1024$}
+  \label{img:cycles_1024_1024}
+\end{figure}
+
+\pagebreak
+
+Vertinant \ref{img:comparisons_1024_1024} pav. pateikiamus atliekamų palyginimų rezultatus, pastebimos panašios tendencijos,
+kaip ir analizuojant veikimo laiko rezultatus - mažiausiai palankus yra \verb|shuffled| duomenų rinkinys, labiausiai palankus yra \verb|push_min| duomenų rinkinys.
+
+Taip pat galima pastebėti, jog rinkinys \verb|descending| yra palankesnis veikimo laikui, nei būtų galima tikėtis vertinant atliekamus palyginimus.
+Nors rikiuojant šį duomenų rinkinį reikia atlikti gana daug operacijų, jis yra lengvai nuspėjamas dėl pakankamai žemos entropijos,
+kadangi visi elementai yra išrikiuoti (nors ir nepalankia tvarka).
+Tad beveik visada galima spėti, jog elementas ties pozicija $i$ yra mažesnis už elementą esantį ties pozicija $i - h$
+ir neatspėtų šakų skaičius turėtų būti santykinai žemas.
+
+Taip pat galima pastebėti, jog genetinio algoritmo sugeneruoti Šelo algoritmo variantai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|
+atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai.
+Iš esmės to buvo galima tikėtis, kadangi gautų variantų veikimo laikas buvo patobulintas paaukojant atliekamų operacijų kiekį.
+Tačiau su likusiais duomenų rinkiniais šie variantai atlieka pastebimai mažiau palyginimo operacijų.
+Tai galima paaiškinti tuo, jog sugeneruoti variantai turi mažiau perėjimų, nei literatūroje pateikti variantai.
+Todėl kai duomenys yra dalinai išrikiuoti, šie algoritmai atlieka mažiau nereikalingų palyginimų, nei literatūroje pateikti variantai. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/comparisons_1024_1024.jpg}
+  \caption{Atliekami palyginimai priklausomai nuo duomenų rinkinio su $N = 1024$}
+  \label{img:comparisons_1024_1024}
+\end{figure}
+
+\pagebreak
+
+\ref{img:assignments_1024_1024} pav. pateikiami atliekamų priskyrimų rezultatai.
+Kaip ir vertinant atliekamus palyginimus, nepalankiausias yra duomenų rinkinys \verb|shuffled|, labiausiai palankus - rinkinys \verb|push_min|.
+
+Genetinio algoritmo pagalba gauti Šelo algoritmo variantai, kaip ir analizuojant atliekamus palyginimus,
+su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| atlieka ženkliai daugiau priskyrimo operacijų, nei literatūroje pateikti variantai.
+Tiesa, su duomenų rinkiniais \verb|partially_sorted| ir \verb|merge| atliekamų priskyrimų rezultatai yra kiek palankesni.
+% Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą,
+% tad šiuo atveju gauti algoritmai pateikia geresnius rezultatus nei literatūroje pateikiami variantai.
+% Tai galima paaiškinti tuo, jog jų santykinis gretimų tarpų skirtumas yra didesnis, tad elementą perstumti į kitą sąrašo galą galima atliekant mažiau sukeitimų
+% FIXME - ne visai teisinga
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/assignments_1024_1024.jpg}
+  \caption{Atliekami priskyrimai priklausomai nuo duomenų rinkinio su $N = 1024$}
+  \label{img:assignments_1024_1024}
+\end{figure}
+
+\pagebreak
+
+\subsubsection{Efektyvumas priklausomai nuo duomenų dydžio}
 
 % \ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
 % Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
