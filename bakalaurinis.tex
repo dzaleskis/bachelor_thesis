@@ -821,8 +821,9 @@ Remiantis \ref{img:cycles_1024_1024} pav. rezultatais, mažiausiai palankus veik
 Duomenų rinkinys \verb|shuffled| iš tiriamų rinkinių turi didžiausią entropiją, kadangi jį sudaro atsitiktine tvarka išdėstyti ir neturintys dublikatų duomenys.
 Tokį duomenų rinkinį sudėtinga rikiuoti, kadangi jau išrikiuotų posekių egzistavimo tikimybė yra gana maža ir
 kiekvienas elementas turi vienodą tikimybę būti bet kurioje iš galimų pozicijų.
-Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinai išdėstomas ir todėl gana nepalankus, tačiau galima teigti, jog jo entropija yra mažesnė, kadangi
-šis rinkinys turi didesnį dublikatų skaičių, kas leistų paaiškinti šiek tiek geresnius veikimo laiko rezultatus.
+Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinai išdėstomas ir todėl gana nepalankus, nors 
+pastebimi veikimo laikai yra geresni nei su rinkiniu \verb|shuffled|.
+% TODO: pridet kazka?
 
 Veikimo laiko atžvilgiu labiausiai palankūs yra rinkiniai \verb|merge| ir \verb|push_min|.
 Šie rinkiniai pasižymi tuo, jog yra dalinai išrikiuoti (\verb|merge| sudaro du išrikiuoti sąrašai, \verb|push_min| turi tik vieną neišrikiuotą elementą).
@@ -847,10 +848,10 @@ Vertinant \ref{img:comparisons_1024_1024} pav. pateikiamus atliekamų palyginim�
 kaip ir analizuojant veikimo laiko rezultatus - mažiausiai palankus yra \verb|shuffled| duomenų rinkinys, labiausiai palankus yra \verb|push_min| duomenų rinkinys.
 
 Taip pat galima pastebėti, jog rinkinys \verb|descending| yra palankesnis veikimo laikui, nei būtų galima tikėtis vertinant atliekamus palyginimus.
-Nors rikiuojant šį duomenų rinkinį reikia atlikti gana daug operacijų, jis yra lengvai nuspėjamas dėl pakankamai žemos entropijos,
+Nors rikiuojant šį duomenų rinkinį reikia atlikti gana daug operacijų, jis yra lengvai nuspėjamas,
 kadangi visi elementai yra išrikiuoti (nors ir nepalankia tvarka).
 Tad beveik visada galima spėti, jog elementas ties pozicija $i$ yra mažesnis už elementą esantį ties pozicija $i - h$
-ir neatspėtų šakų skaičius turėtų būti santykinai žemas.
+ir atliekant tokius spėjimus neatspėtų šakų skaičius turėtų būti santykinai žemas.
 
 Taip pat galima pastebėti, jog genetinio algoritmo sugeneruoti Šelo algoritmo variantai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|
 atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai.
@@ -873,12 +874,11 @@ Kaip ir vertinant atliekamus palyginimus, nepalankiausias yra duomenų rinkinys 
 
 Genetinio algoritmo pagalba gauti Šelo algoritmo variantai, kaip ir analizuojant atliekamus palyginimus,
 su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| atlieka ženkliai daugiau priskyrimo operacijų, nei literatūroje pateikti variantai.
-Tiesa, su duomenų rinkiniais \verb|partially_sorted| ir \verb|merge| atliekamų priskyrimų rezultatai yra kiek palankesni.
-% Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą,
-% tad šiuo atveju gauti algoritmai pateikia geresnius rezultatus nei literatūroje pateikiami variantai.
-% Tai galima paaiškinti tuo, jog jų santykinis gretimų tarpų skirtumas yra didesnis, tad elementą perstumti į kitą sąrašo galą galima atliekant mažiau sukeitimų
-% FIXME - ne visai teisinga
+Tiesa, su duomenų rinkiniais \verb|partially_sorted| ir \verb|merge| atliekamų priskyrimų rezultatai yra kiek palankesni,
+o su duomenų rinkiniu \verb|push_min|
+sugeneruoti variantai lenkia literatūroje pateikiamus variantus.
 
+% TODO: truksta teksto cia
 
 \begin{figure}[H]
   \centering
@@ -889,7 +889,9 @@ Tiesa, su duomenų rinkiniais \verb|partially_sorted| ir \verb|merge| atliekamų
 
 \pagebreak
 
-\subsubsection{Efektyvumas priklausomai nuo duomenų dydžio}
+\subsection{Efektyvumas priklausomai nuo duomenų dydžio}
+
+
 
 % \ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
 % Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
