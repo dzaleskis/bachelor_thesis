@@ -718,7 +718,7 @@ Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaus
   \item C3: $1, 6, 19, 53, 187, 760 $
 \end{itemize}
 
-\section{Šelo algoritmo variantų efektyvumo tyrimo aplinkos paruošimas}
+\section{Šelo algoritmo variantų efektyvumo tyrimo aplinka}
 
 \subsection{Duomenų rinkiniai}
 
@@ -817,6 +817,8 @@ Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatori
 
 \subsection{Efektyvumas priklausomai nuo duomenų rinkinio}
 
+\subsubsection{Veikimo laikas}
+
 Remiantis \ref{img:cycles_1024_1024} pav. rezultatais, mažiausiai palankus veikimo laiko prasme yra duomenų rinkinys \verb|shuffled|.
 Duomenų rinkinys \verb|shuffled| iš tiriamų rinkinių turi didžiausią entropiją, kadangi jį sudaro atsitiktine tvarka išdėstyti ir neturintys dublikatų duomenys.
 Tokį duomenų rinkinį sudėtinga rikiuoti, kadangi jau išrikiuotų posekių egzistavimo tikimybė yra gana maža ir
@@ -844,6 +846,8 @@ geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
 
 \pagebreak
 
+\subsubsection{Palyginimai}
+
 Vertinant \ref{img:comparisons_1024_1024} pav. pateikiamus atliekamų palyginimų rezultatus, pastebimos panašios tendencijos,
 kaip ir analizuojant veikimo laiko rezultatus - mažiausiai palankus yra \verb|shuffled| duomenų rinkinys, labiausiai palankus yra \verb|push_min| duomenų rinkinys.
 
@@ -869,6 +873,8 @@ Todėl kai duomenys yra dalinai išrikiuoti, šie algoritmai atlieka mažiau ner
 
 \pagebreak
 
+\subsubsection{Priskyrimai}
+
 \ref{img:assignments_1024_1024} pav. pateikiami atliekamų priskyrimų rezultatai.
 Kaip ir vertinant atliekamus palyginimus, nepalankiausias yra duomenų rinkinys \verb|shuffled|, labiausiai palankus - rinkinys \verb|push_min|.
 
@@ -891,136 +897,131 @@ sugeneruoti variantai lenkia literatūroje pateikiamus variantus.
 
 \subsection{Efektyvumas priklausomai nuo duomenų dydžio}
 
+\subsubsection{Veikimo laikas}
+
+\ref{img:push_min_cycles_128} pav. pateikiami veikimo laiko rezultatai su duomenų rinkiniu \verb|push_min| ir nedideliais duomenų dydžiais.
+Galima pastebėti, jog augant duomenų dydžiui sugeneruotų algoritmų veikimo laikas beveik nesikeičia, tuo tarpu literatūroje pateikti variantai
+su mažiausiu duomenų dydžiu veikia daugiau nei 2 kartus lėčiau, augant duomenų dydžiui veikimo laikas gerėja.
+Tai galima paaiškinti tuo, jog sugeneruoti algoritmai su $N = 32$ atliks vos du perėjimus, tuo tarpu literatūroje pateikiami variantai atliks 4.
+Taip pat pastebėsime, jog didžiausią įtaką veikimo laikui šiuo atveju turi mažiausi tarpai, kadangi su didesniais tarpais yra atliekama mažiau iteracijų.
+Kadangi šis duomenų rinkinys yra beveik išrikiuotas, papildomi du perėjimai šiuo atveju pastebimai sulėtina veikimą.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/push_min_cycles_128.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu push\_min ir $N \leq 128$}
+  \label{img:push_min_cycles_128}
+\end{figure}
+
+\ref{img:shuffled_cycles_128} pav. pateikiami veikimo laiko rezultatai su duomenų rinkiniu \verb|shuffled| ir nedideliais duomenų dydžiais.
+Galima pastebėti, jog sugeneruotų ir literatūroje pateikiamų variantų rezultatai šiuo atveju skiriasi mažiau.
+Tai paaiškina \verb|shuffled| duomenų rinkinio specifika - kadangi duomenys yra atsitiktiniai, tenka atlikti žymiai daugiau elementų perstūmimų,
+tad didesnis naudojamų tarpų kiekis nesukelia problemų. 
+Ir toliau galima pastebėti tendenciją, jog su nedideliais duomenų dydžiais literatūroje pateikiamų variantų veikimo laikas gerėja augant duomenų dydžiui.
+Sugeneruoti algoritmai su visais pateikiamais duomenų dydžiais lenkia literatūroje pateikiamus variantus.
+Iš esmės tai galima paaiškinti tuo, jog sugeneruoti algoritmai naudoja mažiau perėjimų, jų santykinis tarpų atstumas yra didesnis,
+tad su visais duomenų dydžiais daugiau rikiavimo jie atlieka naudodami rikiavimą įterpimu, kuris veikia
+greičiau nei Šelo algoritmas nedideliems duomenų dydžiams. % TODO: citata?
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/shuffled_cycles_128.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 128$}
+  \label{img:shuffled_cycles_128}
+\end{figure}
+
+\ref{img:shuffled_cycles_8192} pav. yra pateikiami veikimo laiko rezultatai su duomenų rinkiniu \verb|shuffled| ir dideliais duomenų dydžiais.
+Šiuo atveju galima pastebėti, jog literatūroje pateikiamų variantų veikimo laikas nežymiai didėja augant duomenų dydžiui.
+Tuo tarpu sugeneruotų algoritmų C2 ir C3 veikimo laikas išlieka pakankamai stabilus, net ir augant duomenų dydžiui, taip pat
+bene geriausi rezultatai pastebimi su didžiausiu duomenų dydžiu.
+Tiesa, algoritmo C1 rezultatai yra artimesni literatūroje pateikiamiems variantams,
+kas yra pakankamai netikėta, kadangi jis yra labai panašus į algoritmą C2 (skiriasi tik du priešpaskutiniai perėjimai).
+Tad galima daryti išvadą, jog perėjimai su didesniais tarpais rikiuojant pakankamai didelius duomenų dydžius turi gana didelę įtaką duoto varianto efektyvumui.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/shuffled_cycles_8192.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \label{img:shuffled_cycles_8192}
+\end{figure}
+
+\pagebreak
+
+\subsubsection{Palyginimai}
+
+\ref{img:shuffled_comparisons_128} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|shuffled| ir nedideliais duomenų dydžiais.
+Galima pastebėti, jog sugeneruotų variantų atliekamų palyginimų skaičius didėjant duomenų dydžiui gana sparčiai auga.
+Literatūrinių variantų atliekamų palyginimų skaičius auga nuosaikiau.
+Su $N = 32$ sugeneruotų variantų atliekamų palyginimų skaičius yra pakankamai mažas ir nedaug atsilieka nuo literatūrinių variantų.
+Tai galima paaiškinti tuo, šie variantai naudoja mažiau tarpų ir daugiau rikiavimo atlieka su tarpu $1$,
+o rikiavimas įterpimu yra pakankamai efektyvus atliekamų palyginimų prasme, kai duomenų dydis yra pakankamai mažas.
+Tačiau mažesnis perėjimų kiekis sukelia sunkumų su didesniais duomenų dydžiais ir duomenų dydžiui augant sugeneruoti variantai atlieka vis daugiau palyginimų.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/shuffled_comparisons_128.jpg}
+  \caption{Palyginimai su duomenų rinkiniu shuffled ir $N \leq 128$}
+  \label{img:shuffled_comparisons_128}
+\end{figure}
 
 
-% \ref{img:bench_cycles_128} pav. yra pateikiamas veikimo laikas, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-% Kiti šio algoritmų rinkinio rezultatai yra panašūs, todėl siekiant glaustumo čia nagrinėjamas tik atvejis, kai $N = 128$, o kiti rezultatai pateikiami prieduose.
-% Pirmiausia galima pastebėti, jog su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų algoritmų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
-% Didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
-% Tai galima paaiškinti faktu, jog GA veikimo metu optimizacija buvo vykdoma būtent rikiuojant atsitiktinius, nedidelį dublikatų skaičių turinčius duomenis, tad gauti algoritmai
-% geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
-% Bendrai vertinant veikimo laiką su įvairiais duomenų rinkiniais geriausi rezultatai gauti su A3 algoritmu.
+\ref{img:descending_comparisons_128} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|descending| ir nedideliais duomenų dydžiais.
+Šiuo atveju literatūrinų variantų rezultatai yra gana stabilūs ir auga nežymiai didėjant duomenų dydžiui.
+Tuo tarpu sugeneruoti variantai veikia mažiau stabiliai, galima pastebėti nereguliarius rezultatus priklausomai nuo duomenų dydžio:
+su $N = 32$ pastebimi apytiksliai 30\% prastesni A3 varianto rezultatai lyginant su geriausius rezultatus pateikusiu variantu (Sedgewick),
+su $N = 64$ pastebimas didelis A2 varianto atliekamų palyginimų šuolis,
+o su $N = 128$ pastebimas gana didelis A1 varianto skirtumas nuo geriausio rezultato.
+Tai galima paaiškinti tuo, jog sugeneruoti variantai naudoja ganėtinai mažai tarpų, ir pasitaikius nepalankiam duomenų rinkiniui ir/ar dydžiui,
+šių variantų efektyvumas gali būti stipriau paveiktas, kadangi papildomi tarpai duoda tam tikrą garantiją, jog blogiausias atvejis nebus ypač prastas.
+Kaip pavyzdį galima pateikti Pratt tarpų seką \cite{pratt1972shellsort}, kuri naudoja labai daug tarpų, tad praktikoje nėra efektyvi, tačiau
+šiuo metu yra geriausia žinoma seka pagal laiko sudėtingumą blogiausiu atveju.
 
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cycles_bench_results_128_128.jpg}
-%   \caption{Veikimo laikas su $N = 128$}
-%   \label{img:bench_cycles_128}
-% \end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/descending_comparisons_128.jpg}
+  \caption{Palyginimai su duomenų rinkiniu descending ir $N \leq 128$}
+  \label{img:descending_comparisons_128}
+\end{figure}
 
+\ref{img:shuffled_comparisons_8192} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|shuffled| ir dideliais duomenų dydžiais.
+Galima pastebėti, jog sugeneruotų variantų rezultatai su duomenų dydžiais $2048$ ir $4096$ yra pakankamai geri ir nežymiai atsilieka nuo literatūrinių variantų.
+Tiesa, su didžiausiu tiriamu duomenų dydžiu rezultatai yra prastesni, tačiau reikia pastebėti, jog veikimo laiko rezultatai su šiuo duomenų dydžiu buvo pastebimai geresni.
+Tad iš esmės pastebimas sugeneruotų variantų daromas kompromisas, kur atliekamų operacijų skaičius paaukojamas vardan palankesnio veikimo laiko.
 
-% \ref{img:bench_comparisons_128} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-% Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
-% Gauti algoritmai atlieka ženkliai daugiau palyginimo operacijų, nei literatūroje pateikti variantai, su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
-% Iš esmės to buvo galima tikėtis - gautų algoritmų veikimo laikas buvo patobulintas paaukojant atliekamų operacijų kiekį.
-% Tačiau su likusiais duomenų rinkiniais gauti algoritmai atlieka mažiau palyginimo operacijų.
-% Tai galima paaiškinti tuo, jog gauti algoritmai turi mažiau perėjimų, nei literatūroje pateikti variantai.
-% Todėl kai duomenys yra gana tvarkingi, šie algoritmai atlieka mažiau nereikalingų palyginimų, nei literatūroje pateikti variantai. 
-% Bendrai vertinant atliekamus palyginimus su \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| duomenų rinkiniais geriausi rezultatai gauti su Ciura tarpų seka paremtu Šelo algoritmu.
-% Su kitais duomenų rinkiniais sunku išskirti geriausią algoritmą,
-% kadangi rezultatai tarp algoritmų A1, A2 ir A3 svyruoja priklausomai nuo naudojamo duomenų dydžio (priklausomai nuo algoritmo taikomų tarpų, kai kurie duomenų dydžiai gali būti palankesni).
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{img/shuffled_comparisons_8192.jpg}
+  \caption{Palyginimai su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \label{img:shuffled_comparisons_8192}
+\end{figure}
 
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cmp_bench_results_128_128.jpg}
-%   \caption{Atliekami palyginimai su $N = 128$}
-%   \label{img:bench_comparisons_128}
-% \end{figure}
+\pagebreak
 
-% \ref{img:bench_assignments_128} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 128$ su pasirinktais duomenų rinkiniais.
-% Rezultatai su kitais duomenų dydžiais yra panašūs, todėl pateikiami prieduose.
-% Gauti algoritmai su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|, atlieka ženkliai daugiau priskyrimo operacijų (kaip ir analizuojant atliekamus palyginimus).
-% Su duomenų rinkiniais \verb|partially_sorted|, \verb|merge| atliekamų priskyrimų rezultatai yra palankesni, tačiau vis tiek atsilieka nuo literatūroje pateiktų algoritmų.
-% Duomenų rinkinys \verb|push_min| turi tik vieną neišrikiuotą elementą kurį reikia perstumti į kitą sąrašo galą,
-% tad šiuo atveju gauti algoritmai pasirodo geriau, kadangi jų santykinis atstumas tarp dviejų tarpų yra didesnis.
-% Vertinant bendrai, mažiausiai priskyrimų atliko Šelo algoritmas su Tokuda tarpų seka.
+\subsubsection{Priskyrimai}
 
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/asg_bench_results_128_128.jpg}
-%   \caption{Atliekami priskyrimai su $N = 128$}
-%   \label{img:bench_assignments_128}
-% \end{figure}
+Bendrai atliekamų priskyrimų rezultatai yra gana panašūs į atliekamų palyginimų, nors yra pastebima skirtumų.
+To pavyzdys yra \ref{img:shuffled_assignments_8192} pav. esantys priskyrimų rezultatai su duomenų rinkiniu \verb|shuffled| ir dideliais duomenų dydžiais.
+Šiuo atveju variantas C1, kuris su tirtais duomenų dydžiais atliko daugiausia palyginimų, iš sugeneruotų variantų atliko mažiausiai priskyrimų.
+Peršasi išvada, jog generavimo metu žemas priskyrimų skaičius atsvėrė kitus kriterijus ir taip sumažino varianto bendrą kainą.    
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{img/shuffled_assignments_8192.jpg}
+  \caption{Priskyrimai su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \label{img:shuffled_assignments_8192}
+\end{figure}
 
-% \subsubsection{Antras algoritmų rinkinys}
+Taip pat skirtumai pastebimi su \verb|descending| duomenų rinkiniu ir dideliais duomenų dydžiais (\ref{img:descending_assignments_8192} pav.).
+Šiuo atveju varianto C3 atliekamų priskyrimų skaičius vis auga ir ties $N = 8192$ nuo geriausio rezultato skiriasi apytiksliai 30\%.
+Kadangi variantas C3 turi 2 perėjimais mažiau nei variantai C1 ir C2 ir didžiausi jo tarpai yra santykinai nedideli,
+galima pastebėti naudojamų perėjimų skaičiaus ir didesnių tarpų įtaką efektyvumui kai duomenų rinkinys yra nepalankus.
 
-% \ref{img:bench_cycles_1024} pav. yra pateikiamas veikimo laikas, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-% Iš esmės gauti rezultatai yra pakankamai panašūs į praeitame etape gautus rezultatus,
-% gauti algoritmai lenkia literatūroje pateiktus algoritmus su visais duomenų rinkiniais ir dydžiais.
-% Bendrai geriausi veikimo laiko rezultatai pastebimi su algoritmu B2.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cycles_bench_results_1024_1024.jpg}
-%   \caption{Veikimo laikas su $N = 1024$}
-%   \label{img:bench_cycles_1024}
-% \end{figure}
-
-% \ref{img:bench_comparisons_1024} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-% Galima pastebėti, jog algoritmas B1 labai nežymiai atsilieka nuo literatūroje pateiktų variantų vertinant atliekamus palyginimus
-% su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending|.
-% Algoritmas B2 su atsitiktiniais duomenų rinkiniais atlieka daugiausia palyginimų, algoritmo B3 silpnoji vieta - mažėjančia tvarka išrikiuoti duomenys.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cmp_bench_results_1024_1024.jpg}
-%   \caption{Atliekami palyginimai su $N = 1024$}
-%   \label{img:bench_comparisons_1024}
-% \end{figure}
-
-% \ref{img:bench_assignments_1024} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 1024$ su pasirinktais duomenų rinkiniais.
-% Kaip ir vertinant atliekamus palyginimus, algoritmas B1 nedaug atsilieka nuo literatūroje pateiktų algoritmų vertinant atliekamus priskyrimus.
-% Bendrai daugiausia priskyrimų atlieka algoritmas B2.
-% Mažėjančia tvarka išrikiuoti duomenys sukelia sunkumų algoritmui B3 ir Šelo algoritmui su Tokuda tarpų seka.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/asg_bench_results_1024_1024.jpg}
-%   \caption{Atliekami priskyrimai su $N = 1024$}
-%   \label{img:bench_assignments_1024}
-% \end{figure}
-
-
-% \subsubsection{Trečias algoritmų rinkinys}
-
-% \ref{img:bench_cycles_8192} pav. yra pateikiamas veikimo laikas, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-% Algoritmas C1 beveik visais atvejais rodo labai prastą veikimo laiką ir dažnu atveju atsilieka net ir nuo literatūroje pateiktų variantų.
-% Dėl to turbūt galima kaltinti ribotą GA veikimo metu atliekamą algoritmų vertinimą, kadangi šio algoritmo veikimo laiko rezultatai
-% GA veikimo metu buvo pakankamai geri, tačiau dėl riboto atliekamų matavimų skaičiaus tai galėjo būti tiesiog atsitiktinumas.  
-% Ypač palankūs veikimo laiko rezultatai gauti su algoritmu C3, jis pirmauja pagal veikimo laiką beveik visais atvejais.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cycles_bench_results_8192_8192.jpg}
-%   \caption{Veikimo laikas su $N = 8192$}
-%   \label{img:bench_cycles_8192}
-% \end{figure}
-
-% \ref{img:bench_comparisons_8192} pav. yra pateikiamas atliekamų palyginimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-% Algoritmas C1 rodo labai prastus rezultatus, kaip ir vertinant veikimo laiką.
-% Algoritmai C2 ir C3 su mažesniais duomenų dydžiais ir atsitiktiniais duomenų rinkiniais nuo literatūrinių algoritmų atsilieka sąlyginai nedaug,
-% tad galima daryti prielaidą, jog jų perėjimai su didžiausiais tarpais nėra ypač efektyvūs ir šie algoritmai galėtų būti dar patobulinti.
-% Algoritmas C3 taip pat rodo labai palankius rezultatus su sąlyginai tvarkingais duomenų rinkiniais.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/cmp_bench_results_8192_8192.jpg}
-%   \caption{Atliekami palyginimai su $N = 8192$}
-%   \label{img:bench_comparisons_8192}
-% \end{figure}
-
-% \ref{img:bench_assignments_8192} pav. yra pateikiamas atliekamų priskyrimų skaičius, kai $N = 8192$ su pasirinktais duomenų rinkiniais.
-% Iš GA sugeneruotų algoritmų geriausius rezultatus pagal šį kriterijų rodo Algoritmas C1, tačiau vis tiek ženkliai atsilieka nuo literatūrinių algoritmų su
-% atsitiktiniais duomenų rinkiniais.
-% Likusių algoritmų rezultatai nėra ypač palankūs net ir su sąlyginai tvarkingais duomenų rinkiniais.
-
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[scale=1]{img/asg_bench_results_8192_8192.jpg}
-%   \caption{Atliekami priskyrimai su $N = 8192$}
-%   \label{img:bench_assignments_8192}
-% \end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{img/descending_assignments_8192.jpg}
+  \caption{Priskyrimai su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \label{img:descending_assignments_8192}
+\end{figure}
 
 \sectionnonum{Išvados}
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
@@ -1060,100 +1061,5 @@ inline void test_shellsort(T & data) {
 }
 \end{lstlisting}
 
-\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 128$}
-
-\begin{lstlisting}[caption={Algoritmas A1},label={alg:A1},language=json]
-  [
-    {"gap":52,"passType":"bubble"}, 
-    {"gap":6,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas A2},label={alg:A2},language=json]
-  [
-    {"gap":92,"passType":"shake"}, 
-    {"gap":7,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas A3},label={alg:A3},language=json]
-  [
-    {"gap":76,"passType":"bubble"}, 
-    {"gap":10,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 1024$}
-
-\begin{lstlisting}[caption={Algoritmas B1},label={alg:B1},language=json]
-  [
-    {"gap":162,"passType":"insertion"}, 
-    {"gap":40,"passType":"insertion"}, 
-    {"gap":17,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas B2},label={alg:B2},language=json]
-  [
-    {"gap":155,"passType":"insertion"}, 
-    {"gap":19,"passType":"insertion"}, 
-    {"gap":5,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas B3},label={alg:B3},language=json]
-  [
-    {"gap":97,"passType":"insertion"}, 
-    {"gap":26,"passType":"insertion"}, 
-    {"gap":8,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-
-\section{GA sugeneruoti Šelo algoritmo variantai, kai $N = 8192$}
-
-\begin{lstlisting}[caption={Algoritmas C1},label={alg:C1},language=json]
-  [
-    {"gap":1794,"passType":"insertion"}, 
-    {"gap":615,"passType":"shake"}, 
-    {"gap":264,"passType":"insertion"}, 
-    {"gap":104,"passType":"insertion"}, 
-    {"gap":25,"passType":"insertion"}, 
-    {"gap":11,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas C2},label={alg:C2},language=json]
-  [
-    {"gap":1794,"passType":"insertion"}, 
-    {"gap":1152,"passType":"brick"}, 
-    {"gap":356,"passType":"insertion"}, 
-    {"gap":104,"passType":"insertion"}, 
-    {"gap":25,"passType":"insertion"}, 
-    {"gap":11,"passType":"insertion"}, 
-    {"gap":4,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Algoritmas C3},label={alg:C3},language=json]
-  [
-    {"gap":760,"passType":"insertion"}, 
-    {"gap":187,"passType":"insertion"}, 
-    {"gap":53,"passType":"insertion"}, 
-    {"gap":19,"passType":"insertion"}, 
-    {"gap":6,"passType":"insertion"}, 
-    {"gap":1,"passType":"insertion"}
-  ]
-\end{lstlisting}
 
 \end{document}
