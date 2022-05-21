@@ -317,18 +317,19 @@ kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesn
 
 Šiuolaikinių kompiuterių architektūros yra labai sudėtingos ir tai apsunkina teorines veikimo laiko prognozes.
 Tai lemia įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
-instrukcijų vykdymas ne iš eilės (siekiant pilnai išnaudoti procesoriaus ciklus),
-duomenų saugojimas kelių lygių talpykloje (siekiant panaikinti atminties delsą) ir
-šakų nuspėjimas (siekiant tęsti intrukcijų vykdymą nelaukiant, kol sąlygos rezultatas bus žinomas).
+instrukcijų vykdymas ne iš eilės, duomenų saugojimas kelių lygių talpykloje, šakų nuspėjimas, etc.
 Jei duotas algoritmas netinkamai išnaudoja šias mašinos galimybes, praktinis jo efektyvumas gali stipriai nukentėti.
 Todėl bene geriausias būdas nustatyti tikėtiną praktinį algoritmo efektyvumą yra atlikti eksperimentus ir stebėti mašinos veikimą.
 Žinoma, tokiu būdu gauti rezultatai priklauso nuo duotos mašinos techinių parametrų ir įvairių kitų veiksnių, tačiau didžioji dalis
 šiuolaikinių kompiuterių pasitelkia tas pačias strategijas, tad atliekant kelių algoritmų veikimo palyginimą skirtinguose kompiuteriuose,
 santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis.  
 
+\subsection{Veikimo laiko ir atliekamų operacijų tyrimas}
+
 Pirmiausia buvo nutarta pamatuoti kelių skirtingų Šelo algoritmo variantų veikimo laiką ir atliekamas operacijas, siekiant nustatyti kaip tarpų sekos įtakoja šiuos kriterijus.
 Vykdant eksperimentus buvo nuspręsta tirti Šelo algoritmo veikimą rikiuojant 64 elementus.
 Tai pakankamai svarbus scenarijus, kadangi jis tokiu principu dažnai pasitelkiamas hibridiniuose rikiavimo algoritmuose \cite{golangsort,bzip2sort}.
+Taip pat tokio dydžio duomenys lengvai telpa į procesoriaus talpyklą, kas palengvina veikimo laiko analizę.
 Šiam eksperimentų etapui buvo pasirinkti du Šelo algoritmo variantai, kur pirmasis naudoja tarpų seką $\{1\}$ kas prilygsta rikiavimui įterpimu, o antrasis naudoja sutrumpintą Ciura tarpų seką $\{57,23,10,4,1\}$.
 
 Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi, 32 GB operatyviosios atminties ir Windows 11 OS.
@@ -353,6 +354,7 @@ Norint juos paaiškinti, reikia surinkti daugiau duomenų.
   \end{tabular}
 \end{table}
 
+\subsection{Šakų nuspėjimo tyrimas}
 
 Šiuolaikiniai kompiuteriai dažniausiai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
 Tam yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
@@ -448,7 +450,7 @@ pasirinktų tarpų dydžio, kadangi nuo jo priklauso, kiek elementų palyginimų
 
 Įprastai praktinis rikiavimo algoritmų efektyvumas yra vertinamas matuojant jų atliekamų palyginimų ar priskyrimų skaičių.
 Tai yra pakankamai geri kriterijai norint praktiškai įvertinti duoto algoritmo efektyvumą su tam tikrais duomenų dydžiais,
-kadangi teorinis laiko sudėtingumas nurodo tik algoritmo sudėtingumo funkcijos augimo greitį ir
+kadangi algoritminis sudėtingumas nurodo tik veikimo laiko augimą priklausomai nuo $N$ ir
 neatsižvelgia į konstantas, kurios praktikoje taip pat įtakoja veikimo greitį \cite{biggar2005sorting}.
 
 Tiksliam efektyvumo įvertinimui tinkama matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus.
@@ -468,69 +470,53 @@ algoritmo veikimo laiko įvertis yra svarbus kriterijus įvertinant praktinį Š
 
 Remiantis aukščiau pateiktais argumentais, šiame darbe Šelo algoritmo variantai vertinami pagal
 atliekamų palyginimų skaičių, atliekamų priskyrimų skaičių ir veikimo laiką.
-Kiekvienas iš šių kriterijų yra vienodai svarbus įvertinant duoto algoritmo efektyvumą, tad svoriai šiems kriterijams nėra taikomi.
+Kiekvienas iš šių kriterijų yra pakankamai svarbus įvertinant duoto algoritmo efektyvumą, tad svoriai šiems kriterijams nėra taikomi.
 
 \section{Genetiniai algoritmai}
 
-Paprasčiausias genetinis algoritmas susideda iš chromosomų populiacijos bei atrankos, mutacijos ir rekombinacijos operatorių \cite{simpson1999faster}.
-Šiame skyriuje bus nagrinėjamos šių terminų reikšmės ir genetinių algoritmų veikimo principai.
+Paprasčiausias genetinis algoritmas susideda iš individų populiacijos bei atrankos, mutacijos ir rekombinacijos operatorių \cite{simpson1999faster}.
+Šiame skyriuje nagrinėjamos šių terminų reikšmės ir genetinių algoritmų veikimo principai.
 
-\subsection{Chromosomų populiacija}
+\subsection{Individų populiacija}
 
-Chromosoma GA kontekste vadiname potencialų uždavinio sprendinį.
+Individu GA kontekste vadinamas potencialus uždavinio sprendinys.
 Projektuojant genetinį algoritmą tam tikro uždavinio sprendimui, svarbu tinkamai pasirinkti,
 kaip kompiuteriu modeliuoti galimus sprendinius.
-Įprastai siekiama sprendinio genus išreikšti kuo primityviau, siekiant
+Įprastai siekiama sprendinį modeliuoti kuo primityviau, siekiant
 palengvinti mutacijos ir rekombinacijos operatorių taikymą.
-Dažniausiai tai pasiekiama chromosomas išreiškiant bitų ar kitų primityvių duomenų tipų masyvais \cite{whitley1994genetic}.
-Tada mutacija gali būti įgyvendinama tiesiog modifikuojant atsitiktinai pasirinktą masyvo elementą,
-o rekombinacijai pakanka remiantis tam tikra strategija perkopijuoti tėvinių chromosomų elementus į vaikinę chromosomą.
 
-Sprendinio kokybę įvardijame kaip jo tinkamumą, kuris apibrėžiamas tinkamumo funkcijos reikšme, pateikus sprendinį arba tarpinį sprendinio įvertį kaip parametrą.
-Sprendžiant minimizavimo uždavinį, tinkamumo funkcija taip pat vadinama kainos funkcija.
-Tinkamumo funkcija yra viena svarbiausių genetinio algoritmo dalių,
+Individų rinkinys yra vadinamas populiacija ir atspindi uždavinio sprendinių aibę, kuri kinta kiekvieną genetinio algoritmo iteraciją.
+Populiacijos dydis dažniausiai pasirenkamas priklausomai nuo sprendžiamo uždavinio,
+tad literatūroje nėra konsensuso, kokį populiacijos dydį rinktis bendru atveju.
+
+Duoto sprendinio kokybė yra nustatoma pasitelkiant tikslo funkciją.
+Tikslo funkcija dar vadinama kainos arba tinkamumo funkcija, priklausomai nuo sprendžiamo uždavinio tipo.
+Tikslo funkcija yra viena svarbiausių genetinio algoritmo dalių,
 kadangi kai ji netinkamai parinkta, algoritmas nekonverguos į tinkamą sprendinį arba užtruks labai ilgai.
-
-Chromosomų rinkinys, literatūroje dažnai vadinamas populiacija, atspindi uždavinio sprendinių aibę, kuri kinta kiekvieną genetinio algoritmo iteraciją.
-Populiaciją dažnu atveju sudaro šimtai ar net tūkstančiai individų.
-Populiacijos dydis dažnai priklauso nuo sprendžiamo uždavinio,
-tačiau literatūroje nėra konsensuso, kokį populiacijos dydį rinktis bendru atveju.
-
 
 \subsection{Genetiniai operatoriai}
 
 Esminė GA dalis yra populiacijos genetinės įvairovės užtikrinimas, geriausių individų atranka ir kryžminimasis.
 Siekiant užtikrinti šių procesų išpildymą, genetinis algoritmas vykdymo metu
-iteratyviai atnaujina esamą populiaciją ir kuria naujas kartas
-taikydamas biologijos žiniomis paremtus atrankos, rekombinacijos ir mutacijos operatorius.
+iteratyviai atnaujina esamą populiaciją taikydamas atrankos, rekombinacijos ir mutacijos operatorius.
 
 Atrankos operatorius grąžina tinkamiausius populiacijos individus, kuriems yra leidžiama susilaukti palikuonių taikant rekombinacijos operatorių.
 Dažniausiai atranka vykdoma atsižvelgiant į populiacijos individų tinkamumą, atrenkant ir pateikiant rekombinacijai tuos, kurių tinkamumas yra geriausias.
-Verta pastebėti, jog įprastai rekombinacijai yra pasirenkama tam tikra fiksuota einamosios populiacijos dalis
-ir daugelyje GA implementacijų šis dydis yra nurodomas kaip veikimo parametras.
 
-Rekombinacijos operatorius įprastai veikia iš dviejų tėvinių chromosomų sukurdamas naują vaikinę chromosomą, kas dažniausiai pasiekiama
-tam tikru būdu perkopijuojant tėvų genų atkarpas į vaikinę chromosomą.
-Rekombinacijos strategijų yra įvairių, tačiau tinkamiausią strategiją galima pasirinkti tik atsižvelgiant į sprendžiamą uždavinį.
+Rekombinacijos operatorius įprastai veikia iš dviejų tėvinių individų sukurdamas naują individą, kas dažniausiai pasiekiama
+tam tikru būdu perkopijuojant tėvų savybes vaikiniam individui.
 
-Mutacijos operatorius veikia modifikuojant pasirinktos chromosomos vieną ar kelis genus,
-kas dažniausiai įgyvendinama nežymiai pakeičiant pasirinktų genų reikšmes ar sukeičiant jas vietomis.
-Įprastai mutacija kiekvienai chromosomai taikoma su tam tikra tikimybe, kuri nurodoma kaip vienas iš GA veikimo parametrų.
+Mutacijos operatorius veikia modifikuojant pasirinkto individo vieną ar kelias savybes.
 Tinkamas chromosomos mutacijos tikimybės parinkimas yra vienas iš svarbiausių sprendimų projektuojant GA,
-kadangi nuo mutacijos tikimybės dažnu atveju priklauso gaunamų sprendinių kokybė.
-Jei mutacijos tikimybė yra per didelė, GA išsigimsta į primityvią atsitiktinę paiešką \cite{hassanat2019choosing} ir rizikuojama prarasti geriausius sprendinius.
-Jei mutacijos tikimybė per maža, tai gali vesti prie genetinio dreifo \cite{masel2011genetic},
-kas reiškia, jog populiacijos genetinė įvairovė palaipsniui mažės.
+kadangi nuo mutacijos tikimybės dažnu atveju priklauso populiacijos genetinė įvairovė, o tuo pačiu ir gaunamų sprendinių kokybė.
 
 \section{Genetinis algoritmas Šelo algoritmo variantų generavimui}
-
-% FIXME: tai chromosoma ar individas???
 
 Pirmiausia reikėtų aptarti kaip turėtų būti modeliuojamas sprendinys, atspindintis tam tikrą Šelo algoritmo variantą.
 Laikysime jog Šelo algoritmo variantą sudaro sąrašas porų $(p, h)$, kur $p$ yra skaičius, atitinkantis vieną iš anksčiau darbe aptartų perėjimų tipų,
 o $h$ - tarpas, su kuriuo rikiuojama tame perėjime.
-Toliau darbe tokiu būdu modeliuojamą Šelo algoritmo variantą vadinsime chromosoma arba individu, o porą $(p, h)$ - genu.
-Tiesa, toks modelis neturi jokio funkcionalumo (juo duomenų rikiuoti negalime), tačiau tai nėra sunku išspręsti: pakanka kiekvienam perėjimo tipui
+Toliau darbe tokiu būdu modeliuojamas Šelo algoritmo variantas vadinamas individu, o pora $(p, h)$ - genu.
+Tiesa, toks modelis neturi jokio funkcionalumo (juo duomenų rikiuoti negalima), tačiau tai nėra sunku išspręsti: pakanka kiekvienam perėjimo tipui
 paruošti atitinkamą funkciją, kuri kaip parametrus priima rikiuojamus duomenis ir tarpą su kuriuo rikiuojama.
 Tada modeliuojamą Šelo algoritmo variantą galima nesunkiai vykdyti iteruojant jo genų sąrašą ir kiekvienai porai $(p, h)$ iškviečiant funkciją atitinkančią jos tipą ir nurodant tarpą su kuriuo rikiuoti.
 
