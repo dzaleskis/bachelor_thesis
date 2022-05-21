@@ -24,7 +24,6 @@
 \definecolor{eclipseKeywords}{RGB}{42,0,255}
 \colorlet{numb}{magenta!60!black}
 
-
 \lstset{
   basicstyle=\normalfont\ttfamily,
   commentstyle=\color{eclipseKeywords}, % style of comment
@@ -33,21 +32,6 @@
   showstringspaces=false,
   breaklines=true,
   frame=lines,
-}
-
-\lstdefinelanguage{json}{
-    string=[s]{"}{"},
-    literate=
-        *{0}{{{\color{numb}0}}}{1}
-         {1}{{{\color{numb}1}}}{1}
-         {2}{{{\color{numb}2}}}{1}
-         {3}{{{\color{numb}3}}}{1}
-         {4}{{{\color{numb}4}}}{1}
-         {5}{{{\color{numb}5}}}{1}
-         {6}{{{\color{numb}6}}}{1}
-         {7}{{{\color{numb}7}}}{1}
-         {8}{{{\color{numb}8}}}{1}
-         {9}{{{\color{numb}9}}}{1}
 }
 
 % Titulinio aprašas
@@ -61,8 +45,7 @@
 \status{4 kurso 2 grupės studentas}
 \author{Deividas Zaleskis}
 \supervisor{Irmantas Radavičius}
-% FIXME - nesamone
-\reviewer{doc. dr. Vardauskas Pavardauskas}
+\reviewer{Vardukas Pavardukas}
 \date{Vilnius \\ \the\year}
 
 \bibliography{bibliografija} 
@@ -108,7 +91,7 @@ Todėl šiuo metu praktikoje plačiausiai naudojami hibridiniai rikiavimo algori
 Pavyzdžiui, C++ programavimo kalbos standartinėje bibliotekoje naudojamas introspektyvaus rikiavimo (angl. introsort) algoritmas įprastai naudoja greitojo rikiavimo algoritmą,
 pasiekus tam tikrą rekursijos gylį yra naudojamas rikiavimas krūva (angl. heapsort) siekiant išvengti $O(n^2)$ laiko sudėtingumo,
 o kai rikiuojamų duomenų dydis yra pakankamai mažas, pasitelkiamas rikiavimas įterpimu, kadangi su mažais duomenų dydžiais jis yra efektyvesnis.
-Apibendrinant, pasitelkiant įvairius rikiavimo algoritmus ir jų unikalias savybes yra įmanoma rikiavimo uždavinį spręsti efektyviau.
+Apibendrinant, pasitelkiant įvairius klasikinius rikiavimo algoritmus ir jų unikalias savybes yra įmanoma rikiavimo uždavinį spręsti efektyviau.
 
 Vienas iš teorine prasme įdomiausių klasikinių algoritmų yra Šelo rikiavimo algoritmas.
 Šelo algoritmą galima laikyti rikiavimo įterpimu optimizacija, kadangi atliekant rikiavimą yra lyginami ne tik gretimi elementai,
@@ -119,31 +102,35 @@ $S_i = (s_i, s_{i+h}, s_{i+2h}, ...)$ ir atskirai išrikiuoti kiekvieną posekį
 Šelo algoritmo efektyvumas priklauso nuo pasirinktos tarpų sekos, todėl bendra teorinė šio algoritmo analizė yra labai sudėtinga.
 Taip pat reikia pastebėti, jog praktikoje efektyviausi yra eksperimentiškai gauti Šelo algoritmo variantai \cite{ciura2001best,tokuda1992}.
 
-Literatūroje galima rasti darbų \cite{roos2002genetic,simpson1999faster}, kuriuose genetiniai algoritmai yra taikomi naujų Šelo algoritmo tarpų sekų radimui.
-Simpson-Yachavaram darbe daugiausia dėmesio skiriama atliekamiems palyginimams, teigiama, jog gautos tarpų sekos atlieka mažiausiai palyginimo operacijų,
-tačiau jos yra lyginamos tik su Sedgewick ir Incerpi-Sedgewick tarpų sekomis.
-Tačiau šiuo metu yra laikoma, jog vidutiniškai atliekamų palyginimų atžvilgiu optimaliausia yra Ciura \cite{ciura2001best} tarpų seka.
-Kursinio darbo metu buvo atliktas Ciura ir Simpson-Yachavaram tarpų sekų tarpusavio palyginimas vidutiniškai atliekamų priskyrimų atžvilgiu, gauti rezultatai tam neprieštaravo.
-Roos et al. darbe daugiausia dėmesio skiriama veikimo laikui, teigiama, jog gauta tarpų seka veikia greičiau nei kitos tirtos tarpų sekos, tačiau
-pateikiamuose rezultatuose ji lyginama tik su Simpson-Yachavaram tarpų seka, tiriami tik keli duomenų dydžiai.
-Kursinio darbo metu buvo atliktas platesnio masto Roos et al. ir kitų tarpų sekų tarpusavio palyginimas vidutinio veikimo laiko atžvilgiu,
-pagal gautus rezultatus Roos et al. sekos veikimo laikas buvo mažiausias, tačiau ji taip pat atliko žymiai daugiau palyginimo ir priskyrimo operacijų nei kitos tirtos tarpų sekos.
-Nepaisant aukščiau aprašytų darbų trūkumų, juose gauti rezultatai rodo, jog genetinių algoritmų taikymas Šelo algoritmo variantų konstravimui
-yra prasmingas ir gali duoti reikšmingų rezultatų.
+Vienas iš eksperimentinių metodų, kuriuos galima taikyti efektyvių Šelo algoritmo variantų radimui, yra genetinis algoritmas.
+Genetinis algoritmas yra metodas paremtas žiniomis apie natūralios atrankos procesą, leidžiantis efektyviai spręsti paieškos ir optimizavimo uždavinius.
+Pagrindinis genetinių algoritmų veikimo principas yra pradinės populiacijos generavimas ir iteratyvus jos atnaujinimas, siekiant, jog
+bendra populiacijos kokybė didėtų kiekvieną iteraciją.
+Populiacijos atnaujinimas yra vykdomas pasitelkiant biologijos įkvėptus atrankos, rekombinacijos ir mutacijos operatorius.
 
-Viena iš pagrindinių problemų konstruojant rikiavimo algoritmą yra pusiausvyros tarp atliekamų operacijų ir veikimo laiko išlaikymas.
-Algoritmas, kuris atlieka labai mažai operacijų, tačiau veikia lėtai, yra įdomus tik teorine prasme ir sunkiai panaudojamas praktikoje.
-Tas pats galioja ir algoritmams, kurie prioritetizuoja tik veikimo laiką, tačiau atlieka labai daug operacijų, kadangi 
-tai apsunkina sudėtingesnių duomenų tipų rikiavimą ir apriboja duoto algoritmo panaudojamumą.
-Todėl prasmingiausia būtų ieškoti naujų Šelo algoritmo variantų pasitelkiant tokį metodą, kuris išlaikytų pusiausvyrą tarp veikimo laiko ir atliekamų operacijų.
-Kursiniame projekte buvo atliktas tyrimas, kuriame pasitelkiant vienkriterinį genetinį algoritmą buvo konstruojami
-Šelo algoritmo variantai.
-Siekiant išlaikyti balansą tarp skirtingų kriterijų, buvo pasitelktas svorinės sumos metodas, tačiau
-tyrimo metu buvo pastebėtas jo ribotas efektyvumas ir svorių teikimo skirtingiems kriterijams nepagrįstumas.
-Atsižvelgiant į kursiniame projekte atlikto tyrimo trūkumus, šiame darbe pasirinkta naudoti daugiakriterinį genetinį algoritmą, kuris
-padėtų sukonstruoti algoritmą išlaikantį pusiausvyrą tarp atliekamų operacijų ir veikimo laiko.
+Literatūroje galima rasti darbų \cite{roos2002genetic,simpson1999faster}, kuriuose genetiniai algoritmai yra taikomi naujų Šelo algoritmo variantų radimui.
+Simpson-Yachavaram darbe daugiausia dėmesio skiriama atliekamiems palyginimams, teigiama, jog gauti variantai atlieka mažiausiai palyginimo operacijų,
+tačiau jie yra lyginami tik su Sedgewick ir Incerpi-Sedgewick variantais.
+Šiuo metu yra laikoma, jog vidutiniškai atliekamų palyginimų atžvilgiu optimaliausias yra Ciura \cite{ciura2001best} variantas.
+Roos et al. darbe daugiausia dėmesio skiriama veikimo laikui, teigiama, jog gautas variantas veikia greičiau nei kiti tirti variantai, tačiau
+pateikiamuose rezultatuose jis lyginamas tik su Simpson-Yachavaram variantu, tiriami tik keli duomenų dydžiai.
+Nepaisant aukščiau aprašytų darbų trūkumų, juose pateikiami rezultatai rodo, jog genetinių algoritmų taikymas Šelo algoritmo variantų konstravimui
+gali būti prasmingas ir duoti reikšmingų rezultatų.
 
-\medskip
+Atliekant kursinį projektą buvo atlikti pradiniai eksperimentai, siekiant genetinių algoritmų pagalba sugeneruoti efektyvius Šelo algoritmo variantus.
+Viena iš problemų, su kuriomis buvo susidurta tame darbe, buvo pusiausvyros tarp atliekamų operacijų ir veikimo laiko išlaikymas, kadangi
+algoritmai, kurie atlieka labai mažai operacijų, tačiau veikia lėtai, nėra ypač naudingi praktiniams taikymams, o  
+algoritmai, kurie veikia greitai, tačiau atlieka labai daug operacijų, rikiuojant sudėtingus duomenų tipus gali reikšmingai sulėtėti.
+Todėl prasmingiausia ieškoti naujų Šelo algoritmo variantų pasitelkiant tokį metodą, kuris išlaikytų pusiausvyrą tarp veikimo laiko ir atliekamų operacijų,
+neteikdamas prioriteto nei vienam iš šių kriterijų.
+Kursiniame projekte variantų generavimui buvo pasitelktas vienkriterinis genetinis algoritmas, veikimo laiko ir atliekamų operacijų pusiausvyros problemai spręsti
+naudotas svorinės sumos metodas.
+Retrospektyviai galima teigti, jog šis sprendimas nebuvo teisingas, kadangi skirtingų kriterijų pusiausvyros išlaikymą
+pasitelkiant šį metodą buvo sudėtinga įgyvendinti, o dėl pasirinktų svorių didžiausią įtaką turėjo atliekami palyginimai.
+Atsižvelgiant į kursinio projekto trūkumus, šiame darbe pasirinkta naudoti daugiakriterinį genetinį algoritmą, kuris
+padėtų sugeneruoti efektyvius Šelo algoritmo variantus bei išlaikytų tinkamą pusiausvyrą tarp atliekamų operacijų ir veikimo laiko.
+
+\pagebreak
 
 Keliama tokia \textbf{hipotezė}:
 
@@ -152,9 +139,10 @@ kurių vidutinis veikimo laikas būtų mažesnis nei šiuo metu žinomų variant
 
 \medskip
 
-Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos \textbf{uždavinius}:
+Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos uždavinius:
 \begin{itemize}
-    \item Išanalizuoti Šelo algoritmą ir jo variantus remiantis literatūra ir eksperimentiškai gautais duomenimis;
+    \item Išanalizuoti Šelo algoritmą ir jo variantus remiantis literatūra;
+    \item Išanalizuoti Šelo algoritmo veikimą atliekant eksperimentus;
     \item Nustatyti kriterijus Šelo algoritmo variantų efektyvumui įvertinti;
     \item Realizuoti genetinį algoritmą Šelo algoritmo variantų generavimui;
     \item Pasitelkiant realizuotą genetinį algoritmą sugeneruoti Šelo algoritmo variantus;
@@ -165,7 +153,11 @@ Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos \textbf{uždavini
 
 Šiame darbe atlikta:
 \begin{itemize}
-    \item kol kas nieko
+    \item Atlikta Šelo algoritmo ir jo variantų literatūros analizė;
+    \item Atlikti eksperimentai, kurie leido nustatyti šakų spėjimo įtaką Šelo algoritmo veikimo laikui su nedideliais duomenų dydžiais;
+    \item Realizuotas genetinis algoritmas, leidžiantis generuoti Šelo algoritmo variantus, kurie išlaiko pusiausvyrą tarp veikimo laiko ir atliekamų operacijų;
+    \item Pasitelkiant realizuotą genetinį algoritmą sugeneruoti Šelo algoritmo variantai, leidžiantys efektyviai rikiuoti įvairius duomenų dydžius;
+    \item Atlikti eksperimentai, kuriais patvirtinta, jog sugeneruoti Šelo algoritmo variantai su pasirinktais duomenų dydžiais veikia greičiau, nei žinomi variantai;
 \end{itemize}
 
 \medskip
@@ -181,14 +173,7 @@ Darbas remiasi tokiomis prielaidomis:
 
 \section{Šelo algoritmas}
 
-Šis skyrius sudarytas iš 3 poskyrių.
-Pirmame poskyryje remiantis literatūra atliekama Šelo algoritmo analizė.
-Antrame poskyryje remiantis literatūra atliekama Šelo algoritmo variantų analizė.
-Trečiame poskyryje atliekama eksperimentinė Šelo algoritmo analizė.
-
-\subsection{Šelo algoritmo literatūros analizė}
-
-% gal reiketu daugiau?
+\subsection{Klasikinis Šelo algoritmas}
 
 Šelo algoritmas yra vienas iš seniausių ir geriausiai žinomų rikiavimo algoritmų.
 Šelo algoritmas yra paremtas palyginimu, adaptyvus, nestabilus ir nenaudojantis papildomos atminties.
@@ -216,6 +201,8 @@ Tai įrodo ir pseudokodas, pateikiamas \ref{alg:shellsort} algoritme.
   \end{algorithmic}
 \end{algorithm}
 
+\subsection{Optimizuotas Šelo algoritmas}
+
 Reikia pastebėti, jog klasikinis Šelo algoritmas nėra optimizuotas ir tam tikrais atvejais atlieka nereikalingas operacijas.
 Jei vykdant vidinį Šelo algoritmo ciklą esamas elementas $S[j]$ nėra mažesnis už elementą $S[j-h]$,
 $while$ ciklas kuriame atliekama esminė rikiavimo logika nebus vykdomas, tad du priskyrimai bus atlikti veltui.
@@ -242,36 +229,24 @@ Toliau darbe naudojama ir analizuojama tik optimizuota Šelo algoritmo implement
     \end{algorithmic}
   \end{algorithm}
 
-\subsection{Šelo algoritmo variantų literatūros analizė}
+\subsection{Šelo algoritmo variantai}
 
 Šelo algoritmas pasižymi variantų gausa.
-Šelo algoritmą iš esmės galima laikyti tarpų iteravimu, su kiekvienu iš jų atliekant tam tikro posekio rikiavimą.
-Tad norint patobulinti Šelo algoritmą galima keisti tiek posekių formavimą (naudojant kitokią tarpų seką),
-tiek posekių rikiavimo logiką.
-Šioje darbo dalyje nagrinėsime tuos variantus, kurie nuo originalios versijos skiriasi taikoma posekių rikiavimo logika.
+Šelo algoritmą iš esmės galima laikyti tarpų sekos iteravimu, su kiekvienu iš tarpų atliekant tam tikro posekio rikiavimą.
+Tad norint patobulinti Šelo algoritmą galima keisti tiek posekių formavimą (naudojant kitokią tarpų seką), tiek posekių rikiavimo logiką.
+Šioje darbo dalyje nagrinėjami tie variantai, kurie nuo originalios versijos skiriasi taikoma posekių rikiavimo logika.
 
 Siekiant supaprastinti skirtingų Šelo algoritmo variantų palyginimą, galima išskirti dvi sudėtines kiekvieno varianto dalis:
 visiems variantams bendrą struktūrą ir konkrečiam variantui būdingą posekių rikiavimo logiką.
-Šelo algoritmo variantams būdingą struktūrą toliau vadinsime Šelo algoritmo karkasu,
-o karkaso viduje atliekamą rikiavimo logiką - perėjimu (angl. pass).
-Šelo algoritmo karkaso apibrėžimas pateikiamas pseudokodu \ref{alg:shell_framework} algoritme.
-Standartinį Šelo algoritmo taikomą perėjimą toliau vadinsime įterpimo perėjimu.
-
-\begin{algorithm}[H]
-  \caption{Šelo algoritmo karkasas}\label{alg:shell_framework}
-  \begin{algorithmic}[1]
-    \ForEach {$h$ \textbf{in} $H$}
-        \State perform pass with gap $h$
-    \EndFor
-  \end{algorithmic}
-\end{algorithm}
+Šelo algoritmo variantams būdinga struktūra, kurioje iteruojant per tarpus rikiuojami posekiai, toliau vadinama Šelo algoritmo karkasu,
+o karkaso viduje atliekama rikiavimo logika - perėjimu (angl. pass).
+Optimizuoto Šelo algoritmo taikomas perėjimas toliau vadinamas įterpimo perėjimu.
 
 Dobosiewicz vienas pirmųjų pastebėjo, jog pasitelkiant
-Šelo algoritmo karkasą ir pakeitus rikiavimo logiką (perėjimą) taip pat galima sukonstruoti pakankamai
-efektyvų algoritmą \cite{dobosiewicz1980efficient}.
-Dobosiewicz taikytas perėjimas yra labai panašus į burbuliuko rikiavimo algoritmo (angl. bubble sort) atliekamas operacijas:
-einama iš kairės į dešinę, palyginant ir (jei reikia) sukeičiant elementus vietomis.
-Todėl šis perėjimas dažniausiai vadinamas burbuliuko perėjimu (angl. bubble pass) \cite{sedgewick1996analysis}.
+Šelo algoritmo karkasą ir pakeitus rikiavimo logiką taip pat galima sukonstruoti pakankamai efektyvų algoritmą \cite{dobosiewicz1980efficient}.
+Dobosiewicz taikytas perėjimas yra labai panašus į burbuliuko rikiavimo algoritmo (angl. bubble sort) atliekamas operacijas -
+einama iš kairės į dešinę, palyginant ir (jei reikia) sukeičiant elementus vietomis, todėl
+šis perėjimas dažniausiai vadinamas burbuliuko perėjimu (angl. bubble pass) \cite{sedgewick1996analysis}.
 Jo pseudokodas pateikiamas \ref{alg:bubble_pass} algoritme.
 
 \begin{algorithm}[H]
@@ -285,13 +260,12 @@ Jo pseudokodas pateikiamas \ref{alg:bubble_pass} algoritme.
   \end{algorithmic}
 \end{algorithm}
 
-Tiesa, burbuliuko metodą galima nežymiai patobulinti, suteikiant jam daugiau simetrijos ir atliekant perėjimą
+Burbuliuko metodą galima nežymiai patobulinti, suteikiant jam daugiau simetrijos ir atliekant perėjimą
 tiek iš kairės į dešinę, tiek iš dešinės į kairę.
 Tokiu būdu dešinėje esantys elementai greičiau pasieks savo galutinę poziciją.
-Šis metodas primena kokteilio purtymą, todėl literatūroje dažnai vadinamas kokteilio rikiavimu (angl. cocktail sort arba shaker sort).
-Šio algoritmo taikomą perėjimą, kurį toliau vadinsime supurtymo perėjimu (angl. shake pass), integravus į Šelo algoritmo karkasą
-taip pat gaunamas gana įdomus algoritmas \cite{incerpi1986practical}.
-Supurtymo perėjimo pseudokodas pateikiamas \ref{alg:shake_pass} algoritme.
+Šis metodas primena kokteilio purtymą, todėl literatūroje dažnai vadinamas kokteilio rikiavimu (angl. cocktail sort).
+Šio algoritmo idėjas integravus į Šelo algoritmo karkasą taip pat gaunamas gana efektyvus algoritmas \cite{incerpi1986practical}.
+Jo taikomas perėjimas toliau vadinamas supurtymo perėjimu (angl. shake pass), o šio perėjimo pseudokodas yra pateikiamas \ref{alg:shake_pass} algoritme.
 
 \begin{algorithm}[H]
   \caption{Supurtymo perėjimas}\label{alg:shake_pass}
@@ -313,9 +287,8 @@ Supurtymo perėjimo pseudokodas pateikiamas \ref{alg:shake_pass} algoritme.
 Dar viena burbuliuko algoritmo modifikacija yra mūrijimo rikiavimas (angl. brick sort) \cite{habermann1972parallel}.
 Šio algoritmo perėjimo idėja - išrikiuoti visas nelyginių/lyginių indeksų gretimų elementų poras,
 o tada atlikti tą patį visoms lyginių/nelyginių indeksų gretimų elementų poroms.
-Šią idėją nesunkiai galima pritaikyti ir Šelo algoritmo karkasui, kintamuoju pakeitus originaliame algoritme taikytą tarpą $1$ \cite{lemke1994performance}.
-Šį perėjimą toliau vadinsime mūrijimo perėjimu (angl. brick pass).
-Jo pseudokodas yra pateikiamas \ref{alg:brick_pass} algoritme.
+Šią idėją nesunkiai galima pritaikyti ir Šelo algoritmo karkaso viduje, kintamuoju pakeitus originaliame algoritme taikytą tarpą $1$ \cite{lemke1994performance}.
+Šis perėjimas toliau vadinamas mūrijimo perėjimu (angl. brick pass), o jo pseudokodas yra pateikiamas \ref{alg:brick_pass} algoritme.
 
 \begin{algorithm}[H]
   \caption{Mūrijimo perėjimas}\label{alg:brick_pass}
@@ -334,39 +307,36 @@ Jo pseudokodas yra pateikiamas \ref{alg:brick_pass} algoritme.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Eksperimentinė Šelo algoritmo analizė}
+\section{Eksperimentinė Šelo algoritmo analizė}
 
 Norint paruošti greitai veikiantį Šelo algoritmo variantą arba taisykles tokiam algoritmui gauti, vertinga žinoti, kodėl vieni variantai veikia greičiau nei kiti.
-Pradėkime nuo to, jog kursiniame darbe ir kursiniame projekte buvo pastebėta, jog Šelo algoritmo variantų atliekamų operacijų skaičius ne visada koreliuoja su veikimo laiku.
+Kursiniame projekte buvo pastebėta, jog Šelo algoritmo variantų atliekamų operacijų skaičius ne visada koreliuoja su veikimo laiku.
 Dėl šiuolaikinių kompiuterių veikimo subtilybių algoritmai, kurie atlieka daugiau palyginimo ir priskyrimo operacijų,
 kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai.
-Atliekant kursinį darbą ir kursinį projektą buvo pastebėta būtent tai - 
-tyrimuose geriausius veikimo laiko rezultatus parodę Šelo algoritmo variantai atliko ženkliai daugiau operacijų, nei atliekamų operacijų operacijų atžvilgiu optimalūs variantai.
 Taigi, keliama pradinė hipotezė, jog vien operacijų skaičius neleidžia tinkamai įvertinti kaip Šelo algoritmo variantas veiks praktikoje.
 
-Pirmiausia pastebėsime, jog šiuolaikinių kompiuterių architektūros yra labai sudėtingos, kas dažnu atveju neleidžia iš anksto nustatyti praktinio algoritmo efektyvumo.
+Pirmiausia reikia pastebėti, jog šiuolaikinių kompiuterių architektūros yra labai sudėtingos, kas dažnu atveju neleidžia iš anksto nustatyti praktinio algoritmo efektyvumo.
 Išankstinę teorinę analizę apsunkina įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
 instrukcijų vykdymas ne iš eilės (siekiant pilnai išnaudoti procesoriaus ciklus),
 duomenų saugojimas kelių lygių talpykloje (siekiant panaikinti atminties delsą) ir
-šakų nuspėjimas (siekiant išlygiagretinti instrukcijų vykdymą).
+šakų nuspėjimas (siekiant tęsti intrukcijų vykdymą nelaukiant, kol sąlygos rezultatas bus žinomas).
 Jei duotas algoritmas netinkamai išnaudoja šias mašinos galimybes, praktinis efektyvumas gali stipriai nukentėti.
 Todėl bene geriausias būdas nustatyti tikėtiną praktinį algoritmo efektyvumą yra atlikti eksperimentus ir stebėti mašinos veikimą.
 Žinoma, tokiu būdu gauti rezultatai priklauso nuo duotos mašinos techinių parametrų ir įvairių kitų veiksnių, tačiau didžioji dalis
-šiuolaikinių kompiuterių pasitelkia tas pačias strategijas, tad pvz. lyginant kelių algoritmų veikimą
-santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis net ir atliekant matavimus skirtinguose kompiuteriuose.  
+šiuolaikinių kompiuterių pasitelkia tas pačias strategijas, tad atliekant kelių algoritmų veikimo palyginimą skirtinguose kompiuteriuose,
+santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis.  
 
-Reikia pastebėti, jog šiuolaikiniai kompiuteriai, nors ir sudėtingi, dažnai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
+Šiuolaikiniai kompiuteriai, nors ir sudėtingi, dažnai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
 Tam dažniausiai yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
-Šiuos rodiklius įprastai yra lengviau analizuoti pasitelkiant tam skirtus įrankius.
-Šiame darbe buvo pasirinkta praktinei analizei naudoti \verb|perf| profiliuotoją, kadangi jis yra plačiai naudojamas, nemokamas ir jį naudoti nesudėtinga.
+Kadangi rankiniu būdu tikrinti registrų reikšmes yra gana sudėtinga, buvo pasirinkta esminių rodiklių stebėjimui naudoti \verb|perf| profiliuotoją.
 Kadangi \verb|perf| yra prieinamas tik Linux OS vartotojamas, buvo pasinaudota WSL funkcionalumu, kas leido jį naudoti kompiuteryje su Windows 11 OS.
-Pastebėsime, jog naudojant WSL prieinama Linux OS veikia virtualioje mašinoje, tad tai gali paveikti gautus rezultatus. 
 
 Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi ir 32 GB operatyviosios atminties.
 Kadangi praktinis efektyvumas stipriai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
 Tiek naudojant \verb|perf|, tiek matuojant veikimo laiką ir atliekamas operacijas eksperimentai buvo vykdomi 5000000 kartų rikiuojant
-atsitiktinai išmaišytus sveikus 32 bitų skaičius priklausančius intervalui $[0, size)$.
+atsitiktinius sveikaskaitinius duomenis.
 Siekiant išvengti neatitikimų, abi eksperimentų rūšys buvo vykdomos WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
+Reikia pastebėti, jog WSL veikia virtualioje mašinoje, tad tai gali paveikti gautus rezultatus.
 Kadangi \verb|perf| stebi visą programos veikimo laikotarpį, atliekant matavimus pirmiausia buvo išmatuojama kiek operacijų, ciklų ir pan. reikia vien duomenų generavimui,
 vėliau juos atimant iš rodiklių, gautų atliekant rikiavimą.
 
@@ -376,7 +346,8 @@ Tai taip pat palengvina analizę, kadangi ją atlikti su nedideliais duomenų dy
 
 Pirmiausia buvo nutarta pamatuoti kelių skirtingų Šelo algoritmo variantų veikimo laiką ir atliekamas operacijas, siekiant nustatyti kaip tarpų sekos įtakoja šiuos kriterijus.
 Tuo tikslu buvo pasirinkti du Šelo algoritmo variantai, kur pirmasis naudoja tarpų seką $\{1\}$ kas prilygsta rikiavimui įterpimu, o antrasis naudoja sutrumpintą Ciura tarpų seką $\{57,23,10,4,1\}$.
-Pagal \ref{experiment_results_64} lentelėje matomus rezultatus matome, jog Šelo algoritmas atliko žymiai mažiau operacijų su Ciura tarpų seka, tačiau taip pat veikė reikšmingai lėčiau.
+Pagal \ref{experiment_results_64} lentelėje matomus rezultatus galima pastebėti, jog
+Šelo algoritmas atliko žymiai mažiau operacijų su Ciura tarpų seka, tačiau taip pat veikė reikšmingai lėčiau.
 
 \begin{table}[H]
   \caption{Eksperimentų rezultatai matuojant veikimo laiką ir operacijas, kai $N = 64$}
@@ -391,7 +362,7 @@ Pagal \ref{experiment_results_64} lentelėje matomus rezultatus matome, jog Šel
 
 Norint geriau suprasti gautus rezultatus, galima pasinaudoti \verb|perf| teikiamu funkcionalumu.
 Naudojant \verb|perf| gauti rezultatai pateikiami \ref{perf_results_64} lentelėje.
-Pastebėsime, jog kai kurie šiuo atveju neesminiai kriterijai nėra pateikiami, kadangi juos geriau atspindi kombinuoti kriterijai
+Kai kurie šiuo atveju neesminiai kriterijai nėra pateikiami, kadangi juos geriau atspindi kombinuoti kriterijai
 (pvz. neverta pateikti viso atliktų šakų ir neatspėtų šakų, kai galime pateikti neatspėtų šakų santykį).
 Pastebėsime, jog instrukcijos įvykdomos per ciklą iš dalies priklauso nuo procesoriaus gebėjimo atspėti šaką, kadangi jos neatspėjus tenka atstatyti prieš spėjimą buvusią būseną,
 kas įprastai užtrunka nuo 10 iki 30 ciklų (priklauso nuo procesoriaus).
@@ -420,15 +391,15 @@ o kita šaka priklauso nuo elementų palyginimo rezultato (sunkiausiai nuspėjam
 Reikia paminėti, jog rikiavimo įterpimu vidinis ciklas įprastai yra vykdomas keletą iteracijų (norint perstumti elementą per $n$ pozicijų, reikia atlikti tiek pat iteracijų)
 ir todėl elementų palyginimo šaka yra santykinai lengvai nuspėjama.
 Nors Šelo algoritmo šakų nuspėjamumas priklauso nuo naudojamos tarpų sekos, jis įprastai būna reikšmingai prastesnis nei rikiavimo įterpimu \cite{biggar2005sorting}.
-Biggar et al. pastebėjo, jog su Gonnet tarpų seka Šelo algoritme per vieną iteraciją kiekvienas elementas yra pastumiamas apytiksliai per $0.9744 * h$ \cite{biggar2008experimental}.
+Biggar et al. pastebi, jog su Gonnet tarpų seka Šelo algoritme per vieną iteraciją kiekvienas elementas yra pastumiamas apytiksliai per $0.9744 * h$ \cite{biggar2008experimental}.
 Tai reiškia, kad vidinis ciklas, kuriame vykdomas rikiavimas įterpimu su tam tikru tarpu, retai kada atlieka daugiau nei vieną iteraciją, kas lemia, jog
 vidiniame cikle vykdomo elementų palyginimo šaką yra sudėtinga nuspėti.
 
 Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, buvo pasirinkta ištirti tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{16, 1\}$, $\{32, 1\}$, $\{48, 1\}$.
 Atliekant eksperimentus gauti rezultatai pateikiami \ref{perf_results2_64} lentelėje.
 Remiantis gautais rezultatais, geriausią šakų nuspėjamumą turi tarpų seka $\{48, 1\}$.
-Taip pat galime pastebėti, kaip mažėjant neatspėtų šakų skaičiui auga instrukcijų per ciklą skaičius bei didėja atliekamų operacijų skaičius.
-Ir nors su tarpų seka $\{48, 1\}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{32, 1\}$ veikimo laikas yra geresnis.
+Taip pat galima pastebėti, kaip mažėjant neatspėtų šakų skaičiui auga instrukcijų per ciklą skaičius bei didėja atliekamų operacijų skaičius.
+Nors su tarpų seka $\{48, 1\}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{32, 1\}$ veikimo laikas yra geresnis.
 Tad vien šakų nuspėjimo tikslumas ir instrukcijų įvykdomų per ciklą kiekis pilnai nenusako veikimo spartos. 
 
 \begin{table}[H]
