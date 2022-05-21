@@ -313,41 +313,34 @@ Norint paruošti greitai veikiantį Šelo algoritmo variantą arba taisykles tok
 Kursiniame projekte buvo pastebėta, jog Šelo algoritmo variantų atliekamų operacijų skaičius ne visada koreliuoja su veikimo laiku.
 Dėl šiuolaikinių kompiuterių veikimo subtilybių algoritmai, kurie atlieka daugiau palyginimo ir priskyrimo operacijų,
 kai kuriais atvejais gali veikti greičiau, nei operacijų atžvilgiu optimalesni algoritmai.
-Taigi, keliama pradinė hipotezė, jog vien operacijų skaičius neleidžia tinkamai įvertinti kaip Šelo algoritmo variantas veiks praktikoje.
+Šiame skyriuje siekiama nustatyti, kokie veiksniai labiausiai įtakoja Šelo algoritmo veikimo laiką.
 
-Pirmiausia reikia pastebėti, jog šiuolaikinių kompiuterių architektūros yra labai sudėtingos, kas dažnu atveju neleidžia iš anksto nustatyti praktinio algoritmo efektyvumo.
-Išankstinę teorinę analizę apsunkina įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
+Šiuolaikinių kompiuterių architektūros yra labai sudėtingos ir tai apsunkina teorines veikimo laiko prognozes.
+Tai lemia įvairios šiuolaikinių kompiuterių architektūrose pasitelkiamos strategijos:
 instrukcijų vykdymas ne iš eilės (siekiant pilnai išnaudoti procesoriaus ciklus),
 duomenų saugojimas kelių lygių talpykloje (siekiant panaikinti atminties delsą) ir
 šakų nuspėjimas (siekiant tęsti intrukcijų vykdymą nelaukiant, kol sąlygos rezultatas bus žinomas).
-Jei duotas algoritmas netinkamai išnaudoja šias mašinos galimybes, praktinis efektyvumas gali stipriai nukentėti.
+Jei duotas algoritmas netinkamai išnaudoja šias mašinos galimybes, praktinis jo efektyvumas gali stipriai nukentėti.
 Todėl bene geriausias būdas nustatyti tikėtiną praktinį algoritmo efektyvumą yra atlikti eksperimentus ir stebėti mašinos veikimą.
 Žinoma, tokiu būdu gauti rezultatai priklauso nuo duotos mašinos techinių parametrų ir įvairių kitų veiksnių, tačiau didžioji dalis
 šiuolaikinių kompiuterių pasitelkia tas pačias strategijas, tad atliekant kelių algoritmų veikimo palyginimą skirtinguose kompiuteriuose,
 santykiniai rezultatų skirtumai neturėtų reikšmingai skirtis.  
 
-Šiuolaikiniai kompiuteriai, nors ir sudėtingi, dažnai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
-Tam dažniausiai yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
-Kadangi rankiniu būdu tikrinti registrų reikšmes yra gana sudėtinga, buvo pasirinkta esminių rodiklių stebėjimui naudoti \verb|perf| profiliuotoją.
-Kadangi \verb|perf| yra prieinamas tik Linux OS vartotojamas, buvo pasinaudota WSL funkcionalumu, kas leido jį naudoti kompiuteryje su Windows 11 OS.
-
-Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi ir 32 GB operatyviosios atminties.
-Kadangi praktinis efektyvumas stipriai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
-Tiek naudojant \verb|perf|, tiek matuojant veikimo laiką ir atliekamas operacijas eksperimentai buvo vykdomi 5000000 kartų rikiuojant
-atsitiktinius sveikaskaitinius duomenis.
-Siekiant išvengti neatitikimų, abi eksperimentų rūšys buvo vykdomos WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
-Reikia pastebėti, jog WSL veikia virtualioje mašinoje, tad tai gali paveikti gautus rezultatus.
-Kadangi \verb|perf| stebi visą programos veikimo laikotarpį, atliekant matavimus pirmiausia buvo išmatuojama kiek operacijų, ciklų ir pan. reikia vien duomenų generavimui,
-vėliau juos atimant iš rodiklių, gautų atliekant rikiavimą.
-
+Pirmiausia buvo nutarta pamatuoti kelių skirtingų Šelo algoritmo variantų veikimo laiką ir atliekamas operacijas, siekiant nustatyti kaip tarpų sekos įtakoja šiuos kriterijus.
 Vykdant eksperimentus buvo nuspręsta tirti Šelo algoritmo veikimą rikiuojant 64 elementus.
 Tai pakankamai svarbus scenarijus, kadangi jis tokiu principu dažnai pasitelkiamas hibridiniuose rikiavimo algoritmuose \cite{golangsort,bzip2sort}.
-Tai taip pat palengvina analizę, kadangi ją atlikti su nedideliais duomenų dydžiais yra paprasčiau.
+Šiam eksperimentų etapui buvo pasirinkti du Šelo algoritmo variantai, kur pirmasis naudoja tarpų seką $\{1\}$ kas prilygsta rikiavimui įterpimu, o antrasis naudoja sutrumpintą Ciura tarpų seką $\{57,23,10,4,1\}$.
 
-Pirmiausia buvo nutarta pamatuoti kelių skirtingų Šelo algoritmo variantų veikimo laiką ir atliekamas operacijas, siekiant nustatyti kaip tarpų sekos įtakoja šiuos kriterijus.
-Tuo tikslu buvo pasirinkti du Šelo algoritmo variantai, kur pirmasis naudoja tarpų seką $\{1\}$ kas prilygsta rikiavimui įterpimu, o antrasis naudoja sutrumpintą Ciura tarpų seką $\{57,23,10,4,1\}$.
+Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi, 32 GB operatyviosios atminties ir Windows 11 OS.
+Tyrimui reikalinga programinė įranga yra prieinama tik Linux OS vartotojams, tad eksperimentai buvo vykdomi WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
+Reikia pastebėti, jog WSL veikia virtualioje mašinoje, tad tai galėjo paveikti gautus rezultatus.
+Kadangi praktinis efektyvumas reikšmingai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
+Visi eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinius sveikaskaitinius duomenis.
+
 Pagal \ref{experiment_results_64} lentelėje matomus rezultatus galima pastebėti, jog
-Šelo algoritmas atliko žymiai mažiau operacijų su Ciura tarpų seka, tačiau taip pat veikė reikšmingai lėčiau.
+Šelo algoritmas su Ciura tarpų seka atliko žymiai mažiau operacijų, tačiau taip pat veikė reikšmingai lėčiau nei variantas su tarpų seka  $\{1\}$.
+Šiuo atveju rezultatai yra visiškai neintuityvūs, tačiau aiškiai pastebima, jog atliekamos operacijos ir veikimo laikas nekoreliuoja.
+Norint juos paaiškinti, reikia surinkti daugiau duomenų. 
 
 \begin{table}[H]
   \caption{Eksperimentų rezultatai matuojant veikimo laiką ir operacijas, kai $N = 64$}
@@ -360,14 +353,23 @@ Pagal \ref{experiment_results_64} lentelėje matomus rezultatus galima pastebėt
   \end{tabular}
 \end{table}
 
-Norint geriau suprasti gautus rezultatus, galima pasinaudoti \verb|perf| teikiamu funkcionalumu.
-Naudojant \verb|perf| gauti rezultatai pateikiami \ref{perf_results_64} lentelėje.
+
+Šiuolaikiniai kompiuteriai dažniausiai suteikia galimybes stebėti rodiklius, kurie labiausiai įtakoja veikimo laiką.
+Tam yra pasitelkiami atskiri registrai, kuriuose saugomas pvz. neatspėtų šakų skaičius.
+Kadangi rankiniu būdu tikrinti registrų reikšmes yra gana sudėtinga, buvo pasirinkta esminių rodiklių stebėjimui naudoti \verb|perf| profiliuotoją.
+Kadangi \verb|perf| stebi visą programos veikimo laikotarpį, atliekant matavimus pirmiausia buvo išmatuojama kiek operacijų, ciklų ir pan. reikia vien duomenų generavimui,
+vėliau juos atimant iš rodiklių, gautų atliekant rikiavimą.
+
+Naudojant \verb|perf| surinkti duomenys pateikiami \ref{perf_results_64} lentelėje.
 Kai kurie šiuo atveju neesminiai kriterijai nėra pateikiami, kadangi juos geriau atspindi kombinuoti kriterijai
-(pvz. neverta pateikti viso atliktų šakų ir neatspėtų šakų, kai galime pateikti neatspėtų šakų santykį).
-Pastebėsime, jog instrukcijos įvykdomos per ciklą iš dalies priklauso nuo procesoriaus gebėjimo atspėti šaką, kadangi jos neatspėjus tenka atstatyti prieš spėjimą buvusią būseną,
-kas įprastai užtrunka nuo 10 iki 30 ciklų (priklauso nuo procesoriaus).
+(pvz. neverta pateikti viso atliktų šakų ir neatspėtų šakų, kai galima pateikti neatspėtų šakų santykį).
+Reikia pastebėti, jog instrukcijos įvykdomos per ciklą iš dalies priklauso nuo procesoriaus gebėjimo atspėti šaką, kadangi jos neatspėjus tenka atstatyti prieš spėjimą buvusią būseną,
+kas priklausomai nuo procesoriaus užtrunka nuo 10 iki 30 ciklų.
+Taip pat skirtingų variantų atliekamos instrukcijos nėra vienodai prasmingos - su tarpu 1 norint perstumti elementą per 3 pozicijas reikės atlikti daugiau instrukcijų,
+nei tą patį atliekant su tarpu 3, nors galutinis rezultatas bus toks pats.
+Tad vien instrukcijos per ciklą neduoda pilno vaizdo apie rikiavimo spartą ir į tai būtina atsižvelgti.
 Analizuojant gautus rezultatus galima pastebėti, kad variantas su tarpų seka $\{1\}$ turi apytiksliai 6 kartus mažesnį neatspėtų šakų santykį bei įvykdo apytiksliai 3 kartus daugiau instrukcijų per ciklą.
-Todėl, nors jis ir nėra efektyvus teorine prasme (atlieka daug palyginimų ir priskyrimų), praktikoje jis veikia reikšmingai greičiau, kadangi geriau išnaudoja procesoriaus galimybes.
+Todėl, nors jis ir nėra efektyvus teorine prasme (atlieka daug palyginimų ir priskyrimų), praktikoje jis veikia reikšmingai greičiau, kadangi geriau išnaudoja mašinos galimybes.
 Tiesa, rikiuojant sudėtingus duomenų tipus variantas su Ciura tarpų seka turėtų gauti palankesnius veikimo laiko rezultatus, kadangi atlieka mažiau operacijų.
 
 \begin{table}[H]
@@ -382,24 +384,30 @@ Tiesa, rikiuojant sudėtingus duomenų tipus variantas su Ciura tarpų seka tur�
 \end{table}
 
 
-Pirmiausia reikėtų išnagrinėti, nuo ko priklauso šakų atspėjamumas naudojant šias tarpų sekas.
-Pastebėsime, jog rikiavimas įterpimu yra vienas palankiausių $O(n^2)$ algoritmų šakų nuspėjimui
+Pirmiausia reikėtų nustatyti, nuo ko priklauso šakų atspėjamumas naudojant šias tarpų sekas.
+Reikia pastebėti, jog rikiavimas įterpimu yra vienas palankiausių $O(n^2)$ algoritmų šakų nuspėjimui
 ir rikiuojant neatspėjama $O(n)$ šakų \cite{biggar2005sorting}.
 Tai lemia kelios priežastys: išorinio ciklo sąlyga yra lengvai nuspėjama, kadangi ji bus patenkinta tik perėjus visus elementus;
 vidiniame cikle pirmiausia tikrinama, ar nepasiekta rikiuojamų duomenų pradžia (tai teisinga tik blogiausiu atveju),
 o kita šaka priklauso nuo elementų palyginimo rezultato (sunkiausiai nuspėjama, kadangi priklauso nuo duomenų).
 Reikia paminėti, jog rikiavimo įterpimu vidinis ciklas įprastai yra vykdomas keletą iteracijų (norint perstumti elementą per $n$ pozicijų, reikia atlikti tiek pat iteracijų)
-ir todėl elementų palyginimo šaka yra santykinai lengvai nuspėjama.
-Nors Šelo algoritmo šakų nuspėjamumas priklauso nuo naudojamos tarpų sekos, jis įprastai būna reikšmingai prastesnis nei rikiavimo įterpimu \cite{biggar2005sorting}.
+ir todėl elementų palyginimo šaka yra pakankamai lengvai nuspėjama.
+Šelo algoritmo šakų nuspėjamumas priklauso nuo naudojamos tarpų sekos, tačiau jis įprastai būna reikšmingai prastesnis nei rikiavimo įterpimu \cite{biggar2005sorting}.
 Biggar et al. pastebi, jog su Gonnet tarpų seka Šelo algoritme per vieną iteraciją kiekvienas elementas yra pastumiamas apytiksliai per $0.9744 * h$ \cite{biggar2008experimental}.
-Tai reiškia, kad vidinis ciklas, kuriame vykdomas rikiavimas įterpimu su tam tikru tarpu, retai kada atlieka daugiau nei vieną iteraciją, kas lemia, jog
+Tai reiškia, kad vidinis ciklas, kuriame vykdomas rikiavimas įterpimu su tam tikru tarpu, vidutiniškai atlieka mažiau nei vieną iteraciją, kas lemia, jog
 vidiniame cikle vykdomo elementų palyginimo šaką yra sudėtinga nuspėti.
 
-Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, buvo pasirinkta ištirti tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{16, 1\}$, $\{32, 1\}$, $\{48, 1\}$.
+Taip pat verta pastebėti, jog kiekvienas papildomas tarpas padidina neatspėtų šakų santykį.
+Kaip pastebima \cite{biggar2008experimental}, Šelo algoritmo neatspėtų šakų skaičius priklauso nuo atliekamų perėjimų skaičiaus.
+To paaiškinimas yra gana paprastas - rikiavimas įterpimu sukelia $O(n)$ neatspėtų šakų,
+tad vienas perėjimas, kuriame atliekamas posekio rikiavimas įterpimu taip pat sukels $O(n)$ neatspėtų šakų \cite{biggar2008experimental}.
+Tad $p$ perėjimų atliekantis Šelo algoritmas viso sukels $O(np)$ neatspėtų šakų.
+
+Kadangi prieš tai nagrinėtos tarpų sekos pastebimai skiriasi, buvo pasirinkta ištirti tarpų sekas, kurios yra gana paprastos ir tokio paties ilgio: $\{1, 16 \}$, $\{1, 32 \}$, $\{1, 48 \}$.
 Atliekant eksperimentus gauti rezultatai pateikiami \ref{perf_results2_64} lentelėje.
-Remiantis gautais rezultatais, geriausią šakų nuspėjamumą turi tarpų seka $\{48, 1\}$.
+Remiantis gautais rezultatais, geriausią šakų nuspėjamumą turi tarpų seka $\{1, 48 \}$.
 Taip pat galima pastebėti, kaip mažėjant neatspėtų šakų skaičiui auga instrukcijų per ciklą skaičius bei didėja atliekamų operacijų skaičius.
-Nors su tarpų seka $\{48, 1\}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{32, 1\}$ veikimo laikas yra geresnis.
+Nors su tarpų seka $\{1, 48 \}$ šakos nuspėjamos tiksliau bei atliekama daugiau instrukcijų per ciklą, su tarpų seka $\{1, 32 \}$ veikimo laikas yra geresnis.
 Tad vien šakų nuspėjimo tikslumas ir instrukcijų įvykdomų per ciklą kiekis pilnai nenusako veikimo spartos. 
 
 \begin{table}[H]
@@ -408,43 +416,33 @@ Tad vien šakų nuspėjimo tikslumas ir instrukcijų įvykdomų per ciklą kieki
   \centering
   \begin{tabular}{@{}lllllll@{}}
   Tarpų seka             & instrukcijos/ciklai     & neatspėtos šakos  & palyginimai       & priskyrimai      & laikas (ciklais) \\ \midrule
-  $\{16, 1\}$            & 1.29                    & 9.94\%            & 578               & 656              & 2822                  \\
-  $\{32, 1\}$            & 1.74                    & 6.19\%            & 753               & 823              & 2579                  \\
-  $\{48, 1\}$            & 1.93                    & 5.20\%            & 825               & 888              & 2618                  \\ \bottomrule
+  $\{1, 16 \}$            & 1.29                    & 9.94\%            & 578               & 656              & 2822                  \\
+  $\{1, 32 \}$            & 1.74                    & 6.19\%            & 753               & 823              & 2579                  \\
+  $\{1, 48 \}$            & 1.93                    & 5.20\%            & 825               & 888              & 2618                  \\ \bottomrule
   \end{tabular}
 \end{table}
 
-Dabar panagrinėsime, kodėl buvo gauti būtent tokie rezultatai.
-Tarpų seka $\{48, 1\}$ pirmame perėjime atlieka mažiau instrukcijų nei kitos tarpų sekos, kadangi jis vykdomas pradedant nuo indekso $48$,
-tad atliekama viso 16 iteracijų, o kiekvienoje iteracijoje rikiuojamo posekio ilgis visada bus 2 (jei esame ties paskutiniu elementu, rikiuojamo posekio indeksai bus $\{63, 15\}$).
-Tarpų seka $\{32, 1\}$ pirmame perėjime atliks 32 iteracijas ir kiekvieno rikiuojamo posekio ilgis taip pat bus 2.
-Tarpų seka $\{16, 1\}$ pirmame perėjime atliks 48 iteracijas, tačiau rikiuojamo posekio ilgis didės kas 16 iteracijų (pradėjus rikiavimą
-rikiuojamo posekio indeksai bus $\{16, 0\}$, o paskutinėje iteracijoje rikiuojamo posekio indeksai bus $\{63, 47, 31, 15\}$).
-Remiantis tuo, įmanoma apskaičiuoti maksimaliai pirmame perėjime atliekamų palyginimų skaičių kiekvienai tarpų sekai:
-$\{48, 1\}$ - $16 * 1 = 16$, $\{32, 1\}$ - $32 * 1 = 32$, $\{16, 1\}$ - $16 * 1 + 16 * 2 + 16 * 3 = 96$.
-Tad tarpų seka $\{16, 1\}$ pirmame perėjime gali atlikti 6 kartus daugiau palyginimų, nei tarpų seka $\{48, 1\}$.
-
-Tiesa, sunku pasakyti, kaip priklauso elementų palyginimo šakos nuspėjamumas priklausomai nuo tarpo dydžio.
-Atlikus preliminarius matavimus rikiuojant vien su tarpais 16, 32 ir 48 nebuvo pastebėta reikšmingų skirtumų (visais atvejais neatspėtų šakų buvo apie 17\%).
-Tad labiausiai tikėtina, jog tarpų sekų $\{48, 1\}$ ir $\{32, 1\}$ šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
-atlieka mažiau instrukcijų, kas lemia, jog daugiau rikiavimo (tuo pačiu ir šakų) atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
-
-Taip pat verta pastebėti, jog kiekvienas papildomas tarpas padidina neatspėtų šakų santykį.
-Kaip pastebima \cite{biggar2008experimental}, Šelo algoritmo neatspėtų šakų skaičius priklauso nuo atliekamų perėjimų skaičiaus.
-To paaiškinimas yra gana paprastas - rikiavimas įterpimu sukelia $O(n)$ neatspėtų šakų,
-tad vienas perėjimas, kuriame atliekamas posekio rikiavimas įterpimu taip pat sukels $O(n)$ neatspėtų šakų \cite{biggar2008experimental}.
-Tad $p$ perėjimų atliekantis Šelo algoritmas viso sukels $O(np)$ neatspėtų šakų.
-
-Vertinga pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima netikrinti,
-ar vidinio ciklo indeksas nėra mažesnis už tarpą, kadangi maksimalus iteracijų skaičius vidiniame cikle visada bus 1.
-Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje.
-Įterpimo perėjimo pakeitimas burbuliuko perėjimu tokiais atvejais gali būti prasmingas,
-kadangi jis neturi vidinio ciklo, tad jo taikymas leistų atsisakyti vienos šakos ir kelių instrukcijų per iteraciją.  
-
-Vertinant gautus rezultatus, taip pat pastebima, jog variantai su tarpų sekomis $\{48, 1\}$, $\{32, 1\}$, $\{16, 1\}$ lenkia variantą
+Vertinant gautus rezultatus, taip pat pastebima, jog variantai su tarpų sekomis $\{1, 48 \}$, $\{1, 32 \}$, $\{1, 16 \}$ lenkia variantą
 su Ciura tarpų seka vertinant veikimo laiką ir beveik prilygsta variantui su tarpų seka $\{1\}$.
 Žinoma, tam pasiekti jie atlieka daugiau operacijų, nei variantas su Ciura tarpų seka, tačiau taip pat atlieka reikšmingai mažiau operacijų nei variantas su tarpų seka $\{1\}$.
-Tad šiuo atveju pasiekiamas tam tikras balansas tarp atliekamų operacijų ir veikimo laiko, ko ir yra siekiama šiame darbe.
+Tad šiuo atveju pasiekiamas tam tikras balansas tarp atliekamų operacijų ir veikimo laiko.
+
+Nagrinėjamu atveju galima bendrai įvertinti pasirinktų tarpų sekų veikimą.
+Pavyzdžiui, tarpų seka $\{ 1, 48 \}$, pirmame perėjime atliks 16 iteracijų, kadangi vykdymas pradedamas nuo indekso $48$.
+Panašia logika, tarpų seka $\{1, 32 \}$ pirmame perėjime atliks 32 iteracijas.
+Šios tarpų sekos vidinį ciklą visada vykdys maksimaliai vieną kartą, kadangi pirmo perėjimo tarpai yra pakankamai dideli ir rikiuojamo posekio ilgis visada bus 2.
+Tarpų seka $\{1, 16 \}$ pirmame perėjime atliks 48 iteracijas, tačiau rikiuojamo posekio ilgis didės kas 16 iteracijų.
+Remiantis tuo, įmanoma apskaičiuoti maksimaliai pirmame perėjime atliekamų palyginimų skaičių kiekvienai tarpų sekai:
+$\{1, 48 \}$ - $16 * 1 = 16$, $\{1, 32 \}$ - $32 * 1 = 32$, $\{1, 16 \}$ - $16 * 1 + 16 * 2 + 16 * 3 = 96$.
+Tad tarpų seka $\{1, 16 \}$ pirmame perėjime gali atlikti 6 kartus daugiau elementų palyginimų, nei tarpų seka $\{1, 48 \}$.
+
+Tiesa, iš pateiktų rezultatų sunku nuspręsti, kaip priklauso elementų palyginimo šakos nuspėjamumas priklausomai nuo tarpo dydžio.
+Atlikus preliminarius matavimus rikiuojant vien su tarpais 16, 32 ir 48 nebuvo pastebėta reikšmingų skirtumų (visais atvejais neatspėtų šakų buvo apie 17\%).
+Tad galima teigti, jog tarpų sekų $\{1, 48 \}$ ir $\{1, 32 \}$ šakų nuspėjamumo rezultatai yra geresni, nes jos pirmame perėjime
+mažiau aprikiuoja duomenis ir taip atlieka mažiau elementų palyginimo šakų, kas lemia, jog daugiau rikiavimo atliekama su tarpu 1, kur nuspėjamumas yra geresnis.
+Bendrai vertinant šakų nuspėjamumą Šelo algoritmu rikiuojant nedidelius duomenų dydžius,
+galima teigti, jog bendras šakų nuspėjamumas priklauso ne tik nuo naudojamų perėjimų kiekio, tačiau ir nuo
+pasirinktų tarpų dydžio, kadangi nuo jo priklauso, kiek elementų palyginimų (tuo pačiu ir šakų) bus atlikta su tam tikru tarpu.
 
 \section{Šelo algoritmo variantų efektyvumo kriterijai}
 
@@ -453,14 +451,12 @@ Tai yra pakankamai geri kriterijai norint praktiškai įvertinti duoto algoritmo
 kadangi teorinis laiko sudėtingumas nurodo tik algoritmo sudėtingumo funkcijos augimo greitį ir
 neatsižvelgia į konstantas, kurios praktikoje taip pat įtakoja veikimo greitį \cite{biggar2005sorting}.
 
-Pastebėsime, jog tiksliam efektyvumo įvertinimui tinkama matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus.
+Tiksliam efektyvumo įvertinimui tinkama matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus.
 To priežastis yra gana paprasta - rikiuojant duomenis, kurių palyginimas yra sudėtingas (pvz. simbolių eilutes),
 algoritmo veikimo laiką stipriau įtakoja jo atliekamų palyginimų skaičiaus.
 Analogiškas efektas pastebimas ir rikiuojant duomenis, kurių priskyrimas yra sudėtingas.
 Vertinant Šelo algoritmo variantų efektyvumą būtina matuoti tiek atliekamus palyginimus, tiek atliekamus priskyrimus, kadangi
 atliekamų palyginimų ir priskyrimų skaičiaus santykis priklauso nuo implementacijos ir augant $N$ nebūtinai artėja prie 1 \cite{Radavičius_Baranauskas_2013}.
-
-% TODO: parasyt apie comparison itaka branch predictionui ir performance
 
 Vertinant Šelo algoritmo variantų efektyvumą taip pat būtina atsižvelgti ir į veikimo laiką.
 Savaime suprantama, jog į šį kriterijų verta žvelgti pakankamai kritiškai, kadangi jis priklauso nuo konkrečios algoritmo implementacijos,
@@ -874,7 +870,7 @@ sugeneruoti variantai lenkia literatūroje pateikiamus variantus.
 Galima pastebėti, jog augant duomenų dydžiui sugeneruotų algoritmų veikimo laikas beveik nesikeičia, tuo tarpu literatūroje pateikti variantai
 su mažiausiu duomenų dydžiu veikia daugiau nei 2 kartus lėčiau, augant duomenų dydžiui veikimo laikas gerėja.
 Tai galima paaiškinti tuo, jog sugeneruoti algoritmai su $N = 32$ atliks vos du perėjimus, tuo tarpu literatūroje pateikiami variantai atliks 4.
-Taip pat pastebėsime, jog didžiausią įtaką veikimo laikui šiuo atveju turi mažiausi tarpai, kadangi su didesniais tarpais yra atliekama mažiau iteracijų.
+Didžiausią įtaką veikimo laikui šiuo atveju turi mažiausi tarpai, kadangi su didesniais tarpais yra atliekama mažiau iteracijų.
 Kadangi šis duomenų rinkinys yra beveik išrikiuotas, papildomi du perėjimai šiuo atveju pastebimai sulėtina veikimą.
 
 \begin{figure}[H]
@@ -956,7 +952,7 @@ Kaip pavyzdį galima pateikti Pratt tarpų seką \cite{pratt1972shellsort}, kuri
 
 \ref{img:shuffled_comparisons_8192} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|shuffled| ir dideliais duomenų dydžiais.
 Galima pastebėti, jog sugeneruotų variantų rezultatai su duomenų dydžiais $2048$ ir $4096$ yra pakankamai geri ir nežymiai atsilieka nuo literatūrinių variantų.
-Tiesa, su didžiausiu tiriamu duomenų dydžiu rezultatai yra prastesni, tačiau reikia pastebėti, jog veikimo laiko rezultatai su šiuo duomenų dydžiu buvo pastebimai geresni.
+Tiesa, su didžiausiu tiriamu duomenų dydžiu atliekamų palyginimų rezultatai yra prastesni, tačiau veikimo laiko rezultatai su šiuo duomenų dydžiu buvo pastebimai geresni.
 Tad iš esmės pastebimas sugeneruotų variantų daromas kompromisas, kur atliekamų operacijų skaičius paaukojamas vardan palankesnio veikimo laiko.
 
 \begin{figure}[H]
