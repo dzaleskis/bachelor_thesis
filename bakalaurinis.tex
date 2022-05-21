@@ -173,8 +173,6 @@ Darbas remiasi tokiomis prielaidomis:
 
 \section{Šelo algoritmas}
 
-\subsection{Klasikinis Šelo algoritmas}
-
 Šelo algoritmas yra vienas iš seniausių ir geriausiai žinomų rikiavimo algoritmų.
 Šelo algoritmas yra paremtas palyginimu, adaptyvus, nestabilus ir nenaudojantis papildomos atminties.
 Yra įrodyta, kad Šelo algoritmo laiko sudėtingumo blogiausiu atveju apatinė riba yra
@@ -182,36 +180,12 @@ $\Omega(\frac{n\,log^2\,n}{log\,log\,n^2})$ \cite{plaxton1992}, tad jis nėra as
 Šio algoritmo laiko sudėtingumo analizė vidutiniu atveju yra labai sudėtinga
 ir lieka atvira problema \cite{ciura2001best,Radavičius_Baranauskas_2013}.
 Nepaisant sudėtingos analizės, Šelo algoritmas yra nesunkiai įgyvendinamas ir gana lengvai suprantamas.
-Tai įrodo ir pseudokodas, pateikiamas \ref{alg:shellsort} algoritme.
+Tiesa, klasikinė Šelo algoritmo implementacija nėra tokia efektyvi, kokia galėtų būti, todėl šiame darbe naudojama
+optimizuota šio algoritmo versija, kuri atlieka mažiau priskyrimų ir veikia greičiau \cite{Radavičius_Baranauskas_2013}.
+Šelo algoritmo pseudokodas pateikiamas \ref{alg:shellsort} algoritme.
 
 \begin{algorithm}[H]
-  \caption{Šelo algoritmas}\label{alg:shellsort}
-  \begin{algorithmic}[1]
-  \ForEach {$h$ \textbf{in} $H$}
-    \For {$i\gets h$ \textbf{to} $N-1$}
-      \State $j\gets i$
-      \State $temp\gets S[i]$
-      \While {$j > h$ \textbf{and} $S[j - h] > S[j]$}
-        \State $S[j]\gets S[j - h]$
-        \State $j\gets j-h$
-      \EndWhile
-      \State $S[j]\gets temp$
-    \EndFor
-  \EndFor
-  \end{algorithmic}
-\end{algorithm}
-
-\subsection{Optimizuotas Šelo algoritmas}
-
-Reikia pastebėti, jog klasikinis Šelo algoritmas nėra optimizuotas ir tam tikrais atvejais atlieka nereikalingas operacijas.
-Jei vykdant vidinį Šelo algoritmo ciklą esamas elementas $S[j]$ nėra mažesnis už elementą $S[j-h]$,
-$while$ ciklas kuriame atliekama esminė rikiavimo logika nebus vykdomas, tad du priskyrimai bus atlikti veltui.
-Optimizuota Šelo algoritmo versija \cite{Radavičius_Baranauskas_2013} patikrina ar esamas elementas yra mažesnis už elementą $S[j-h]$ ir tik tada vykdo vidinį ciklą.
-Tai leidžia sumažinti atliekamų priskyrimų skaičių 40-80\% ir sumažinti veikimo laiką apytiksliai 20\%, lyginant su klasikine implementacija.
-Toliau darbe naudojama ir analizuojama tik optimizuota Šelo algoritmo implementacija. 
-
-\begin{algorithm}[H]
-    \caption{Optimizuotas Šelo algoritmas}\label{alg:shellsort_optimized}
+    \caption{Šelo algoritmas}\label{alg:shellsort}
     \begin{algorithmic}[1]
       \ForEach {$h$ \textbf{in} $H$}
         \For {$i\gets h$ \textbf{to} $N-1$}
@@ -240,7 +214,17 @@ Siekiant supaprastinti skirtingų Šelo algoritmo variantų palyginimą, galima 
 visiems variantams bendrą struktūrą ir konkrečiam variantui būdingą posekių rikiavimo logiką.
 Šelo algoritmo variantams būdinga struktūra, kurioje iteruojant per tarpus rikiuojami posekiai, toliau vadinama Šelo algoritmo karkasu,
 o karkaso viduje atliekama rikiavimo logika - perėjimu (angl. pass).
-Optimizuoto Šelo algoritmo taikomas perėjimas toliau vadinamas įterpimo perėjimu.
+Šelo algoritmo taikomas perėjimas toliau vadinamas įterpimo perėjimu.
+Šelo algoritmo karkasas pateikiamas pseudokodu \ref{alg:shell_framework} algoritme.
+
+\begin{algorithm}[H]
+  \caption{Šelo algoritmo karkasas}\label{alg:shell_framework}
+  \begin{algorithmic}[1]
+    \ForEach {$gap$ \textbf{in} $H$}
+        \State perform pass with gap
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
 
 Dobosiewicz vienas pirmųjų pastebėjo, jog pasitelkiant
 Šelo algoritmo karkasą ir pakeitus rikiavimo logiką taip pat galima sukonstruoti pakankamai efektyvų algoritmą \cite{dobosiewicz1980efficient}.
@@ -340,7 +324,7 @@ Visi eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinius sveikask
 
 Pagal \ref{experiment_results_64} lentelėje matomus rezultatus galima pastebėti, jog
 Šelo algoritmas su Ciura tarpų seka atliko žymiai mažiau operacijų, tačiau taip pat veikė reikšmingai lėčiau nei variantas su tarpų seka  $\{1\}$.
-Šiuo atveju rezultatai yra visiškai neintuityvūs, tačiau aiškiai pastebima, jog atliekamos operacijos ir veikimo laikas nekoreliuoja.
+Šiuo atveju rezultatai yra neintuityvūs, tačiau aiškiai pastebima, jog atliekamos operacijos ir veikimo laikas nekoreliuoja.
 Norint juos paaiškinti, reikia surinkti daugiau duomenų. 
 
 \begin{table}[H]
@@ -477,8 +461,6 @@ Kiekvienas iš šių kriterijų yra pakankamai svarbus įvertinant duoto algorit
 Paprasčiausias genetinis algoritmas susideda iš individų populiacijos bei atrankos, mutacijos ir rekombinacijos operatorių \cite{simpson1999faster}.
 Šiame skyriuje nagrinėjamos šių terminų reikšmės ir genetinių algoritmų veikimo principai.
 
-\subsection{Individų populiacija}
-
 Individu GA kontekste vadinamas potencialus uždavinio sprendinys.
 Projektuojant genetinį algoritmą tam tikro uždavinio sprendimui, svarbu tinkamai pasirinkti,
 kaip kompiuteriu modeliuoti galimus sprendinius.
@@ -493,8 +475,6 @@ Duoto sprendinio kokybė yra nustatoma pasitelkiant tikslo funkciją.
 Tikslo funkcija dar vadinama kainos arba tinkamumo funkcija, priklausomai nuo sprendžiamo uždavinio tipo.
 Tikslo funkcija yra viena svarbiausių genetinio algoritmo dalių,
 kadangi kai ji netinkamai parinkta, algoritmas nekonverguos į tinkamą sprendinį arba užtruks labai ilgai.
-
-\subsection{Genetiniai operatoriai}
 
 Esminė GA dalis yra populiacijos genetinės įvairovės užtikrinimas, geriausių individų atranka ir kryžminimasis.
 Siekiant užtikrinti šių procesų išpildymą, genetinis algoritmas vykdymo metu
@@ -622,7 +602,7 @@ Algoritmų generavimui pasirinkta naudoti $T = 9000$.
 Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 890 skirtingų variantų.
 
 Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: A1, A2 ir A3.
-Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
   \item A1: $1, 6, 52$, su didžiausiu tarpu naudojamas burbuliuko perėjimas
@@ -630,7 +610,7 @@ Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaus
   \item A3: $1, 10, 76 $, su didžiausiu tarpu naudojamas burbuliuko perėjimas
 \end{itemize}
 
-Galima pastebėti tendenciją, jog visi gauti algoritmai naudoja ne įterpimo perėjimą su didžiausiu tarpu.
+Galima pastebėti tendenciją, jog visi sugeneruoti algoritmai naudoja ne įterpimo perėjimą su didžiausiu tarpu.
 Kaip buvo minėta viename iš praeitų skyrių, su dideliais (santykinai duomenų dydžiui) tarpais atlikti įterpimo perėjimą nėra prasminga,
 tad panašu, jog kainos funkcija taip pat privedė individus prie šios optimizacijos taikymo.
 
@@ -642,7 +622,7 @@ Algoritmų generavimui pasirinkta naudoti $T = 125000$.
 Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 690 skirtingų variantų.
 
 Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: B1, B2 ir B3. 
-Kadangi gauti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėlei bus nusakomos tik jų tarpų sekos.
+Kadangi sugeneruoti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėlei bus nusakomos tik jų tarpų sekos.
 
 \begin{itemize}
   \item B1: $1, 4, 17, 40, 162$
@@ -663,7 +643,7 @@ Algoritmų generavimui pasirinkta naudoti $T = 1500000$.
 Genetinis algoritmas buvo įvykdytas 20 kartų, viso buvo sugeneruoti 322 skirtingi variantai.
 
 Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: C1, C2 ir C3.
-Kadangi gauti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
   \item C1: $1, 4, 11, 25, 104, 264, 615, 1794$, su antru pagal dydį tarpu naudojamas supurtymo perėjimas
@@ -831,7 +811,7 @@ Todėl kai duomenys yra dalinai išrikiuoti, šie algoritmai atlieka mažiau ner
 \ref{img:assignments_1024_1024} pav. pateikiami atliekamų priskyrimų rezultatai.
 Kaip ir vertinant atliekamus palyginimus, nepalankiausias yra duomenų rinkinys \verb|shuffled|, labiausiai palankus - rinkinys \verb|push_min|.
 
-Genetinio algoritmo pagalba gauti Šelo algoritmo variantai, kaip ir analizuojant atliekamus palyginimus,
+Genetinio algoritmo pagalba sugeneruoti Šelo algoritmo variantai, kaip ir analizuojant atliekamus palyginimus,
 su duomenų rinkiniais \verb|shuffled|, \verb|shuffled_mod_sqrt|, \verb|descending| atlieka ženkliai daugiau priskyrimo operacijų, nei literatūroje pateikti variantai.
 Tiesa, su duomenų rinkiniais \verb|partially_sorted| ir \verb|merge| atliekamų priskyrimų rezultatai yra kiek palankesni,
 o su duomenų rinkiniu \verb|push_min|
