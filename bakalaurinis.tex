@@ -134,7 +134,7 @@ padėtų sugeneruoti efektyvius Šelo algoritmo variantus bei išlaikytų tinkam
 
 Keliama tokia \textbf{hipotezė}:
 
-\textit{Pasitelkiant genetinius algoritmus įmanoma sukonstruoti efektyvius Šelo algoritmo variantus,
+\textit{Pasitelkiant genetinius algoritmus įmanoma sugeneruoti efektyvius Šelo algoritmo variantus,
 kurių vidutinis veikimo laikas būtų mažesnis nei šiuo metu žinomų variantų.}
 
 \medskip
@@ -505,28 +505,11 @@ Parinkti atsitiktinį perėjimo tipą yra nesudėtinga, kadangi pakanka sugeneru
 Tuo tarpu greitai sugeneruoti pakankamai efektyvias tarpų sekas yra gana sudėtinga.
 Tuo tikslu buvo pasirinkta individų inializacijai naudoti geometrines tarpų sekas, kadangi jas gana nesudėtinga generuoti
 ir jos bendru atveju yra pakankamai efektyvios (didelė dalis efektyvių eksperimentiškai gautų tarpų sekų yra geometrinės).
-Geometrinių tarpų sekų generavimo eiga yra pateikiama \ref{alg:geometric_gaps} algoritme.
+Geometrinių tarpų sekų generavimo algoritmas yra pateikiamas prieduose.
 Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
 tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
 Generuojant geometrines tarpų sekas buvo nuspręsta koeficientą $q$ parinkti atsitiktinai, užtikrinant, jog $1.5 \leq q \leq 7$.
 Generuojant atsitiktines tarpų sekas taip pat buvo taikomas panašus principas, tačiau šiuo atveju naudotas toks $q$, kad $1.5 \leq q \leq 12.5$.
-
-\begin{algorithm}[H]
-  \caption{Geometrinių tarpų sekų generavimas}\label{alg:geometric_gaps}
-  \begin{algorithmic}[1]
-    \Procedure{geometric\_gaps}{$n, q$}
-      \State let $gaps$ be an empty set
-      \State $current \gets 1$
-      
-      \While{$current < n$}
-        \State insert $\lceil current \rceil$ into $gaps$
-        \State $current \gets current * q$ 
-      \EndWhile
-
-      \State \textbf{return} $gaps$
-    \EndProcedure
-  \end{algorithmic}
-\end{algorithm}
 
 Genetinio algoritmo įgyvendinimui buvo pasirinkta naudoti C++ programavimo kalbą ir openGA biblioteką \cite{mohammadi2017openga}.
 C++ buvo pasirinkta dėl veikimo spartos ir patirties sukauptos ruošiant kursinį darbą ir kursinį projektą.
@@ -633,7 +616,7 @@ Kadangi sugeneruoti algoritmai naudoja tik įterpimo perėjimus, toliau glaustum
 Galima pastebėti, jog gautų algoritmų tarpų sekos yra žymiai trumpesnės, nei įprastai sutinkamų Šelo algoritmo variantų.
 Kaip pastebima \cite{Radavičius_Baranauskas_2013}, vertinant veikimo laiką dažnai tinkamesnės būna geometrinės tarpų sekos, kur $q$ yra didesnis.
 Reikia pastebėti, kad kuo didesnis $q$, tuo mažiau perėjimų bus atliekama tam tikro duomenų dydžio išrikiavimui,
-o kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja papildomo darbo.  
+o kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja atlikti papildomas instrukcijas.  
 
 \subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
 
@@ -852,7 +835,7 @@ Tai paaiškina \verb|shuffled| duomenų rinkinio specifika - kadangi duomenys yr
 tad didesnis naudojamų tarpų kiekis nesukelia problemų. 
 Ir toliau galima pastebėti tendenciją, jog su nedideliais duomenų dydžiais literatūroje pateikiamų variantų veikimo laikas gerėja augant duomenų dydžiui.
 Sugeneruoti algoritmai su visais pateikiamais duomenų dydžiais lenkia literatūroje pateikiamus variantus.
-Iš esmės tai galima paaiškinti tuo, jog sugeneruoti algoritmai naudoja mažiau perėjimų, jų santykinis tarpų atstumas yra didesnis,
+Iš esmės tai galima paaiškinti tuo, jog sugeneruoti algoritmai naudoja mažiau perėjimų, jų gretimų tarpų skirtumas yra didesnis,
 tad su visais duomenų dydžiais daugiau rikiavimo jie atlieka naudodami rikiavimą įterpimu, kuris veikia
 greičiau nei Šelo algoritmas nedideliems duomenų dydžiams. % TODO: citata?
 
@@ -961,6 +944,36 @@ galima pastebėti naudojamų perėjimų skaičiaus ir didesnių tarpų įtaką e
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
 % suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
+Darbo metu atlikti eksperimentai leido nustatyti šakų nuspėjimo įtaką Šelo algoritmo veikimo laikui, kai duomenų dydis yra nedidelis.
+Pastebėta, jog didelis neatspėtų šakų santykis gali reikšmingai padidinti veikimo laiką bei sumažinti per ciklą įvykdomų instrukcijų skaičių.
+Taip pat nustatyta, jog bendras neatspėtų šakų santykis priklauso ne tik nuo atliekamų perėjimų skaičiaus, bet ir nuo naudojamų tarpų dydžio.
+Rikiuojant nedidelius duomenų dydžius ir siekiant minimizuoti veikimo laiką, galima rekomenduoti naudoti kuo trumpesnes tarpų sekas
+su santykinai dideliais tarpais.
+Tokią rekomendaciją leidžia pagrįsti tai, jog Šelo algoritmas su $p$ perėjimų sukelia apytiksliai $O(np)$ neatspėtų šakų,
+tad minimizuojant perėjimų skaičių turėtų mažėti ir neatspėtų šakų skaičius.
+Taip pat, kuo didesnis naudojamas tarpas, tuo mažiau su juo bus atliekama elementų palyginimų, kas leis daugiau rikiavimo atlikti su tarpu 1,
+kur šakos yra nuspėjamos tiksliausiai.
+
+Remiantis darbo metu atliktų eksperimentų rezultatais galima teigti, jog
+pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veiktų greičiau nei žinomi variantai.
+Su visais duomenų dydžiais ir duomenų rinkiniais buvo pastebėtas mažesnis sugeneruotų variantų veikimo laikas,
+lyginant juos su žinomais variantais.
+Su atsitiktiniais bei didėjančia tvarka išrikiuotais duomenų rinkiniais buvo pastebėtas didesnis sugeneruotų variantų atliekamų palyginimų ir priskyrimų skaičius,
+tad geresnis veikimo laikas buvo pasiektas paaukojant optimalumą atliekamų operacijų atžvilgiu.
+Su dalinai išrikiuotais duomenų rinkiniais, kurie gana dažnai sutinkami praktikoje, sugeneruoti variantai veikė greičiau ir atliko mažiau palyginimų.
+
+% Atliekant eksperimentus buvo pastebėta, jog mažiausiai Šelo algoritmo variantams palankūs yra atsitiktiniai duomenų rinkiniai.
+% Tuo pačiu pastebėti šiek tiek palankesni rezultatai naudojant atsitiktinį duomenų rinkinį, turintį didelį dublikatų skaičių.
+% Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai.
+
+% Darbo metu sugeneruoti Šelo algoritmai gana reikšmingai skiriasi nuo literatūroje pateikiamų variantų.
+% Tai galima paaiškinti tuo, jog daug didesnis dėmesys buvo skirtas jų veikimo laikui, tad sugeneruoti variantai naudoja trumpesnes tarpų sekas ir
+% jų gretimų tarpų skirtumai yra didesni.
+% Siekiant minimizuoti veikimo laiką
+
+% Darbo metu suprojektuotas daugiakriterinis genetinis algoritmas yra vienas iš esminių darbo rezultatų.
+
+
 \sectionnonum{Conclusions}
 % Šiame skyriuje pateikiamos išvados (reziume) anglų kalba.
 
@@ -995,5 +1008,87 @@ inline void test_shellsort(T & data) {
 }
 \end{lstlisting}
 
+\section{Inversijų skaičiavimas pasitelkiant rikiavimą sąlaja}
+
+\begin{algorithm}[H]
+  \caption{Inversijas skaičiuojantis rikiavimas sąlaja}\label{alg:merge_sort}
+  \begin{algorithmic}[1]
+    \Procedure{mergesort}{$a$}
+      \State $n \gets size(a)$
+      \State $inv \gets 0$
+      
+      \If {$n \le 1$}
+        \State \textbf{return} $0$ 
+      \EndIf
+
+      \State let $l$ and $r$ be the result of splitting $a$ at $n/2$
+
+      \State $inv \gets inv + mergesort(l)$
+      \State $inv \gets inv + mergesort(r)$
+      \State $inv \gets inv + merge(l,r,a)$
+
+      \State \textbf{return} $inv$ 
+
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{Inversijas skaičiuojantis sąlajos algoritmas}\label{alg:merge}
+  \begin{algorithmic}[1]
+    \Procedure{merge}{$a,b,c$}
+      \State $inv \gets 0$
+      \State $i \gets 0$
+      \State $j \gets 0$
+
+      \State $n \gets size(a)$
+      \State $m \gets size(b)$
+      \State $l \gets size(c)$
+      
+      \For {$k\gets 0$ \textbf{to} $l-1$}
+        \If {$i < n$}
+          \If {$j < m$}
+            \If {$a[i] \le b[j]$}
+              \State $c[k] \gets a[i]$
+              \State $i \gets i+1$
+            \Else
+              \State $c[k] \gets b[j]$
+              \State $j \gets j+1$
+              \State $inv \gets inv + (n-i)$
+            \EndIf
+          \Else
+            \State $c[k] \gets a[i]$
+            \State $i \gets i+1$
+          \EndIf
+        \Else
+          \State $c[k] \gets b[j]$
+          \State $j \gets j+1$
+        \EndIf
+      \EndFor
+
+      \State \textbf{return} $inv$
+      
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\section{Geometrinių tarpų sekų generavimo algoritmas}
+
+\begin{algorithm}[H]
+  \caption{Geometrinių tarpų sekų generavimas}\label{alg:geometric_gaps}
+  \begin{algorithmic}[1]
+    \Procedure{geometric\_gaps}{$n, q$}
+      \State let $gaps$ be an empty set
+      \State $current \gets 1$
+      
+      \While{$current < n$}
+        \State insert $\lceil current \rceil$ into $gaps$
+        \State $current \gets current * q$ 
+      \EndWhile
+
+      \State \textbf{return} $gaps$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
 
 \end{document}
