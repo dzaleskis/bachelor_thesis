@@ -55,16 +55,6 @@
 
 \tableofcontents
 
-\sectionnonum{Sąvokų apibrėžimai}
-% Sutartinių ženklų, simbolių, vienetų ir terminų sutrumpinimų sąrašas (jeigu
-% ženklų, simbolių, vienetų ir terminų bendras skaičius didesnis nei 10 ir
-% kiekvienas iš jų tekste kartojasi daugiau nei 3 kartus).
-
-Šelo algoritmas
-GA
-OS
-WSL
-
 \sectionnonum{Įvadas}
 
 Duomenų rikiavimas yra vienas aktyviausiai tiriamų uždavinių informatikos moksle.
@@ -102,7 +92,7 @@ $S_i = (s_i, s_{i+h}, s_{i+2h}, ...)$ ir atskirai išrikiuoti kiekvieną posekį
 Šelo algoritmo efektyvumas priklauso nuo pasirinktos tarpų sekos, todėl bendra teorinė šio algoritmo analizė yra labai sudėtinga.
 Taip pat reikia pastebėti, jog praktikoje efektyviausi yra eksperimentiškai gauti Šelo algoritmo variantai \cite{ciura2001best,tokuda1992}.
 
-Vienas iš eksperimentinių metodų, kuriuos galima taikyti efektyvių Šelo algoritmo variantų radimui, yra genetinis algoritmas.
+Vienas iš eksperimentinių metodų, kuriuos galima taikyti efektyvių Šelo algoritmo variantų radimui, yra genetinis algoritmas (toliau - GA).
 Genetinis algoritmas yra metodas paremtas žiniomis apie natūralios atrankos procesą, leidžiantis efektyviai spręsti paieškos ir optimizavimo uždavinius.
 Pagrindinis genetinių algoritmų veikimo principas yra pradinės populiacijos generavimas ir iteratyvus jos atnaujinimas, siekiant, jog
 bendra populiacijos kokybė didėtų kiekvieną iteraciją.
@@ -267,6 +257,8 @@ Jo taikomas perėjimas toliau vadinamas supurtymo perėjimu (angl. shake pass), 
     \EndFor
   \end{algorithmic}
 \end{algorithm}
+
+\pagebreak
 
 Dar viena burbuliuko algoritmo modifikacija yra mūrijimo rikiavimas (angl. brick sort) \cite{habermann1972parallel}.
 Šio algoritmo perėjimo idėja - išrikiuoti visas nelyginių/lyginių indeksų gretimų elementų poras,
@@ -590,8 +582,8 @@ kurie leistų rikiuoti nedidelius duomenų dydžius greičiau nei žinomi varian
 Algoritmų generavimui pasirinkta naudoti $T = 9000$.
 Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 890 skirtingų variantų.
 
-Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: A1, A2 ir A3.
-Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai.
+Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
   \item A1: $1, 6, 52$, su didžiausiu tarpu naudojamas burbuliuko perėjimas
@@ -610,8 +602,10 @@ kurie leistų rikiuoti vidutinius duomenų dydžius greičiau nei žinomi varian
 Algoritmų generavimui pasirinkta naudoti $T = 125000$.
 Genetinis algoritmas buvo įvykdytas 50 kartų, viso buvo sugeneruota 690 skirtingų variantų.
 
-Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: B1, B2 ir B3. 
-Kadangi sugeneruoti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėlei bus nusakomos tik jų tarpų sekos.
+\pagebreak
+
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai. 
+Kadangi sugeneruoti algoritmai naudoja tik įterpimo perėjimus, toliau glaustumo dėlei nusakomos tik jų tarpų sekos.
 
 \begin{itemize}
   \item B1: $1, 4, 17, 40, 162$
@@ -631,8 +625,8 @@ kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi varianta
 Algoritmų generavimui pasirinkta naudoti $T = 1500000$.
 Genetinis algoritmas buvo įvykdytas 20 kartų, viso buvo sugeneruoti 322 skirtingi variantai.
 
-Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai: C1, C2 ir C3.
-Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei bus nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
+Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacijas buvo atrinkti 3 tinkamiausi variantai.
+Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
   \item C1: $1, 4, 11, 25, 104, 264, 615, 1794$, su antru pagal dydį tarpu naudojamas supurtymo perėjimas
