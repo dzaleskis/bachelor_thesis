@@ -320,7 +320,7 @@ Eksperimentai buvo atliekami naudojant kompiuterį su 2.70 GHz Intel(R) Core(TM)
 Tyrimui reikalinga programinė įranga yra prieinama tik Linux OS vartotojams, tad eksperimentai buvo vykdomi WSL aplinkoje su g++ 9.3 kompiliatoriumi naudojant \verb|-O2| optimizacijos lygmenį.
 Reikia pastebėti, jog WSL veikia virtualioje mašinoje, tad tai galėjo paveikti gautus rezultatus.
 Kadangi praktinis efektyvumas reikšmingai priklauso nuo konkrečios implementacijos, prieduose yra pateikiama eksperimentams naudota Šelo algoritmo implementacija C++ kalba.
-Visi eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinius sveikaskaitinius duomenis.
+Visi eksperimentai buvo vykdomi 5000000 kartų rikiuojant atsitiktinius sveikus skaičius.
 
 Pagal \ref{experiment_results_64} lentelėje matomus rezultatus galima pastebėti, jog
 Šelo algoritmas su Ciura tarpų seka atliko žymiai mažiau operacijų, tačiau taip pat veikė reikšmingai lėčiau nei variantas su tarpų seka  $\{1\}$.
@@ -553,7 +553,7 @@ individo kainos funkcija yra apibrėžiama tokia forma:
   \end{cases}
 \]
 
-Algoritmai buvo vertinami rikiuojant atsitiktinius sveikaskaitinius duomenis.
+Algoritmai buvo vertinami rikiuojant atsitiktinius sveikus skaičius.
 Atliekamų matavimų skaičius buvo nustatomas pagal duomenų dydį, kuriam generuojami algoritmai (jei duomenų dydis didelis, atliekama mažiau matavimų).
 Pirmiausia dėl to, jog su didesniais duomenų dydžiais GA neužtruktų per ilgai, o tuo pačiu ir tam,
 jog rezultatai gauti su mažesniais duomenų dydžiais būtų tikslesni.
@@ -648,7 +648,7 @@ Norint tinkamai įvertinti įvairių Šelo algoritmo variantų efektyvumą, yra 
 įvairius duomenų rinkinius.
 Idealiu atveju, tyrime taip pat naudojami skirtingi duomenų tipai (skaičiai, simbolių eilutės, etc.), kas leidžia įvertinti 
 atliekamų palyginimų ir priskyrimų įtaką rikiavimo laikui.
-Šiame darbe buvo pasirinkta naudoti sveikaskaitinius duomenis, generuojamus juos išdėstant 6 skirtingais būdais.
+Šiame darbe buvo pasirinkta tyrimui naudoti sveikus skaičius, generuojamus juos išdėstant 6 skirtingais būdais.
 Šie duomenų išsidėstymo būdai yra apibrėžiami žemiau.
 
 Dažniausiai literatūroje tiriant rikiavimo algoritmų efektyvumą yra sutinkami atsitiktiniai išsidėstę duomenys.
@@ -950,7 +950,36 @@ galima pastebėti naudojamų perėjimų skaičiaus ir didesnių tarpų įtaką e
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
 % suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
-Atlikti eksperimentai leido nustatyti šakų nuspėjimo įtaką Šelo algoritmo veikimo laikui, kai duomenų dydis yra nedidelis.
+Remiantis atliktų eksperimentų rezultatais galima teigti, jog
+pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veikia greičiau nei žinomi variantai.
+Palankesni sugeneruotų variantų veikimo laiko rezultatai buvo pastebėti beveik su visais duomenų rinkiniais ir dydžiais.
+Kai kuriais atvejais sugeneruotų variantų veikimo laikas buvo net kelis kartus mažesnis nei žinomų variantų.
+Tiesa, šis veikimo laiko patobulinimas buvo pasiektas paaukojant optimalumą atliekamų operacijų atžvilgiu.
+Reikia pastebėti, jog darbo metu sugeneruoti Šelo algoritmo variantai yra baigtiniai (skirti rikiuoti specifinius duomenų dydžius).
+Taip pat eksperimentai buvo atlikti tik su sveikais skaičiais, kas neleido įvertinti sugeneruotų variantų veikimo laiko rikiuojant sudėtingesnius duomenų tipus.
+Todėl sugeneruotus Šelo algoritmo variantus galima rekomenduoti tik tuo atveju, jei rikiuojamų duomenų dydis yra žinomas iš anksto, o
+duomenų palyginimo ir priskyrimo operacijų sudėtingumas laiko atžvilgiu yra $O(1)$.
+
+Vertinant skirtingų Šelo algoritmo variantų atliekamas operacijas ir veikimo laiką buvo pastebėta, jog bendru atveju mažiausiai palankūs buvo
+atsitiktiniai duomenys, neturintys dublikatų.
+Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai, su jais veikimo laikas buvo kelis kartus mažesnis nei rikiuojant atsitiktinius duomenis,
+kas įrodo Šelo algoritmo variantų adaptyvumo naudą.
+Rikiuojant didėjančia tvarka išrikiuotus duomenis pastebėtas labai palankus veikimo laikas,
+kas įvertinant didelį atliekamų palyginimų ir priskyrimų skaičių leidžia teigti,
+jog duomenų rinkinio palankumas šakų nuspėjimui gali ženkliai įtakoti Šelo algoritmo variantų veikimo laiką.  
+
+Šelo algoritmo variantų generavimui suprojektuotas daugiakriterinis genetinis algoritmas yra vienas iš esminių darbo rezultatų.
+Pasitelkiant jį yra įmanoma generuoti Šelo algoritmo variantus, atsižvelgiant į visus esminius efektyvumo kriterijus.
+Taip pat keičiant tikslo funkciją įmanoma generuoti variantus, kurie atitinka pasirinktus apribojimus.
+Atsižvelgiant į tai, jog sugeneruotus variantus didele dalimi sudaro įterpimo perėjimai, suprojektuotas genetinis algoritmas
+galėtų būti supaprastintas siekiant generuoti tik tarpų sekas, taip sumažinant paieškos erdvę ir potencialiai padidinant gautų rezultatų kokybę.
+
+Pasitelkiant genetinį algoritmą sugeneruoti Šelo algoritmo variantai gana reikšmingai skiriasi nuo literatūroje pateikiamų variantų.
+Tai galima paaiškinti tuo, jog tikslo funkcija prioritetizavo veikimo laiką, tad sugeneruoti variantai naudoja trumpas geometrines tarpų sekas su gana dideliu $q$.
+Remiantis atliktų eksperimentų rezultatais, ši strategija pasiteisino ir padėjo sugeneruoti greitai veikiančius Šelo algoritmo variantus.
+Todėl šią tarpų sekų generavimo strategiją galima rekomenduoti platesniems taikymams, ypač jei siekiama pagerinti Šelo algoritmo veikimo laiką.
+
+Atliekant eksperimentinę Šelo algoritmo analizę buvo nustatyta šakų nuspėjimo įtaka Šelo algoritmo veikimo laikui, kai duomenų dydis yra nedidelis.
 Pastebėta, jog didelis neatspėtų šakų santykis gali reikšmingai padidinti veikimo laiką bei sumažinti per ciklą įvykdomų instrukcijų skaičių.
 Tiesa, vien neatspėtų šakų santykis pilnai nenusako Šelo algoritmo veikimo laiko, tad tarpų seka su kuria šakos nuspėjamos tiksliau nebūtinai veiks greičiau.
 Siekiant rasti tarpų sekas, kurios praktikoje veikia greitai, galima rekomenduoti atsižvelgti į neatspėtų šakų santykį,
@@ -965,39 +994,10 @@ didėjant $q$ bendras neatspėtų šakų santykis turėtų mažėti.
 Šią prognozę paremia tai, jog didėjant $q$ mažės atliekamų perėjimų skaičius, nuo kurio priklauso bendras Šelo algoritmo neatspėtų šakų skaičius.
 Taip pat didėjant $q$ kiekvienas tarpas $h_k$ bus didesnis, dėl ko tikėtina, jog daugiau rikiavimo bus atliekama su tarpu 1, kur šakų nuspėjimas yra tiksliausias.
 
-Atliekant eksperimentus pastebėta, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$,
+Atliekant Šelo algoritmo analizę pastebėta, jog rikiuojant su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$,
 rikiavimas įterpimu su tarpu $h$ yra neprasmingas, kadangi vidinis ciklas visada atliks tik vieną iteraciją.
 Todėl tokiais atvejais galima rekomenduoti taikyti burbuliuko perėjimą, kuris neturi vidinio ciklo ir pasiekia tą patį rezultatą
 atlikdamas mažiau instrukcijų.
-
-Darbo metu suprojektuotas daugiakriterinis genetinis algoritmas yra vienas iš esminių darbo rezultatų.
-Pasitelkiant jį yra įmanoma generuoti Šelo algoritmo variantus, atsižvelgiant į visus esminius efektyvumo kriterijus.
-Taip pat keičiant tikslo funkciją įmanoma generuoti variantus, kurie atitinka pasirinktus apribojimus.
-Atsižvelgiant į tai, jog sugeneruotus variantus didele dalimi sudaro įterpimo perėjimai, suprojektuotas genetinis algoritmas
-galėtų būti supaprastintas siekiant generuoti tik tarpų sekas, taip sumažinant paieškos erdvę ir potencialiai padidinant gautų rezultatų kokybę.
-
-Remiantis atliktų eksperimentų rezultatais galima teigti, jog
-pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veikia greičiau nei žinomi variantai.
-Palankesni sugeneruotų variantų veikimo laiko rezultatai buvo pastebėti beveik su visais duomenų rinkiniais ir dydžiais.
-Kai kuriais atvejais sugeneruotų variantų veikimo laikas buvo net kelis kartus mažesnis nei žinomų variantų.
-Tiesa, šis veikimo laiko patobulinimas buvo pasiektas paaukojant optimalumą atliekamų operacijų atžvilgiu.
-Reikia pastebėti, jog darbo metu sugeneruoti Šelo algoritmo variantai yra baigtiniai (skirti rikiuoti specifinius duomenų dydžius).
-Taip pat eksperimentai buvo atlikti tik su sveikaskaitiniais duomenimis, kas neleido įvertinti sugeneruotų variantų veikimo laiko rikiuojant sudėtingesnius duomenų tipus.
-Todėl sugeneruotus Šelo algoritmo variantus galima rekomenduoti tik tuo atveju, jei rikiuojamų duomenų dydis yra žinomas iš anksto, o
-duomenų palyginimo ir priskyrimo operacijų sudėtingumas laiko atžvilgiu yra $O(1)$.
-
-Darbo metu sugeneruoti Šelo algoritmai gana reikšmingai skiriasi nuo literatūroje pateikiamų variantų.
-Tai galima paaiškinti tuo, jog tikslo funkcija prioritetizavo veikimo laiką, tad sugeneruoti variantai naudoja trumpas geometrines tarpų sekas su gana dideliu $q$.
-Remiantis atliktų eksperimentų rezultatais, ši strategija pasiteisino ir padėjo sugeneruoti greitai veikiančius Šelo algoritmo variantus.
-Todėl šią tarpų sekų generavimo strategiją galima rekomenduoti platesniems taikymams, ypač jei siekiama pagerinti Šelo algoritmo veikimo laiką.
-
-Vertinant skirtingų variantų atliekamas operacijas ir veikimo laiką buvo pastebėta, jog bendru atveju Šelo algoritmo variantams mažiausiai palankūs buvo
-atsitiktiniai duomenys, neturintys dublikatų.
-Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai, su jais veikimo laikas buvo kelis kartus mažesnis nei rikiuojant atsitiktinius duomenis,
-kas įrodo Šelo algoritmo variantų adaptyvumo naudą.
-Rikiuojant didėjančia tvarka išrikiuotus duomenis pastebėtas labai palankus veikimo laikas,
-kas įvertinant didelį atliekamų palyginimų ir priskyrimų skaičių leidžia teigti,
-jog duomenų rinkinio palankumas šakų nuspėjimui gali ženkliai įtakoti Šelo algoritmo variantų veikimo laiką.  
 
 % kazka apie duomenu dydzius??
 
