@@ -92,16 +92,18 @@ $S_i = (s_i, s_{i+h}, s_{i+2h}, ...)$ ir atskirai išrikiuoti kiekvieną posekį
 Šelo algoritmo efektyvumas priklauso nuo pasirinktos tarpų sekos, todėl bendra teorinė šio algoritmo analizė yra labai sudėtinga.
 Taip pat reikia pastebėti, jog praktikoje efektyviausi yra eksperimentiškai gauti Šelo algoritmo variantai \cite{ciura2001best,tokuda1992}.
 
+\pagebreak
+
 Vienas iš eksperimentinių metodų, kuriuos galima taikyti efektyvių Šelo algoritmo variantų radimui, yra genetinis algoritmas (toliau - GA).
 Genetinis algoritmas yra metodas paremtas žiniomis apie natūralios atrankos procesą, leidžiantis efektyviai spręsti paieškos ir optimizavimo uždavinius.
 Pagrindinis genetinių algoritmų veikimo principas yra pradinės populiacijos generavimas ir iteratyvus jos atnaujinimas, siekiant, jog
 bendra populiacijos kokybė didėtų kiekvieną iteraciją.
 Populiacijos atnaujinimas yra vykdomas pasitelkiant biologijos įkvėptus atrankos, rekombinacijos ir mutacijos operatorius.
 
-Literatūroje galima rasti darbų \cite{roos2002genetic,simpson1999faster}, kuriuose genetiniai algoritmai yra taikomi naujų Šelo algoritmo variantų radimui.
+Literatūroje galima rasti darbų, kuriuose genetiniai algoritmai yra taikomi naujų Šelo algoritmo variantų radimui \cite{roos2002genetic,simpson1999faster}.
 Simpson-Yachavaram darbe daugiausia dėmesio skiriama atliekamiems palyginimams, teigiama, jog gauti variantai atlieka mažiausiai palyginimo operacijų,
 tačiau jie yra lyginami tik su Sedgewick ir Incerpi-Sedgewick variantais.
-Šiuo metu yra laikoma, jog vidutiniškai atliekamų palyginimų atžvilgiu optimaliausias yra Ciura \cite{ciura2001best} variantas.
+Šiuo metu yra laikoma, jog vidutiniškai atliekamų palyginimų atžvilgiu optimaliausias yra Ciura variantas \cite{ciura2001best}.
 Roos et al. darbe daugiausia dėmesio skiriama veikimo laikui, teigiama, jog gautas variantas veikia greičiau nei kiti tirti variantai, tačiau
 pateikiamuose rezultatuose jis lyginamas tik su Simpson-Yachavaram variantu, tiriami tik keli duomenų dydžiai.
 Nepaisant aukščiau aprašytų darbų trūkumų, juose pateikiami rezultatai rodo, jog genetinių algoritmų taikymas Šelo algoritmo variantų konstravimui
@@ -412,7 +414,11 @@ Panašia logika, tarpų seka $\{1, 32 \}$ pirmame perėjime atliks 32 iteracijas
 Šios tarpų sekos vidinį ciklą visada vykdys maksimaliai vieną kartą, kadangi pirmo perėjimo tarpai yra pakankamai dideli ir rikiuojamo posekio ilgis visada bus 2.
 Tarpų seka $\{1, 16 \}$ pirmame perėjime atliks 48 iteracijas, tačiau rikiuojamo posekio ilgis didės kas 16 iteracijų.
 Remiantis tuo, įmanoma apskaičiuoti maksimaliai pirmame perėjime atliekamų palyginimų skaičių kiekvienai tarpų sekai:
-$\{1, 48 \}$ - $16 * 1 = 16$, $\{1, 32 \}$ - $32 * 1 = 32$, $\{1, 16 \}$ - $16 * 1 + 16 * 2 + 16 * 3 = 96$.
+\begin{itemize}
+  \item $\{1, 16 \}$: $16 * 1 + 16 * 2 + 16 * 3 = 96$
+  \item $\{1, 32 \}$: $32 * 1 = 32$
+  \item $\{1, 48 \}$: $16 * 1 = 16$
+\end{itemize}
 Tad tarpų seka $\{1, 16 \}$ pirmame perėjime gali atlikti 6 kartus daugiau elementų palyginimų, nei tarpų seka $\{1, 48 \}$.
 
 Tiesa, iš pateiktų rezultatų sunku nuspręsti, kaip priklauso elementų palyginimo šakos nuspėjamumas priklausomai nuo tarpo dydžio.
@@ -494,7 +500,7 @@ kadangi nuo mutacijos tikimybės dažnu atveju priklauso populiacijos genetinė 
 Pirmiausia reikėtų aptarti kaip turėtų būti modeliuojamas sprendinys, atspindintis tam tikrą Šelo algoritmo variantą.
 Laikysime jog Šelo algoritmo variantą sudaro sąrašas porų $(p, h)$, kur $p$ yra skaičius, atitinkantis vieną iš anksčiau darbe aptartų perėjimų tipų,
 o $h$ - tarpas, su kuriuo rikiuojama tame perėjime.
-Toliau darbe tokiu būdu modeliuojamas Šelo algoritmo variantas vadinamas individu, o pora $(p, h)$ - genu.
+Toliau tokiu būdu modeliuojamas Šelo algoritmo variantas vadinamas individu, o pora $(p, h)$ - genu.
 Tiesa, toks modelis neturi jokio funkcionalumo (juo duomenų rikiuoti negalima), tačiau tai nėra sunku išspręsti: pakanka kiekvienam perėjimo tipui
 paruošti atitinkamą funkciją, kuri kaip parametrus priima rikiuojamus duomenis ir tarpą su kuriuo rikiuojama.
 Tada modeliuojamą Šelo algoritmo variantą galima nesunkiai vykdyti iteruojant jo genų sąrašą ir kiekvienai porai $(p, h)$ iškviečiant funkciją atitinkančią jos tipą ir nurodant tarpą su kuriuo rikiuoti.
@@ -552,7 +558,7 @@ Pirmiausia dėl to, jog su didesniais duomenų dydžiais GA neužtruktų per ilg
 jog rezultatai gauti su mažesniais duomenų dydžiais būtų tikslesni.
 
 Siekiant pagerinti gautų rezultatų kokybę buvo įgyvendinta individų atranka.
-Šiuo tikslu buvo atmetami individai, kurių vidutinis duomenų inversijų skaičius po rikiavimo didesnis nei $frac{N}{10}$.
+Šiuo tikslu buvo atmetami individai, kurių vidutinis duomenų inversijų skaičius po rikiavimo didesnis nei $\frac{N}{10}$.
 Taip pat buvo atmetami individai, kurių vidutinis veikimo laikas buvo didesnis nei $2\,T$.
 
 Individų mutacija buvo įgyvendinta pasirenkant atsitiktinį individo geną ir atsitiktinai pakeičiant jo perėjimo tipą kuriuo nors kitu.
@@ -587,9 +593,9 @@ Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacija
 Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
-  \item A1: $1, 6, 52$, su didžiausiu tarpu naudojamas burbuliuko perėjimas
-  \item A2: $1, 7, 92$, su didžiausiu tarpu naudojamas supurtymo perėjimas
-  \item A3: $1, 10, 76 $, su didžiausiu tarpu naudojamas burbuliuko perėjimas
+  \item A1: $1, 6, 52$ (burbuliuko perėjimas su paskutiniu tarpu)
+  \item A2: $1, 7, 92$ (supurtymo perėjimas su paskutiniu tarpu)
+  \item A3: $1, 10, 76 $ (burbuliuko perėjimas su paskutiniu tarpu)
 \end{itemize}
 
 Galima pastebėti tendenciją, jog visi sugeneruoti algoritmai naudoja ne įterpimo perėjimą su didžiausiu tarpu.
@@ -630,8 +636,8 @@ Atsižvelgiant į surinktus duomenis apie veikimo laiką ir atliekamas operacija
 Kadangi sugeneruoti algoritmai dažniausiai naudoja įterpimo perėjimą, toliau glaustumo dėlei nusakomos tik tarpų sekos ir tarpai, su kuriais naudojami kitokie perėjimai.
 
 \begin{itemize}
-  \item C1: $1, 4, 11, 25, 104, 264, 615, 1794$, su antru pagal dydį tarpu naudojamas supurtymo perėjimas
-  \item C2: $1, 4, 11, 25, 104, 356, 1152, 1794$, su antru pagal dydį tarpu naudojamas burbuliuko perėjimas
+  \item C1: $1, 4, 11, 25, 104, 264, 615, 1794$ (supurtymo perėjimas su priešpaskutiniu tarpu)
+  \item C2: $1, 4, 11, 25, 104, 356, 1152, 1794$ (burbuliuko perėjimas su priešpaskutiniu tarpu)
   \item C3: $1, 6, 19, 53, 187, 760 $
 \end{itemize}
 
@@ -672,7 +678,7 @@ tada naudojant \verb|std::shuffle| jį išmaišo, o po to dalinai jį išrikiuoj
 Galima nesunkiai įsivaizduoti tokio duomenų išsidėstymo pasitaikymo atvejį praktikoje - tarkime, programa turi duomenis kurie yra išrikiuoti,
 gauna daugiau duomenų, šiuos sąrašus sujungia ir vėl išrikiuoja, siekiant išlaikyti jų tvarką.
 
-Variantas \verb|merge| sugeneruoja du sąrašus pavidalo $\{0, \dots, \lfloor size/2 \rfloor\}$ ir juos sujungia į vieną.
+Variantas \verb|merge| sugeneruoja du sąrašus pavidalo $\{0, \dots, \lfloor \frac{size}{2} \rfloor\}$ ir juos sujungia į vieną.
 Šis duomenų rinkinys leidžia įvertinti, kaip veikia rikiavimo algoritmai, kai vieną sąrašą sudaro du išrikiuoti nuoseklūs posekiai.
 Praktinis šio duomenų rinkinio naudojimo atvejis yra gana panašus į \verb|partially_sorted| duomenų rinkinio.
 Reikia pastebėti, jog šis atvejis su praktikoje sutinkamais duomenimis yra gana dažnas, dėl to pvz.
@@ -699,10 +705,9 @@ Kadangi Ciura seka yra baigtinė, didesnių duomenų dydžių rikiavimui ji buvo
 Sedgewick ir Tokuda sekos yra begalinės, tad jos buvo sutrumpintos taip, jog gauta seka būtų ilgiausia įmanoma seka, kurios visi elementai mažesni už 8192 (maksimalų tirtą duomenų dydį).
 
 Kadangi darbe buvo generuojami algoritmai, leidžiantys efektyviai rikiuoti tris skirtingus duomenų dydžius, tyrimą sudaro trys algoritmų rinkiniai.
-Pirmą rinkinį sudaro A1, A2, A3 algoritmai ir literatūroje pateikti variantai, antrą rinkinį sudaro B1, B2, B3 algoritmai ir literatūroje pateikti variantai,
-trečią rinkinį C1, C2, C3 algoritmai ir literatūroje pateikti variantai.
-Su kiekvienu iš šių rinkinių eksperimentai atliekami naudojant tris skirtingus duomenų dydžius: $\frac{N}{2^2}$, $\frac{N}{2}$, $N$.
-Čia $N$ yra duomenų dydis, su kuriuo pasitelkiant GA buvo sugeneruota dalis to rinkinio algoritmų.
+Pirmą rinkinį sudaro A1, A2, A3 algoritmai ir literatūroje pateikti variantai, tiriami duomenų dydžiai yra 32, 64 ir 128.
+Antrą rinkinį sudaro B1, B2, B3 algoritmai ir literatūroje pateikti variantai, tiriami duomenų dydžiai yra 256, 512 ir 1024.
+Trečią rinkinį sudaro C1, C2, C3 algoritmai ir literatūroje pateikti variantai, tiriami duomenų dydžiai yra 2048, 4096 ir 8192.
 
 Atliekant efektyvumo tyrimą buvo pasirinkta kiekvienai algoritmo ir duomenų rinkinio porai
 atlikti matavimus tol, kol praeis 10 sekundžių.
@@ -718,16 +723,14 @@ kuri inicializuoja \verb|std::shuffle| naudojamą atsitiktinių skaičių genera
 Tad iš esmės kiekvienas algoritmas tam tikrame duomenų rinkinyje turėtų rikiuoti tokius pat pradinius duomenis.
 
 Siekiant jog gauti rezultatai būtų statistiškai reikšmingi, buvo pasirinkta naudoti tarpkvartilinio diapazono (angl. interquartile range) metodą.
-Šis metodas leidžia aptikti nuokrypius, kas leidžia nustatyti nenumatytų veiksnių įtaką gautiems rezultatams.
-Tai ypač svarbu matuojant veikimo laiką, kadangi jį labiausiai paveikia išorinių veiksnių įtaka.
-Taip pat tarpkvartilinis diapazonas nurodo rezultatų sklaidą aplink medianą,
+Tarpkvartilinis diapazonas nurodo rezultatų sklaidą aplink medianą,
 kas leidžia nustatyti atliktų matavimų paklaidą.
 
 \subsection{Tyrimo aplinka}
 
 Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM) i7-10850H procesoriumi,
 32 GB operatyviosios atminties ir Windows 11 operacine sistema.
-Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
+Eksperimentams skirta programa buvo įgyvendinta C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
 
 \section{Šelo algoritmo variantų efektyvumo tyrimas}
 
@@ -737,8 +740,8 @@ pirmoje dalyje tiriamas efektyvumas priklausomai nuo duomenų rinkinio,
 antroje dalyje tiriamas efektyvumas priklausomai nuo duomenų dydžio.
 
 Reikia pastebėti, jog tyrimo metu gautų duomenų kiekis yra gana didelis, kadangi
-viso buvo ištirta 12 algoritmų su 6 duomenų rinkiniais ir įvairiais duomenų dydžiais. 
-Siekiant glaustumo, neesminiai tyrimo rezultatai yra pateikiami prieduose.
+viso buvo ištirta 12 algoritmų su 6 skirtingais duomenų rinkiniais ir įvairiais duomenų dydžiais. 
+Siekiant glaustumo, mažiau reikšmingi tyrimo rezultatai yra pateikiami prieduose.
 
 \subsection{Efektyvumas priklausomai nuo duomenų rinkinio}
 
@@ -845,7 +848,7 @@ Ir toliau galima pastebėti tendenciją, jog su nedideliais duomenų dydžiais l
 Sugeneruoti algoritmai su visais pateikiamais duomenų dydžiais lenkia literatūroje pateikiamus variantus.
 Iš esmės tai galima paaiškinti tuo, jog sugeneruoti algoritmai naudoja mažiau perėjimų, jų gretimų tarpų skirtumas yra didesnis,
 tad su visais duomenų dydžiais daugiau rikiavimo jie atlieka naudodami rikiavimą įterpimu, kuris veikia
-greičiau nei Šelo algoritmas nedideliems duomenų dydžiams. % TODO: citata?
+itin greitai su nedideliais duomenų dydžiais.
 
 \begin{figure}[H]
   \centering
@@ -1134,24 +1137,184 @@ inline void test_shellsort(T & data) {
   \end{algorithmic}
 \end{algorithm}
 
-\section{Išsamūs efektyvumo tyrimo rezultatai}
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 32$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_128_32.jpg}
+  \caption{Veikimo laikas su $N = 32$}
+\end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.6]{img/comparisons_128_32.jpg}
-  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \caption{Palyginimai su $N = 32$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_128_32.jpg}
+  \caption{Priskyrimai su $N = 32$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 64$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_128_64.jpg}
+  \caption{Veikimo laikas su $N = 64$}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.6]{img/comparisons_128_64.jpg}
-  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \caption{Palyginimai su $N = 64$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_128_64.jpg}
+  \caption{Priskyrimai su $N = 64$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 128$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_128_128.jpg}
+  \caption{Veikimo laikas su $N = 128$}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.6]{img/comparisons_128_128.jpg}
-  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+  \caption{Palyginimai su $N = 128$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_128_128.jpg}
+  \caption{Priskyrimai su $N = 128$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 256$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_1024_256.jpg}
+  \caption{Veikimo laikas su $N = 256$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_1024_256.jpg}
+  \caption{Palyginimai su $N = 256$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_1024_256.jpg}
+  \caption{Priskyrimai su $N = 256$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 512$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_1024_512.jpg}
+  \caption{Veikimo laikas su $N = 512$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_1024_512.jpg}
+  \caption{Palyginimai su $N = 512$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_1024_512.jpg}
+  \caption{Priskyrimai su $N = 512$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 1024$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_1024_1024.jpg}
+  \caption{Veikimo laikas su $N = 1024$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_1024_1024.jpg}
+  \caption{Palyginimai su $N = 1024$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_1024_1024.jpg}
+  \caption{Priskyrimai su $N = 1024$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 2048$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_8192_2048.jpg}
+  \caption{Veikimo laikas su $N = 2048$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_8192_2048.jpg}
+  \caption{Palyginimai su $N = 2048$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_8192_2048.jpg}
+  \caption{Priskyrimai su $N = 2048$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 4096$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_8192_4096.jpg}
+  \caption{Veikimo laikas su $N = 4096$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_8192_4096.jpg}
+  \caption{Palyginimai su $N = 4096$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_8192_4096.jpg}
+  \caption{Priskyrimai su $N = 4096$}
+\end{figure}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai su $N = 8192$}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/cycles_8192_8192.jpg}
+  \caption{Veikimo laikas su $N = 8192$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_8192_8192.jpg}
+  \caption{Palyginimai su $N = 8192$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/assignments_8192_8192.jpg}
+  \caption{Priskyrimai su $N = 8192$}
 \end{figure}
 
 \end{document}
