@@ -136,7 +136,8 @@ Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos uždavinius:
     \item Nustatyti kriterijus Šelo algoritmo variantų efektyvumui įvertinti;
     \item Realizuoti genetinį algoritmą Šelo algoritmo variantų generavimui;
     \item Pasitelkiant realizuotą genetinį algoritmą sugeneruoti Šelo algoritmo variantus;
-    \item Eksperimentiškai palyginti sugeneruotų ir pateiktų literatūroje Šelo algoritmo variantų efektyvumą.
+    \item Paruošti aplinką eksperimentiniam Šelo algoritmo variantų efektyvumo tyrimui;
+    \item Eksperimentiškai ištirti sugeneruotų ir pateiktų literatūroje Šelo algoritmo variantų efektyvumą.
   \end{itemize}
 
 \medskip
@@ -144,20 +145,20 @@ Siekiant patikrinti iškeltą hipotezę, reikia atlikti šiuos uždavinius:
 Šiame darbe atlikta:
 \begin{itemize}
     \item Atlikta Šelo algoritmo ir jo variantų literatūros analizė;
-    \item Atlikti eksperimentai, kurie leido nustatyti šakų spėjimo įtaką Šelo algoritmo veikimo laikui su nedideliais duomenų dydžiais;
+    \item Atlikti eksperimentai, kurie leido nustatyti šakų nuspėjimo įtaką Šelo algoritmo veikimo laikui su nedideliais duomenų dydžiais;
     \item Realizuotas genetinis algoritmas, leidžiantis generuoti Šelo algoritmo variantus, kurie išlaiko pusiausvyrą tarp veikimo laiko ir atliekamų operacijų;
     \item Pasitelkiant realizuotą genetinį algoritmą sugeneruoti Šelo algoritmo variantai, leidžiantys efektyviai rikiuoti įvairius duomenų dydžius;
-    \item Atlikti eksperimentai, kuriais patvirtinta, jog sugeneruoti Šelo algoritmo variantai su pasirinktais duomenų dydžiais veikia greičiau, nei žinomi variantai;
+    \item Atlikti eksperimentai, kuriais patvirtinta, jog sugeneruoti Šelo algoritmo variantai su pasirinktais duomenų dydžiais veikia greičiau nei žinomi variantai;
 \end{itemize}
 
 \medskip
 
 Darbas remiasi tokiomis prielaidomis:
 \begin{itemize}
-    \item Atliekant Šelo algoritmo variantų generavimą ir tarpusavio palyginimą rikiuojamų duomenų palyginimo ir priskyrimo sudėtingumas laiko atžvilgiu yra $O(1)$;
-    \item Atliekant Šelo algoritmo variantų tarpusavio palyginimą yra pakankama aprėpti geriausiai žinomus variantus
-        (visų literatūroje pateiktų variantų tarpusavio palyginimas reikalautų atskiro tyrimo);
-    \item Šelo algoritmo variantų tarpusavio palyginimui pasirinkti duomenų rinkiniai pakankamai tiksliai atspindi dažniausiai praktikoje sutinkamus duomenų rinkinius.
+    \item Atliekant Šelo algoritmo variantų generavimą ir efektyvumo tyrimą rikiuojamų duomenų palyginimo ir priskyrimo sudėtingumas laiko atžvilgiu yra $O(1)$;
+    \item Atliekant Šelo algoritmo variantų efektyvumo tyrimą yra pakankama aprėpti geriausiai žinomus variantus
+        (visų literatūroje pateiktų variantų efektyvumo tyrimas reikalautų atskiro tyrimo);
+    \item Šelo algoritmo variantų efektyvumo tyrimui pasirinkti duomenų rinkiniai pakankamai tiksliai atspindi dažniausiai praktikoje sutinkamus duomenų rinkinius.
 \end{itemize}
 
 
@@ -728,8 +729,16 @@ Eksperimentų vykdymui buvo naudojamas kompiuteris su 2.70 GHz Intel(R) Core(TM)
 32 GB operatyviosios atminties ir Windows 11 operacine sistema.
 Efektyvumo tyrimas buvo įgyvendintas C++ kalba su MSVC 19.16.27043 kompiliatoriumi.
 
-
 \section{Šelo algoritmo variantų efektyvumo tyrimas}
+
+Šiame skyriuje atliekamas sugeneruotų ir pateiktų literatūroje Šelo algoritmo variantų efektyvumo tyrimas.
+Tyrimas yra išskirtas į dvi dalis:
+pirmoje dalyje tiriamas efektyvumas priklausomai nuo duomenų rinkinio,
+antroje dalyje tiriamas efektyvumas priklausomai nuo duomenų dydžio.
+
+Reikia pastebėti, jog tyrimo metu gautų duomenų kiekis yra gana didelis, kadangi
+viso buvo ištirta 12 algoritmų su 6 duomenų rinkiniais ir įvairiais duomenų dydžiais. 
+Siekiant glaustumo, neesminiai tyrimo rezultatai yra pateikiami prieduose.
 
 \subsection{Efektyvumas priklausomai nuo duomenų rinkinio}
 
@@ -741,7 +750,6 @@ Tokį duomenų rinkinį sudėtinga rikiuoti, kadangi jau išrikiuotų posekių e
 kiekvienas elementas turi vienodą tikimybę būti bet kurioje iš galimų pozicijų.
 Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinai išdėstomas ir todėl gana nepalankus, nors 
 pastebimi veikimo laikai yra geresni nei su rinkiniu \verb|shuffled|.
-% TODO: pridet kazka?
 
 Veikimo laiko atžvilgiu labiausiai palankūs yra rinkiniai \verb|merge| ir \verb|push_min|.
 Šie rinkiniai pasižymi tuo, jog yra dalinai išrikiuoti (\verb|merge| sudaro du išrikiuoti sąrašai, \verb|push_min| turi tik vieną neišrikiuotą elementą).
@@ -940,9 +948,6 @@ galima pastebėti naudojamų perėjimų skaičiaus ir didesnių tarpų įtaką e
 \end{figure}
 
 \sectionnonum{Išvados}
-% magic 3: rezultatai, prognoze, argumentas (gavom ta, todel ateityje bus taip, nes...)
-% Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
-% suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
 Remiantis atliktų eksperimentų rezultatais galima teigti, jog
 pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veikia greičiau nei žinomi variantai.
@@ -993,10 +998,27 @@ rikiavimas įterpimu su tarpu $h$ yra neprasmingas, kadangi vidinis ciklas visad
 Todėl tokiais atvejais galima rekomenduoti taikyti burbuliuko perėjimą, kuris neturi vidinio ciklo ir pasiekia tą patį rezultatą
 atlikdamas mažiau instrukcijų.
 
-% kazka apie duomenu dydzius??
+\sectionnonum{Summary}
 
-\sectionnonum{Conclusions}
-% Šiame skyriuje pateikiamos išvados (reziume) anglų kalba.
+Sorting is a fundamental task in computer science.
+Therefore, performance improvements in sorting can bring positive effects to various other programs.
+
+Shellsort is a well-known classic sorting algorithm.
+There are many variants of Shellsort, but the best performing ones are experimentally derived.
+
+To investigate the performance of Shellsort and the effect of performed comparisons and assignments to actual runtime,
+we provide an experimental study of Shellsort's performance with a focus on branch prediction.
+
+We present a multiobjective genetic algorithm for generating efficient variants of Shellsort.
+Using the proposed genetic algorithm, we generate variants of Shellsort for various sizes of data.
+
+To investigate the performance of the generated variants, we perform an extensive
+study of the performance of various Shellsort variants using various data distributions and sizes.
+We compare the performance of the different variants based on three criteria: comparisons, assignments and runtime.
+
+Our results show that the generated variants run faster than the ones currently known.
+We conclude that further improvements to the proposed genetic algorithm could be made,
+so that new, more efficient variants could be generated.  
 
 
 \printbibliography[heading=bibintoc]
@@ -1111,5 +1133,25 @@ inline void test_shellsort(T & data) {
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
+\section{Išsamūs efektyvumo tyrimo rezultatai}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_128_32.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_128_64.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.6]{img/comparisons_128_128.jpg}
+  \caption{Veikimo laikas su duomenų rinkiniu shuffled ir $N \leq 8192$}
+\end{figure}
 
 \end{document}
