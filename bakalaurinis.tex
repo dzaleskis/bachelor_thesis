@@ -214,7 +214,7 @@ o karkaso viduje atliekama rikiavimo logika - perėjimu (angl. pass).
   \caption{Šelo algoritmo karkasas}\label{alg:shell_framework}
   \begin{algorithmic}[1]
     \ForEach {$gap$ \textbf{in} $H$}
-        \State perform pass with gap
+        \State perform pass with $gap$
     \EndFor
   \end{algorithmic}
 \end{algorithm}
@@ -364,6 +364,7 @@ Tiesa, rikiuojant sudėtingus duomenų tipus variantas su Ciura tarpų seka tur�
   \end{tabular}
 \end{table}
 
+\pagebreak
 
 Pirmiausia reikėtų nustatyti, nuo ko priklauso šakų atspėjamumas naudojant šias tarpų sekas.
 Reikia pastebėti, jog rikiavimas įterpimu yra vienas palankiausių $O(n^2)$ algoritmų šakų nuspėjimui
@@ -510,7 +511,6 @@ Parinkti atsitiktinį perėjimo tipą yra nesudėtinga, kadangi pakanka sugeneru
 Tuo tarpu greitai sugeneruoti pakankamai efektyvias tarpų sekas yra gana sudėtinga.
 Tuo tikslu buvo pasirinkta individų inializacijai naudoti geometrines tarpų sekas, kadangi jas gana nesudėtinga generuoti
 ir jos bendru atveju yra pakankamai efektyvios (didelė dalis efektyvių eksperimentiškai gautų tarpų sekų yra geometrinės).
-Geometrinių tarpų sekų generavimo algoritmas yra pateikiamas prieduose.
 Siekiant padidinti individų genetinę įvairovę, taip pat buvo pasirinkta dalį individų inicializuoti
 tarpų sekomis, kurios generuojamos metodu panašiu į geometrinių tarpų sekų generavimą, koeficientą $q$ parenkant atsitiktinai kiekvienam tarpui.
 Generuojant geometrines tarpų sekas buvo nuspręsta koeficientą $q$ parinkti atsitiktinai, užtikrinant, jog $1.5 \leq q \leq 7$.
@@ -582,7 +582,7 @@ Tačiau tam reikėtų funkcijos, nusakančios apytikslį įvairių Šelo algorit
 Kadangi tai įgyvendinti yra gana sudėtinga, buvo pasirinktas paprastesnis metodas - kiekvienam naudojamam duomenų dydžiui ištirti
 Šelo algoritmo su Ciura tarpų seka veikimo laiką ir laikyti, jog tai yra $T$.
 
-\subsection{Šelo algoritmo variantų generavimas, kai $N = 128$}
+\subsection{Šelo algoritmo variantų generavimas, kai N = 128}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti nedidelius duomenų dydžius greičiau nei žinomi variantai.
@@ -602,7 +602,7 @@ Galima pastebėti tendenciją, jog visi sugeneruoti algoritmai naudoja ne įterp
 Kaip buvo minėta viename iš praeitų skyrių, su dideliais (santykinai duomenų dydžiui) tarpais atlikti įterpimo perėjimą nėra prasminga,
 tad panašu, jog kainos funkcija taip pat privedė individus prie šios optimizacijos taikymo.
 
-\subsection{Šelo algoritmo variantų generavimas, kai $N = 1024$}
+\subsection{Šelo algoritmo variantų generavimas, kai N = 1024}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti vidutinius duomenų dydžius greičiau nei žinomi variantai.
@@ -625,7 +625,7 @@ Kaip pastebima \cite{Radavičius_Baranauskas_2013}, vertinant veikimo laiką da�
 Reikia pastebėti, kad kuo didesnis $q$, tuo mažiau perėjimų bus atliekama tam tikro duomenų dydžio išrikiavimui,
 o kiekvienas papildomas perėjimas didina neatspėtų šakų santykį bei reikalauja atlikti papildomas instrukcijas.  
 
-\subsection{Šelo algoritmo variantų generavimas, kai $N = 8192$}
+\subsection{Šelo algoritmo variantų generavimas, kai N = 8192}
 
 Šiame poskyryje siekiama sugeneruoti Šelo algoritmo variantus,
 kurie leistų rikiuoti didelius duomenų dydžius greičiau nei žinomi variantai.
@@ -734,28 +734,23 @@ Eksperimentams skirta programa buvo įgyvendinta C++ kalba su MSVC 19.16.27043 k
 
 \section{Šelo algoritmo variantų efektyvumo tyrimas}
 
-Šiame skyriuje atliekamas sugeneruotų ir pateiktų literatūroje Šelo algoritmo variantų efektyvumo tyrimas.
-Tyrimas yra išskirtas į dvi dalis:
-pirmoje dalyje tiriamas efektyvumas priklausomai nuo duomenų rinkinio,
-antroje dalyje tiriamas efektyvumas priklausomai nuo duomenų dydžio.
+Šiame skyriuje atliekamas pasirinktų Šelo algoritmo variantų efektyvumo tyrimas priklausomai nuo duomenų rinkinio ir duomenų dydžio.
 
-Reikia pastebėti, jog tyrimo metu gautų duomenų kiekis yra gana didelis, kadangi
-viso buvo ištirta 12 algoritmų su 6 skirtingais duomenų rinkiniais ir įvairiais duomenų dydžiais. 
-Siekiant glaustumo, mažiau reikšmingi tyrimo rezultatai yra pateikiami prieduose.
+Tyrimo metu gautų duomenų kiekis yra ganėtinai didelis, tad
+siekiant glaustumo mažiau reikšmingi tyrimo rezultatai yra pateikiami prieduose.
 
 \subsection{Efektyvumas priklausomai nuo duomenų rinkinio}
 
 \subsubsection{Veikimo laikas}
 
 Remiantis \ref{img:cycles_1024_1024} pav. rezultatais, mažiausiai palankus veikimo laiko prasme yra duomenų rinkinys \verb|shuffled|.
-Duomenų rinkinys \verb|shuffled| iš tiriamų rinkinių turi didžiausią entropiją, kadangi jį sudaro atsitiktine tvarka išdėstyti ir neturintys dublikatų duomenys.
-Tokį duomenų rinkinį sudėtinga rikiuoti, kadangi jau išrikiuotų posekių egzistavimo tikimybė yra gana maža ir
+Jį sudėtinga rikiuoti, kadangi jį sudaro unikalios, atsitiktinai išdėstytos reikšmės, tad jau išrikiuotų posekių egzistavimo tikimybė yra maža ir
 kiekvienas elementas turi vienodą tikimybę būti bet kurioje iš galimų pozicijų.
-Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinai išdėstomas ir todėl gana nepalankus, nors 
+Rinkinys \verb|shuffled_mod_sqrt| taip pat yra atsitiktinis ir gana nepalankus, nors 
 pastebimi veikimo laikai yra geresni nei su rinkiniu \verb|shuffled|.
 
 Veikimo laiko atžvilgiu labiausiai palankūs yra rinkiniai \verb|merge| ir \verb|push_min|.
-Šie rinkiniai pasižymi tuo, jog yra dalinai išrikiuoti (\verb|merge| sudaro du išrikiuoti sąrašai, \verb|push_min| turi tik vieną neišrikiuotą elementą).
+Šie rinkiniai pasižymi tuo, jog yra dalinai išrikiuoti.
 Šelo algoritmas (o tuo pačiu ir tiriami variantai) yra adaptyvus (dalinai išrikiuotus duomenis rikiuoja greičiau),
 tad šiuo atveju galima pastebėti šios savybės teikiamą naudą.
 
@@ -966,7 +961,7 @@ Vertinant skirtingų Šelo algoritmo variantų atliekamas operacijas ir veikimo 
 atsitiktiniai duomenys, neturintys dublikatų.
 Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai, su jais veikimo laikas buvo kelis kartus mažesnis nei rikiuojant atsitiktinius duomenis,
 kas įrodo Šelo algoritmo variantų adaptyvumo naudą.
-Rikiuojant didėjančia tvarka išrikiuotus duomenis pastebėtas labai palankus veikimo laikas,
+Rikiuojant mažėjančia tvarka išrikiuotus duomenis pastebėtas labai palankus veikimo laikas,
 kas įvertinant didelį atliekamų palyginimų ir priskyrimų skaičių leidžia teigti,
 jog duomenų rinkinio palankumas šakų nuspėjimui gali ženkliai įtakoti Šelo algoritmo variantų veikimo laiką.  
 
