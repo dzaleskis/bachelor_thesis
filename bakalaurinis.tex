@@ -430,6 +430,12 @@ Bendrai vertinant šakų nuspėjamumą Šelo algoritmu rikiuojant nedidelius duo
 galima teigti, jog bendras šakų nuspėjamumas priklauso ne tik nuo naudojamų perėjimų kiekio, tačiau ir nuo
 pasirinktų tarpų dydžio, kadangi nuo jo priklauso, kiek elementų palyginimų (tuo pačiu ir šakų) bus atlikta su tam tikru tarpu.
 
+Vertinga pastebėti, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$, vidiniame cikle galima netikrinti,
+ar vidinio ciklo indeksas nėra mažesnis už tarpą, kadangi maksimalus iteracijų skaičius vidiniame cikle visada bus 1.
+Šią sąlygą galima atlaisvinti iki $h \geq \lfloor\frac{N}{2}\rfloor$, jei nesirūpinama dėl pilno išrikiavimo paskutinėje iteracijoje kai elementų skaičius yra nelyginis.
+Įterpimo perėjimo pakeitimas burbuliuko perėjimu tokiais atvejais gali būti prasmingas - 
+jis neturi vidinio ciklo, tad tai leistų atsisakyti vienos šakos ir kelių instrukcijų per iteraciją. 
+
 \section{Šelo algoritmo variantų efektyvumo kriterijai}
 
 Įprastai praktinis rikiavimo algoritmų efektyvumas yra vertinamas matuojant jų atliekamų palyginimų ar priskyrimų skaičių.
@@ -748,7 +754,7 @@ Veikimo laiko atžvilgiu labiausiai palankūs yra rinkiniai \verb|merge| ir \ver
 Šelo algoritmas (o tuo pačiu ir tiriami variantai) yra adaptyvus (dalinai išrikiuotus duomenis rikiuoja greičiau),
 tad šiuo atveju galima pastebėti šios savybės teikiamą naudą.
 
-Su visais duomenų rinkiniais yra pastebimas geresnis GA sugeneruotų variantų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
+Su visais duomenų rinkiniais yra pastebimas geresnis sugeneruotų variantų veikimo laikas lyginant juos su literatūroje pateiktais variantais. 
 Bene didžiausi rezultatų skirtumai pastebimi su \verb|shuffled| duomenų rinkiniu.
 Tai galima paaiškinti faktu, jog GA optimizavo variantus rikiuojant atsitiktinius, dublikatų neturinčius duomenis, tad sugeneruoti variantai
 geriausiai prisitaikė rikiuoti būtent tokius duomenų rinkinius.
@@ -882,7 +888,7 @@ Tačiau mažesnis perėjimų kiekis sukelia sunkumų su didesniais duomenų dyd�
 
 
 \ref{img:descending_comparisons_128} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|descending| ir nedideliais duomenų dydžiais.
-Šiuo atveju literatūrinų variantų rezultatai yra gana stabilūs ir auga nežymiai didėjant duomenų dydžiui.
+Šiuo atveju literatūrinių variantų rezultatai yra gana stabilūs ir auga nežymiai didėjant duomenų dydžiui.
 Tuo tarpu sugeneruoti variantai veikia mažiau stabiliai, galima pastebėti nereguliarius rezultatus priklausomai nuo duomenų dydžio:
 su $N = 32$ pastebimi apytiksliai 30\% prastesni A3 varianto rezultatai lyginant su geriausius rezultatus pateikusiu variantu (Sedgewick),
 su $N = 64$ pastebimas didelis A2 varianto atliekamų palyginimų šuolis,
@@ -900,7 +906,7 @@ Kaip pavyzdį galima pateikti Pratt tarpų seką \cite{pratt1972shellsort}, kuri
 \end{figure}
 
 \ref{img:shuffled_comparisons_8192} pav. yra pateikiami atliekami palyginimai su duomenų rinkiniu \verb|shuffled| ir dideliais duomenų dydžiais.
-Galima pastebėti, jog sugeneruotų variantų rezultatai su duomenų dydžiais $2048$ ir $4096$ yra pakankamai geri ir nežymiai atsilieka nuo literatūrinių variantų.
+Galima pastebėti, jog sugeneruotų variantų rezultatai su duomenų dydžiais $2048$ ir $4096$ yra pakankamai palankūs ir nežymiai atsilieka nuo literatūrinių variantų.
 Tiesa, su didžiausiu tiriamu duomenų dydžiu atliekamų palyginimų rezultatai yra prastesni, tačiau veikimo laiko rezultatai su šiuo duomenų dydžiu buvo pastebimai geresni.
 Tad iš esmės pastebimas sugeneruotų variantų daromas kompromisas, kur atliekamų operacijų skaičius paaukojamas vardan palankesnio veikimo laiko.
 
@@ -944,35 +950,56 @@ galima pastebėti naudojamų perėjimų skaičiaus ir didesnių tarpų įtaką e
 % Išvadose ir pasiūlymuose, nekartojant atskirų dalių apibendrinimų,
 % suformuluojamos svarbiausios darbo išvados, rekomendacijos bei pasiūlymai.
 
-Darbo metu atlikti eksperimentai leido nustatyti šakų nuspėjimo įtaką Šelo algoritmo veikimo laikui, kai duomenų dydis yra nedidelis.
+Atlikti eksperimentai leido nustatyti šakų nuspėjimo įtaką Šelo algoritmo veikimo laikui, kai duomenų dydis yra nedidelis.
 Pastebėta, jog didelis neatspėtų šakų santykis gali reikšmingai padidinti veikimo laiką bei sumažinti per ciklą įvykdomų instrukcijų skaičių.
-Taip pat nustatyta, jog bendras neatspėtų šakų santykis priklauso ne tik nuo atliekamų perėjimų skaičiaus, bet ir nuo naudojamų tarpų dydžio.
-Rikiuojant nedidelius duomenų dydžius ir siekiant minimizuoti veikimo laiką, galima rekomenduoti naudoti kuo trumpesnes tarpų sekas
-su santykinai dideliais tarpais.
-Tokią rekomendaciją leidžia pagrįsti tai, jog Šelo algoritmas su $p$ perėjimų sukelia apytiksliai $O(np)$ neatspėtų šakų,
-tad minimizuojant perėjimų skaičių turėtų mažėti ir neatspėtų šakų skaičius.
-Taip pat, kuo didesnis naudojamas tarpas, tuo mažiau su juo bus atliekama elementų palyginimų, kas leis daugiau rikiavimo atlikti su tarpu 1,
-kur šakos yra nuspėjamos tiksliausiai.
+Tiesa, vien neatspėtų šakų santykis pilnai nenusako Šelo algoritmo veikimo laiko, tad tarpų seka su kuria šakos nuspėjamos tiksliau nebūtinai veiks greičiau.
+Siekiant rasti tarpų sekas, kurios praktikoje veikia greitai, galima rekomenduoti atsižvelgti į neatspėtų šakų santykį,
+kadangi šis kriterijus suteikia naudingų įžvalgų analizuojant duotos tarpų sekos veikimo laiką.
 
-Remiantis darbo metu atliktų eksperimentų rezultatais galima teigti, jog
-pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veiktų greičiau nei žinomi variantai.
-Su visais duomenų dydžiais ir duomenų rinkiniais buvo pastebėtas mažesnis sugeneruotų variantų veikimo laikas,
-lyginant juos su žinomais variantais.
-Su atsitiktiniais bei didėjančia tvarka išrikiuotais duomenų rinkiniais buvo pastebėtas didesnis sugeneruotų variantų atliekamų palyginimų ir priskyrimų skaičius,
-tad geresnis veikimo laikas buvo pasiektas paaukojant optimalumą atliekamų operacijų atžvilgiu.
-Su dalinai išrikiuotais duomenų rinkiniais, kurie gana dažnai sutinkami praktikoje, sugeneruoti variantai veikė greičiau ir atliko mažiau palyginimų.
+Atliekant eksperimentus nustatyta, jog bendras neatspėtų šakų santykis priklauso ne tik nuo atliekamų perėjimų skaičiaus, bet ir nuo naudojamų tarpų dydžio.
+Tiriant tarpų sekas formos $1, h$ buvo pastebėta, jog didėjant $h$ mažėja bendras neatspėtų šakų santykis.
+Remiantis šiuo rezultatu, galima teigti, jog su visomis tarpų sekomis formos $1, h$ didėjant $h$ mažės neatspėtų šakų santykis,
+kadangi augant $h$ daugiau rikiavimo bus atliekama su tarpu 1, kur šakų nuspėjimas yra tiksliausias.
+Ilgesnių tarpų sekų šakų nuspėjamumą analizuoti yra sunkiau, tačiau galima prognozuoti, jog pvz. naudojant tarpų seką formos $h_1 = 1, h_k = q * h_{k-1}$
+didėjant $q$ bendras neatspėtų šakų santykis turėtų mažėti.
+Šią prognozę paremia tai, jog didėjant $q$ mažės atliekamų perėjimų skaičius, nuo kurio priklauso bendras Šelo algoritmo neatspėtų šakų skaičius.
+Taip pat didėjant $q$ kiekvienas tarpas $h_k$ bus didesnis, dėl ko tikėtina, jog daugiau rikiavimo bus atliekama su tarpu 1, kur šakų nuspėjimas yra tiksliausias.
 
-% Atliekant eksperimentus buvo pastebėta, jog mažiausiai Šelo algoritmo variantams palankūs yra atsitiktiniai duomenų rinkiniai.
-% Tuo pačiu pastebėti šiek tiek palankesni rezultatai naudojant atsitiktinį duomenų rinkinį, turintį didelį dublikatų skaičių.
-% Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai.
+Atliekant eksperimentus pastebėta, jog atliekant perėjimą su tarpu $h$, kur $h > \lfloor\frac{N}{2}\rfloor$,
+rikiavimas įterpimu su tarpu $h$ yra neprasmingas, kadangi vidinis ciklas visada atliks tik vieną iteraciją.
+Todėl tokiais atvejais galima rekomenduoti taikyti burbuliuko perėjimą, kuris neturi vidinio ciklo ir pasiekia tą patį rezultatą
+atlikdamas mažiau instrukcijų.
 
-% Darbo metu sugeneruoti Šelo algoritmai gana reikšmingai skiriasi nuo literatūroje pateikiamų variantų.
-% Tai galima paaiškinti tuo, jog daug didesnis dėmesys buvo skirtas jų veikimo laikui, tad sugeneruoti variantai naudoja trumpesnes tarpų sekas ir
-% jų gretimų tarpų skirtumai yra didesni.
-% Siekiant minimizuoti veikimo laiką
+Darbo metu suprojektuotas daugiakriterinis genetinis algoritmas yra vienas iš esminių darbo rezultatų.
+Pasitelkiant jį yra įmanoma generuoti Šelo algoritmo variantus, atsižvelgiant į visus esminius efektyvumo kriterijus.
+Taip pat keičiant tikslo funkciją įmanoma generuoti variantus, kurie atitinka pasirinktus apribojimus.
+Atsižvelgiant į tai, jog sugeneruotus variantus didele dalimi sudaro įterpimo perėjimai, suprojektuotas genetinis algoritmas
+galėtų būti supaprastintas siekiant generuoti tik tarpų sekas, taip sumažinant paieškos erdvę ir potencialiai padidinant gautų rezultatų kokybę.
 
-% Darbo metu suprojektuotas daugiakriterinis genetinis algoritmas yra vienas iš esminių darbo rezultatų.
+Remiantis atliktų eksperimentų rezultatais galima teigti, jog
+pasitelkiant genetinius algoritmus įmanoma sugeneruoti Šelo algoritmo variantus, kurie veikia greičiau nei žinomi variantai.
+Palankesni sugeneruotų variantų veikimo laiko rezultatai buvo pastebėti beveik su visais duomenų rinkiniais ir dydžiais.
+Kai kuriais atvejais sugeneruotų variantų veikimo laikas buvo net kelis kartus mažesnis nei žinomų variantų.
+Tiesa, šis veikimo laiko patobulinimas buvo pasiektas paaukojant optimalumą atliekamų operacijų atžvilgiu.
+Reikia pastebėti, jog darbo metu sugeneruoti Šelo algoritmo variantai yra baigtiniai (skirti rikiuoti specifinius duomenų dydžius).
+Taip pat eksperimentai buvo atlikti tik su sveikaskaitiniais duomenimis, kas neleido įvertinti sugeneruotų variantų veikimo laiko rikiuojant sudėtingesnius duomenų tipus.
+Todėl sugeneruotus Šelo algoritmo variantus galima rekomenduoti tik tuo atveju, jei rikiuojamų duomenų dydis yra žinomas iš anksto, o
+duomenų palyginimo ir priskyrimo operacijų sudėtingumas laiko atžvilgiu yra $O(1)$.
 
+Darbo metu sugeneruoti Šelo algoritmai gana reikšmingai skiriasi nuo literatūroje pateikiamų variantų.
+Tai galima paaiškinti tuo, jog tikslo funkcija prioritetizavo veikimo laiką, tad sugeneruoti variantai naudoja trumpas geometrines tarpų sekas su gana dideliu $q$.
+Remiantis atliktų eksperimentų rezultatais, ši strategija pasiteisino ir padėjo sugeneruoti greitai veikiančius Šelo algoritmo variantus.
+Todėl šią tarpų sekų generavimo strategiją galima rekomenduoti platesniems taikymams, ypač jei siekiama pagerinti Šelo algoritmo veikimo laiką.
+
+Vertinant skirtingų variantų atliekamas operacijas ir veikimo laiką buvo pastebėta, jog bendru atveju Šelo algoritmo variantams mažiausiai palankūs buvo
+atsitiktiniai duomenys, neturintys dublikatų.
+Labiausiai palankūs buvo dalinai išrikiuoti duomenų rinkiniai, su jais veikimo laikas buvo kelis kartus mažesnis nei rikiuojant atsitiktinius duomenis,
+kas įrodo Šelo algoritmo variantų adaptyvumo naudą.
+Rikiuojant didėjančia tvarka išrikiuotus duomenis pastebėtas labai palankus veikimo laikas,
+kas įvertinant didelį atliekamų palyginimų ir priskyrimų skaičių leidžia teigti,
+jog duomenų rinkinio palankumas šakų nuspėjimui gali ženkliai įtakoti Šelo algoritmo variantų veikimo laiką.  
+
+% kazka apie duomenu dydzius??
 
 \sectionnonum{Conclusions}
 % Šiame skyriuje pateikiamos išvados (reziume) anglų kalba.
